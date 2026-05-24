@@ -1,0 +1,20 @@
+/* Kiosk base type — native 1820×2250 canvas */
+.kiosk-content {
+  font-size: 30px;
+  font-family: var(--font-sans);
+}
+
+:root {
+  --font-sans: "Noto Sans", "Noto Sans KR", -apple-system, sans-serif;
+  --font-serif: "Playfair Display", "Noto Serif KR", Georgia, serif;
+
+  /* All sizes scaled ~1.5× from the original 1080×1920 design */
+  --font-size-xs: 32px;
+  --font-size-sm: 38px;
+  --font-size-md: 44px;
+  --font-size-lg: 52px;
+  --font-size-xl: 60px;
+  --font-size-2xl: 72px;
+  --font-size-3xl: 84px;
+  --font-size-4xl: 100px;
+}

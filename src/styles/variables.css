@@ -1,0 +1,53 @@
+:root {
+  /* Design base: 1820 × 2250 (native kiosk Unity webview size) */
+  --kiosk-width: 1820;
+  --kiosk-height: 2250;
+
+  /* Semantic — use these for UI */
+  --color-primary: #FE6C50;
+  --color-primary-dark: #D44530;
+  --color-primary-light: #FF8C72;
+  --color-primary-muted: #F8ECDE;
+  --color-on-primary: #ffffff;
+
+  --color-secondary: #e0d8d0;
+  --color-secondary-dark: #9a9090;
+  --color-on-secondary: #5a5050;
+
+  --color-disabled: #c0b8b0;
+  --color-on-disabled: #ffffff;
+
+  /* Surfaces & text */
+  --color-bg: #FBF3EA;
+  --color-white: #ffffff;
+  --color-text: #1a1a1a;
+  --color-text-secondary: #6b6060;
+  --color-text-muted: #999;
+  --color-border: #E8E8E8;
+  --color-input-bg: #f0e8e0;
+  --color-card-overlay: rgba(0, 0, 0, 0.50);
+
+  /* Accents */
+  --color-accent-blue: #4a7fd4;
+
+  /* Legacy aliases */
+  --color-purple: var(--color-primary-dark);
+  --color-purple-light: var(--color-primary-light);
+  --color-purple-dark: var(--color-primary-dark);
+  --color-purple-bg: var(--color-primary);
+  --color-blue: var(--color-accent-blue);
+
+  /* Border radii — scaled for 1820×2250 canvas */
+  --radius-sm: 18px;
+  --radius-md: 28px;
+  --radius-lg: 42.9px;
+  --radius-xl: 52px;
+  --radius-pill: 999px;
+
+  /* Shadows — scaled for 1820×2250 canvas */
+  --shadow-card: 0 6px 36px rgba(120, 80, 60, 0.08);
+  --shadow-primary: 0 12px 42px rgba(254, 108, 80, 0.45);
+
+  --font-family: "Noto Sans", "Noto Sans KR", -apple-system, BlinkMacSystemFont,
+    sans-serif;
+}

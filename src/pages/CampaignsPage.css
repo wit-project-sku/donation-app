@@ -1,0 +1,95 @@
+.campaigns-page {
+  padding-bottom: 0;
+  padding-left: 0;
+  padding-right: 0;
+  gap: 40px;
+  overflow: hidden;
+}
+
+/* ── Intro section ── */
+.campaigns-page__intro {
+  flex-shrink: 0;
+  padding: 0 64px;
+}
+
+.campaigns-page__label {
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: #FE6C50;
+  display: block;
+  margin-bottom: 20px;
+  letter-spacing: 0.04em;
+}
+
+.campaigns-page__headline {
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
+  font-size: 68px;
+  font-weight: 700;
+  font-style: normal;
+  line-height: normal;
+  color: #999;
+  margin: 0 0 20px;
+}
+
+.campaigns-page__desc {
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
+  font-size: var(--font-size-sm);
+  font-weight: 400;
+  color: #999;
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* ── Swiper wrapper ── */
+.campaigns-page__swiper-wrap {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  margin-left: -64px;
+  margin-right: -64px;
+  overflow: hidden;
+}
+
+/* ── Scrollable track ── */
+.campaigns-page__track {
+  display: flex;
+  gap: 40px;
+  overflow-x: scroll;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  /* Padding lets first/last cards be fully centered */
+  padding-left: calc((100% - 1231px) / 2);
+  padding-right: calc((100% - 1231px) / 2);
+  height: 100%;
+  align-items: center;
+}
+
+.campaigns-page__track::-webkit-scrollbar {
+  display: none;
+}
+
+/* ── Individual slides ── */
+.campaigns-page__slide {
+  width: 1231px;
+  flex-shrink: 0;
+  scroll-snap-align: center;
+  transition: opacity 0.25s, transform 0.25s;
+  opacity: 0.55;
+  transform: scale(0.95);
+}
+
+.campaigns-page__slide--active {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* ── Loading state ── */
+.campaigns-page__loading {
+  font-size: var(--font-size-md);
+  color: var(--color-text-muted);
+  text-align: center;
+  padding: 72px;
+  flex-shrink: 0;
+}

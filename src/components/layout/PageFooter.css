@@ -1,0 +1,50 @@
+.page-footer {
+  flex-shrink: 0;
+  padding-top: 24px;
+  width: 100%;
+}
+
+.page-footer__actions {
+  display: flex;
+  align-items: stretch;
+  gap: 24px;
+  width: 100%;
+}
+
+.page-footer__actions > * {
+  flex: 1;
+  min-width: 0;
+}
+
+.page-footer--stack .page-footer__actions {
+  flex-direction: column;
+  gap: 18px;
+}
+
+.page-footer--stack .page-footer__actions > * {
+  flex: none;
+  width: 100%;
+}
+
+/* Back button — fixed width, does not grow */
+.page-footer__back-btn {
+  flex: none !important;
+  width: 240px;
+  border-radius: 42.9px;
+  border: 5px solid #E8E8E8;
+  background: #FFF;
+  color: #999;
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
+  font-size: 48px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.15s, transform 0.1s;
+}
+
+.page-footer__back-btn:active {
+  border-color: #FE6C50;
+  transform: scale(0.97);
+}

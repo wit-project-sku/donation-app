@@ -1,0 +1,72 @@
+.campaign-summary {
+  display: flex;
+  gap: 36px;
+  align-items: stretch;
+  width: 100%;
+  height: 316px;
+  border-radius: 42.9px;
+  border: 5px solid #E8E8E8;
+  background: #FFF;
+  overflow: hidden;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+.campaign-summary--compact {
+  height: 316px;
+}
+
+.campaign-summary__thumb {
+  width: 280px;
+  flex-shrink: 0;
+  object-fit: cover;
+  display: block;
+}
+
+.campaign-summary__info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 12px;
+  padding: 32px 40px 32px 0;
+  min-width: 0;
+}
+
+.campaign-summary__location {
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 100%;
+  color: #FE6C50;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.campaign-summary__title {
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
+  font-size: 68px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+  color: #999;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.campaign-summary__desc {
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+  color: #999;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}

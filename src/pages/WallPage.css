@@ -1,0 +1,139 @@
+.wall-page {
+  background: #F5EDE0;
+  gap: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+/* ── Header ── */
+.wall-page__header {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  flex-shrink: 0;
+  padding: 52px 64px 32px;
+}
+
+.wall-page__title {
+  font-family: "Noto Sans", sans-serif;
+  font-size: 120px;
+  font-weight: 900;
+  line-height: 1;
+  color: #111;
+  margin: 0;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+}
+
+/* ── Marquee ── */
+.wall-page__marquee-wrap {
+  overflow: hidden;
+  width: 100%;
+}
+
+.wall-page__marquee-track {
+  display: flex;
+  animation: wall-marquee 24s linear infinite;
+  white-space: nowrap;
+}
+
+.wall-page__marquee-item {
+  font-family: "Noto Sans", sans-serif;
+  font-size: 36px;
+  font-weight: 700;
+  color: #111;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding-right: 60px;
+  flex-shrink: 0;
+}
+
+@keyframes wall-marquee {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* ── Swiper panel ── */
+.wall-page__swiper-panel {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.wall-page__swiper {
+  width: 100%;
+  height: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding: 32px 64px 32px;
+  box-sizing: border-box;
+}
+
+.wall-page__swiper::-webkit-scrollbar {
+  display: none;
+}
+
+.wall-page__track {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 24px;
+  height: 100%;
+}
+
+.wall-page__column {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  flex-shrink: 0;
+  width: 488.871px;
+  scroll-snap-align: start;
+}
+
+.wall-page__column:nth-child(even) {
+  padding-top: 60px;
+}
+
+/* ── Status messages ── */
+.wall-page__status {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
+  font-size: 32px;
+  font-weight: 600;
+  color: #999;
+}
+
+.wall-page__status--error {
+  color: #b42318;
+}
+
+/* ── Done button ── */
+.wall-page__done {
+  align-self: center;
+  width: 416px;
+  height: 148px;
+  border-radius: 42.9px;
+  border: 5px solid #E8E8E8;
+  background: #fff;
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
+  font-size: 48px;
+  font-weight: 700;
+  color: #999;
+  cursor: pointer;
+  flex-shrink: 0;
+  margin: 0 0 52px;
+  transition: opacity 0.15s, transform 0.1s;
+}
+
+.wall-page__done:active {
+  transform: scale(0.98);
+  opacity: 0.85;
+}

@@ -1,0 +1,114 @@
+.amount-page {
+  gap: 28px;
+  padding-bottom: 40px;
+  overflow: hidden;
+}
+
+/* ── Amount display box ── */
+.amount-page__display {
+  width: 1496px;
+  max-width: 100%;
+  height: 490px;
+  margin: 0 auto;
+  border-radius: 42.9px;
+  border: 5px solid #E8E8E8;
+  background: #F8ECDE;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+.amount-page__num {
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
+  font-size: 200px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+  color: #999;
+  letter-spacing: -0.03em;
+}
+
+.amount-page__won {
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
+  font-size: 200px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  color: #999;
+}
+
+.amount-page__num--active,
+.amount-page__won--active {
+  color: #FE6C50;
+}
+
+/* ── Preset grid ── */
+.amount-page__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  column-gap: 115px;
+  row-gap: 68px;
+}
+
+.amount-page__preset {
+  display: flex;
+  padding: 66px 50px;
+  justify-content: center;
+  align-items: center;
+  border-radius: 45px;
+  border: 5px solid #E8E8E8;
+  background: #FFF;
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
+  font-size: 60px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 100%;
+  color: #999;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
+}
+
+.amount-page__preset:active {
+  transform: scale(0.97);
+}
+
+.amount-page__preset--active {
+  border-color: #FE6C50;
+  background: #FFF;
+  color: #FE6C50;
+}
+
+.amount-page__preset--reset {
+  color: #999;
+}
+
+/* ── Donate button ── */
+.amount-page__donate-btn {
+  width: 100%;
+  height: 192px;
+  border-radius: 42.9px;
+  border: 5px solid #E8E8E8;
+  background: #999;
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
+  font-size: 68px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+  color: #ffffff;
+  cursor: not-allowed;
+  transition: background 0.15s;
+  box-sizing: border-box;
+}
+
+.amount-page__donate-btn--active {
+  background: #FE6C50;
+  cursor: pointer;
+}
+
+.amount-page__donate-btn--active:active {
+  transform: scale(0.98);
+}

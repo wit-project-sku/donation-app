@@ -1,0 +1,249 @@
+.camera-page {
+  gap: 40px;
+  padding-bottom: 52px;
+}
+
+/* ── Header ── */
+.camera-page__header {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex-shrink: 0;
+}
+
+.camera-page__step-badge {
+  width: 105px;
+  height: 105px;
+  border-radius: 50%;
+  background: #FE6C50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 52px;
+  flex-shrink: 0;
+}
+
+.camera-page__title {
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
+  font-size: 52px;
+  font-weight: 800;
+  color: #333;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.camera-page__status-label {
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
+  font-size: 28px;
+  font-weight: 400;
+  color: #999;
+  margin: 8px 0 0;
+}
+
+/* ── Main preview area ── */
+.camera-page__main {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  border-radius: 42.9px;
+  border: 5px solid #E8E8E8;
+  background: #111;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.camera-page__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: none;
+}
+
+.camera-page__video--active {
+  display: block;
+}
+
+.camera-page__canvas {
+  display: none;
+}
+
+.camera-page__preview {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ── Idle placeholder ── */
+.camera-page__placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+.camera-page__placeholder-icon {
+  font-size: 120px;
+  opacity: 0.3;
+}
+
+.camera-page__placeholder-text {
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
+  font-size: 40px;
+  font-weight: 500;
+  color: #fff;
+  opacity: 0.4;
+  margin: 0;
+}
+
+/* ── Error box ── */
+.camera-page__error-box {
+  padding: 48px 80px;
+  text-align: center;
+}
+
+.camera-page__error-text {
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
+  font-size: 36px;
+  font-weight: 500;
+  color: #ff6b6b;
+  margin: 0;
+  white-space: pre-line;
+  line-height: 1.6;
+}
+
+/* ── Upload spinner overlay ── */
+.camera-page__spinner-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+}
+
+.camera-page__spinner {
+  width: 120px;
+  height: 120px;
+  border: 8px solid rgba(255, 255, 255, 0.2);
+  border-top-color: #FE6C50;
+  border-radius: 50%;
+  animation: camera-spin 1s linear infinite;
+}
+
+@keyframes camera-spin {
+  to { transform: rotate(360deg); }
+}
+
+.camera-page__uploading-text {
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
+  font-size: 40px;
+  font-weight: 600;
+  color: #fff;
+  margin: 0;
+}
+
+/* ── Action buttons ── */
+.camera-page__actions {
+  display: flex;
+  gap: 24px;
+  flex-shrink: 0;
+  align-items: center;
+}
+
+.camera-page__btn {
+  height: 148px;
+  border-radius: 42.9px;
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
+  font-size: 48px;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  transition: opacity 0.15s, transform 0.1s;
+  flex-shrink: 0;
+}
+
+.camera-page__btn:active {
+  transform: scale(0.98);
+  opacity: 0.85;
+}
+
+.camera-page__btn--primary {
+  flex: 1;
+  background: #FE6C50;
+  color: #fff;
+  box-shadow: 0 21px 42px rgba(254, 108, 80, 0.35);
+}
+
+.camera-page__btn--capture {
+  flex: 1;
+  background: #FE6C50;
+  color: #fff;
+  box-shadow: 0 21px 42px rgba(254, 108, 80, 0.35);
+  position: relative;
+}
+
+.camera-page__btn--capture::before {
+  content: "●";
+  font-size: 36px;
+  margin-right: 16px;
+}
+
+.camera-page__btn--outline {
+  width: 514px;
+  background: #fff;
+  color: #999;
+  border: 5px solid #E8E8E8;
+}
+
+.camera-page__btn--skip {
+  width: 416px;
+  background: #fff;
+  color: #999;
+  border: 5px solid #E8E8E8;
+  margin-left: auto;
+}
+
+/* ── Debug panel ── */
+.camera-page__debug {
+  flex-shrink: 0;
+  border-radius: 16px;
+  border: 2px solid #E8E8E8;
+  background: #f9f9f9;
+  padding: 16px 24px;
+}
+
+.camera-page__debug-summary {
+  font-family: monospace;
+  font-size: 22px;
+  color: #999;
+  cursor: pointer;
+  user-select: none;
+}
+
+.camera-page__debug-list {
+  font-family: monospace;
+  font-size: 22px;
+  color: #333;
+  margin: 12px 0 0;
+  padding: 0 0 0 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.camera-page__debug-device {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 4px 12px;
+  background: #E8E8E8;
+  border-radius: 8px;
+  font-size: 20px;
+}

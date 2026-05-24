@@ -1,0 +1,262 @@
+.outfit-page {
+  gap: 32px;
+  padding-bottom: 52px;
+}
+
+/* ── Section header (used for both ①②) ── */
+.outfit-page__section-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+  flex-shrink: 0;
+}
+
+.outfit-page__step-badge {
+  width: 105px;
+  height: 105px;
+  padding: 19.644px 26.52px 20.356px 27.001px;
+  border-radius: 428.997px;
+  background: #fe6c50;
+  color: #fff;
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
+  font-size: 65px;
+  font-weight: 700;
+  line-height: 100%;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1 / 1;
+  flex-shrink: 0;
+}
+
+.outfit-page__header-text {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 6px;
+}
+
+.outfit-page__title {
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
+  font-size: 52px;
+  font-weight: 800;
+  color: #333;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.outfit-page__desc {
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
+  font-size: 28px;
+  font-weight: 400;
+  color: #999;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.outfit-page__policy {
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
+  font-size: 24px;
+  color: #fe6c50;
+  margin: 0;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* ── Category tabs ── */
+.outfit-page__tabs-wrap {
+  flex-shrink: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.outfit-page__tabs-wrap::-webkit-scrollbar {
+  display: none;
+}
+
+.outfit-page__tabs {
+  display: flex;
+  gap: 16px;
+  width: max-content;
+}
+
+.outfit-page__tab {
+  height: 170px;
+  padding: 0 111.003px 0 111.997px;
+  border: 2.145px solid #e8e8e8;
+  border-radius: 42.9px;
+  background: #fff;
+  box-shadow: 0 21.45px 42.9px 0 rgba(143, 147, 157, 0.1);
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+  color: #999;
+  cursor: pointer;
+  white-space: nowrap;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition:
+    background 0.15s,
+    border-color 0.15s,
+    color 0.15s;
+}
+
+.outfit-page__tab--active {
+  background: #fe6c50;
+  border-color: #fe6c50;
+  color: #fff;
+  box-shadow: 0 6px 20px rgba(254, 108, 80, 0.35);
+}
+
+/* ── Outfit grid — 4 columns, image only ── */
+.outfit-page__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  flex-shrink: 0;
+}
+
+.outfit-card {
+  display: block;
+  border: 4px solid transparent;
+  border-radius: 20px;
+  overflow: hidden;
+  cursor: pointer;
+  padding: 0;
+  background: #f0f0f0;
+  transition:
+    border-color 0.15s,
+    transform 0.1s;
+  aspect-ratio: 2 / 3;
+}
+
+.outfit-card:active {
+  transform: scale(0.97);
+}
+
+.outfit-card--selected {
+  border-color: #fe6c50;
+  box-shadow: 0 0 0 4px rgba(254, 108, 80, 0.2);
+}
+
+.outfit-card__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
+}
+
+.outfit-page__status {
+  font-size: 32px;
+  color: var(--color-text-muted);
+  text-align: center;
+  padding: 24px 0;
+}
+
+.outfit-page__status--error {
+  color: #b42318;
+}
+
+.outfit-page__empty {
+  grid-column: 1 / -1;
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
+  font-size: 32px;
+  color: #999;
+  text-align: center;
+  padding: 80px 0;
+}
+
+/* ── Photo buttons + back ── */
+.outfit-page__photo-btns {
+  display: flex;
+  gap: 24px;
+  flex-shrink: 0;
+}
+
+.outfit-page__photo-btn {
+  width: 815px;
+  height: 150px;
+  padding: 40px 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+  flex-shrink: 0;
+  border: none;
+  border-radius: 42.9px;
+  box-shadow: 0 21.45px 42.9px 0 rgba(143, 147, 157, 0.1);
+  color: #e9e9e9;
+  text-align: center;
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
+  font-size: 58px;
+  font-weight: 700;
+  line-height: 100%;
+  cursor: pointer;
+  transition:
+    opacity 0.15s,
+    transform 0.1s;
+}
+
+.outfit-page__photo-btn--primary {
+  background: #fe6c50;
+}
+
+.outfit-page__photo-btn--dark {
+  background: #616161;
+}
+
+.outfit-page__photo-btn:active {
+  transform: scale(0.98);
+  opacity: 0.85;
+}
+
+/* ── Section 2 card ── */
+.outfit-page__section2-card {
+  display: flex;
+  /* width: 1820px; */
+  height: 592px;
+  padding: 65px 40px;
+  justify-content: center;
+  align-items: flex-start;
+  border-radius: 42.9px;
+  border: 2.145px solid #e8e8e8;
+  background: #fff;
+  box-shadow: 0 21.45px 42.9px 0 rgba(143, 147, 157, 0.1);
+}
+
+.outfit-page__section2-content {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 24px;
+  flex: 1;
+}
+
+/* Bottom card badge — same orange circle, just no extra shadow */
+.outfit-page__step-badge--plain {
+  box-shadow: none;
+}
+
+.outfit-page__avatar-wrap {
+width: 234.288px;
+height: 234.055px;
+  background: #76b6fe;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  overflow: hidden;
+  & > svg {
+    width: 65%;
+    height: 65%;
+  }
+}
+
+.outfit-page__avatar-svg {
+  width: 65%;
+  height: auto;
+}

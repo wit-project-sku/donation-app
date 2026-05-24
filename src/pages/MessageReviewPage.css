@@ -1,0 +1,102 @@
+.message-review-page {
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+  padding-bottom: 40px;
+  overflow: hidden;
+}
+
+.message-review-page__hint {
+  font-size: var(--font-size-md);
+  color: var(--color-text-muted);
+  margin: 0;
+  flex-shrink: 0;
+  text-align: center;
+  width: 100%;
+}
+
+.message-review-page__center {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 0;
+}
+
+.message-review-page__card {
+  width: 100%;
+  max-width: 1280px;
+  min-height: 720px;
+  padding: 80px 96px;
+  background: linear-gradient(
+    145deg,
+    var(--color-primary) 0%,
+    var(--color-primary-dark) 100%
+  );
+  border-radius: var(--radius-xl);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 56px;
+  box-shadow: var(--shadow-primary);
+}
+
+.message-review-page__message {
+  font-size: var(--font-size-4xl);
+  font-weight: 800;
+  color: var(--color-on-primary);
+  margin: 0;
+  line-height: 1.25;
+  word-break: break-word;
+  max-width: 100%;
+}
+
+.message-review-page__name {
+  font-size: var(--font-size-2xl);
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.92);
+  margin: 0;
+}
+
+.message-review-page__footer {
+  width: 100%;
+  max-width: 1280px;
+  flex-shrink: 0;
+}
+
+.message-review-page__skip-photo,
+.message-review-page__continue {
+  padding: 40px 48px;
+  border: none;
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-md);
+  font-family: inherit;
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.1s;
+}
+
+.message-review-page__skip-photo {
+  background: var(--color-secondary);
+  color: var(--color-on-secondary);
+  font-weight: 700;
+}
+
+.message-review-page__skip-photo:active {
+  opacity: 0.75;
+}
+
+.message-review-page__continue {
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  font-weight: 800;
+  box-shadow: var(--shadow-primary);
+}
+
+.message-review-page__continue:active {
+  transform: scale(0.98);
+}

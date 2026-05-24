@@ -1,0 +1,60 @@
+.virtual-keyboard {
+  width: 100%;
+  height: 720px;
+  opacity: 0.7;
+  background: #C5C5C1;
+  border-radius: 12px;
+  padding: 10px 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+
+.virtual-keyboard__row {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex: 1;
+}
+
+/* ── Letter keys — white ── */
+.virtual-keyboard__key {
+  flex: 1;
+  height: 100%;
+  background: #FFFFFF;
+  border: none;
+  border-radius: 8px;
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
+  font-size: 26px;
+  font-weight: 400;
+  color: #000;
+  cursor: pointer;
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.35);
+  transition: opacity 0.1s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.virtual-keyboard__key:active {
+  opacity: 0.6;
+}
+
+/* ── Special keys — darker gray ── */
+.virtual-keyboard__key--special {
+  background: #ADB5BD;
+  color: #000;
+  flex: 1.5;
+}
+
+/* ── Space bar ── */
+.virtual-keyboard__key--spacebar {
+  flex: 5;
+}
+
+/* ── Globe key ── */
+.virtual-keyboard__key--globe {
+  flex: 1.5;
+}
