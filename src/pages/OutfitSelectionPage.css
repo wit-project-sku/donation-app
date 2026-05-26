@@ -112,7 +112,8 @@
 }
 
 .outfit-page__status,
-.outfit-page__empty {
+.outfit-page__empty,
+.outfit-page__loading-card {
   margin: 160px 0 0;
   color: #999;
   font-family: "Noto Sans", "Noto Sans KR", sans-serif;
@@ -120,6 +121,19 @@
   font-weight: 700;
   line-height: 1.3;
   text-align: center;
+}
+
+.outfit-page__loading-card {
+  width: 478px;
+  height: 490px;
+  margin: 0;
+  border-radius: 42.9px;
+  border: 2.145px solid #E8E8E8;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
 .outfit-page__status--error {

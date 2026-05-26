@@ -61,9 +61,21 @@ export interface PaymentHistoryParams extends PageParams {
   keyword?: string;
 }
 
+export interface OutfitParams extends PageParams {
+  keyword?: string;
+  status?: "ACTIVE" | "INACTIVE";
+  type?: "NORMAL" | "PREMIUM";
+}
+
 export interface OutfitDto {
   id: number;
+  categoryName: string;
   name: string;
-  category: string;
+  status: "ACTIVE" | "INACTIVE" | string;
+  type: "NORMAL" | "PREMIUM" | string;
   imageUrl: string;
+  kioskIds?: number[];
+  outfitCode: string;
+  startDate?: string;
+  endDate?: string;
 }

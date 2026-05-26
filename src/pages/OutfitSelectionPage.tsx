@@ -1,14 +1,17 @@
-import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { fetchOutfits, type Outfit } from "../api/outfits";
+import { fetchOutfitsPage, type Outfit } from "../api/outfits";
 import { IconCamera, IconCheck, IconUsers } from "../components/Icon";
 import { PageBody } from "../components/layout/PageBody";
 import { useDonationStore } from "../store/donationStore";
 import "./OutfitSelectionPage.css";
 
+const PAGE_SIZE = 10;
+
 export function OutfitSelectionPage() {
   const navigate = useNavigate();
+  const gridWrapRef = useRef<HTMLDivElement>(null);
   const {
     selectedCampaign,
     paymentMethod,
@@ -19,16 +22,48 @@ export function OutfitSelectionPage() {
 
   const [selected, setSelected] = useState<Outfit | null>(null);
 
-  const { data: outfits = [], isLoading, isError } = useQuery({
-    queryKey: ["outfits"],
-    queryFn: () => fetchOutfits(50),
+  const {
+    data,
+    isLoading,
+    isError,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
+    queryKey: ["outfits", { status: "ACTIVE", type: "PREMIUM", pageSize: PAGE_SIZE }],
+    initialPageParam: 1,
+    queryFn: ({ pageParam }) =>
+      fetchOutfitsPage({
+        pageNum: pageParam,
+        pageSize: PAGE_SIZE,
+        status: "ACTIVE",
+        type: "PREMIUM",
+      }),
+    getNextPageParam: (lastPage) =>
+      lastPage.last ? undefined : lastPage.pageNum + 1,
   });
+
+  const outfits = useMemo(
+    () => data?.pages.flatMap((page) => page.content) ?? [],
+    [data],
+  );
 
   useEffect(() => {
     if (!selectedCampaign || !paymentMethod) {
       navigate("/", { replace: true });
     }
   }, [selectedCampaign, paymentMethod, navigate]);
+
+  const handleGridScroll = () => {
+    const element = gridWrapRef.current;
+    if (!element || !hasNextPage || isFetchingNextPage) return;
+
+    const distanceFromEnd =
+      element.scrollWidth - element.scrollLeft - element.clientWidth;
+    if (distanceFromEnd < 420) {
+      fetchNextPage();
+    }
+  };
 
   const handlePhoto = (withGreeting = false) => {
     setSelectedOutfit(selected);
@@ -49,7 +84,7 @@ export function OutfitSelectionPage() {
       </div>
 
       <p className="outfit-page__instruction">
-        * 원하시는 의상을 고르고 선택 완료 버튼을 누른 뒤 사진촬영 버튼을 눌러주세요
+        * 원하는 의상을 고르고 선택 완료 버튼을 누른 뒤 사진촬영 버튼을 눌러주세요
       </p>
 
       {isLoading && (
@@ -62,7 +97,11 @@ export function OutfitSelectionPage() {
       )}
 
       {!isLoading && !isError && outfits.length > 0 && (
-        <div className="outfit-page__grid-wrap">
+        <div
+          className="outfit-page__grid-wrap"
+          ref={gridWrapRef}
+          onScroll={handleGridScroll}
+        >
           <div className="outfit-page__grid">
             {outfits.map((outfit) => {
               const isSelected = selected?.id === outfit.id;
@@ -82,18 +121,21 @@ export function OutfitSelectionPage() {
                 </button>
               );
             })}
+            {isFetchingNextPage && (
+              <div className="outfit-page__loading-card">더 불러오는 중...</div>
+            )}
           </div>
         </div>
       )}
 
       {!isLoading && !isError && outfits.length === 0 && (
-        <p className="outfit-page__empty">등록된 의상이 없습니다</p>
+        <p className="outfit-page__empty">등록된 프리미엄 의상이 없습니다</p>
       )}
 
       <p className="outfit-page__camera-tip">
         * 사진 촬영 버튼을 누르고 좌측 카메라에 얼굴을 바라봐주세요.
         <br />
-        10초후 촬영이 시작됩니다.
+        카메라 화면에서 직접 촬영을 시작합니다.
       </p>
 
       <div className="outfit-page__photo-btns">

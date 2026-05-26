@@ -38,6 +38,8 @@ function findImageUrl(value: unknown): string | null {
 }
 
 function inferOutfitCode(outfit: Outfit): string {
+  if (outfit.outfitCode) return outfit.outfitCode;
+
   const fromId = outfit.id.match(/\d+(?:\.\d+)?/)?.[0];
   const fromName = outfit.name.match(/\d+(?:\.\d+)?/)?.[0];
   const fromImage = outfit.imageUrl.match(/(\d+(?:\.\d+)?)(?=[-_A-Za-z.]|$)/)?.[1];
