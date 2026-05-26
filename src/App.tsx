@@ -1,4 +1,4 @@
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { HashRouter, Navigate, Route, Routes } from "react-router-dom";
 import { AppLayout } from "./components/layout/AppLayout";
 import { KioskShell } from "./components/layout/KioskShell";
 import { AmountPage } from "./pages/AmountPage";
@@ -15,7 +15,7 @@ import { WallPage } from "./pages/WallPage";
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <Routes>
         <Route path="/mobile-certificate" element={<MobileCertificatePage />} />
         <Route
@@ -44,6 +44,6 @@ export default function App() {
           }
         />
       </Routes>
-    </BrowserRouter>
+    </HashRouter>
   );
 }

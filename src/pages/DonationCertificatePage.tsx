@@ -26,7 +26,7 @@ function buildMobileCertificateUrl(params: {
     search.set("photo", params.photoUrl);
   }
 
-  return `${window.location.origin}/mobile-certificate?${search.toString()}`;
+  return `${window.location.origin}${window.location.pathname}#/mobile-certificate?${search.toString()}`;
 }
 
 export function DonationCertificatePage() {
