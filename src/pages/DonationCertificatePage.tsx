@@ -59,6 +59,7 @@ export function DonationCertificatePage() {
     capturedPhotoUrl,
     submittedRecordId,
     setSubmittedRecordId,
+    setCapturedPhotoUrl,
   } = useDonationStore();
 
   const submitMutation = useMutation({
@@ -67,7 +68,10 @@ export function DonationCertificatePage() {
       return submitCurrentDonation(state);
     },
     onSuccess: (record) => {
-      setSubmittedRecordId(record.id);
+      setSubmittedRecordId(-1);
+      if (record.imageUrl) {
+        setCapturedPhotoUrl(record.imageUrl);
+      }
       queryClient.invalidateQueries({ queryKey: ["wallEntries"] });
     },
     onError: (error) => {

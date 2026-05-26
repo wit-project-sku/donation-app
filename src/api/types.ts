@@ -52,6 +52,14 @@ export interface SubmitDonationDetailsPayload {
   imageUrl: string | null;
 }
 
+/** Response data from POST /api/donations/details */
+export interface DonationDetailsResponse {
+  campaignName: string;
+  imageUrl: string | null;
+  amount: number;
+  donatorName: string;
+}
+
 export interface PaymentHistoryParams extends PageParams {
   keyword?: string;
 }

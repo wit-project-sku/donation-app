@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 import { processArPhoto } from "../api/arPhoto";
 import { IconCamera, IconCheck, IconReset } from "../components/Icon";
 import { PageBody } from "../components/layout/PageBody";
 import { useDonationStore } from "../store/donationStore";
+import { submitCurrentDonation } from "../utils/buildSubmitPayload";
 import "./CameraCapturePage.css";
 
 type CameraStatus =
@@ -85,7 +87,8 @@ function getCameraErrorMessage(error: unknown): string {
 export function CameraCapturePage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { selectedOutfit, merchantUid, setCapturedPhotoUrl } = useDonationStore();
+  const { selectedOutfit, merchantUid, setCapturedPhotoUrl, setSubmittedRecordId } = useDonationStore();
+  const queryClient = useQueryClient();
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -318,8 +321,23 @@ export function CameraCapturePage() {
     }
   };
 
-  const confirm = () => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const confirm = async () => {
     stopStream();
+    setIsSubmitting(true);
+    try {
+      const state = useDonationStore.getState();
+      const record = await submitCurrentDonation(state);
+      setSubmittedRecordId(-1);
+      // Replace blob: URL with the permanent S3 URL so the certificate QR is correct
+      if (record.imageUrl) {
+        setCapturedPhotoUrl(record.imageUrl);
+      }
+      queryClient.invalidateQueries({ queryKey: ["wallEntries"] });
+    } catch {
+      // Submission failed — certificate page will retry when user taps "다음"
+    }
     navigate("/certificate");
   };
 
@@ -329,6 +347,16 @@ export function CameraCapturePage() {
   return (
     <PageBody className="camera-page" scroll={false}>
       <div className="camera-page__surface">
+        {/* Back button — top left, always visible */}
+        <button
+          type="button"
+          className="camera-page__back-btn"
+          onClick={() => { stopStream(); navigate("/outfit"); }}
+          aria-label="의상 선택으로 돌아가기"
+        >
+          ‹ 뒤로
+        </button>
+
         <video
           ref={videoRef}
           className={`camera-page__video${isLive ? " camera-page__video--active" : ""}`}
@@ -446,6 +474,7 @@ export function CameraCapturePage() {
                 type="button"
                 className="camera-page__control camera-page__control--secondary"
                 onClick={retake}
+                disabled={isSubmitting}
               >
                 <IconReset size={42} aria-hidden />
                 다시 촬영
@@ -454,9 +483,10 @@ export function CameraCapturePage() {
                 type="button"
                 className="camera-page__control camera-page__control--primary"
                 onClick={confirm}
+                disabled={isSubmitting}
               >
                 <IconCheck size={42} aria-hidden />
-                다음으로
+                {isSubmitting ? "저장 중..." : "다음으로"}
               </button>
             </>
           )}

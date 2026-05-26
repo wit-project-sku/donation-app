@@ -1,6 +1,7 @@
 import { Search } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { useDeferredValue, useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { fetchWallEntriesPage, type WallEntry } from "../api/wall";
 import { IconBack } from "../components/Icon";
 import { VirtualKeyboard } from "../components/VirtualKeyboard";
@@ -10,7 +11,7 @@ import { useDonationStore } from "../store/donationStore";
 import { appendHangul, removeLastHangul } from "../utils/hangulInput";
 import "./WallPage.css";
 
-const WALL_PAGE_SIZE = 6;
+const WALL_PAGE_SIZE = 9;
 
 function donationTypeLabel(
   entry: WallEntry,
@@ -23,6 +24,7 @@ function donationTypeLabel(
 }
 
 export function WallPage() {
+  const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [pageNum, setPageNum] = useState(1);
   const [keyboardOpen, setKeyboardOpen] = useState(false);
@@ -108,7 +110,16 @@ export function WallPage() {
 
   return (
     <PageBody className="wall-page" scroll={false}>
-      <h1 className="wall-page__title">기억되는 나눔</h1>
+      <div className="wall-page__header">
+        <h1 className="wall-page__title">기억되는 나눔</h1>
+        <button
+          type="button"
+          className="wall-page__home-btn"
+          onClick={() => navigate("/")}
+        >
+          홈으로
+        </button>
+      </div>
 
       <div className="wall-page__search-wrap" ref={searchRef}>
         <input

@@ -9,6 +9,14 @@
   background: #fff;
 }
 
+.wall-page__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  flex-shrink: 0;
+}
+
 .wall-page__title {
   margin: 0;
   color: #FF7BB7;
@@ -16,15 +24,33 @@
   font-size: 58px;
   font-weight: 900;
   line-height: 1;
-  flex-shrink: 0;
+}
+
+.wall-page__home-btn {
+  height: 88px;
+  padding: 0 52px;
+  border-radius: 44px;
+  border: none;
+  background: #FF7BB7;
+  color: #fff;
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
+  font-size: 38px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.1s;
+}
+
+.wall-page__home-btn:active {
+  transform: scale(0.97);
+  opacity: 0.88;
 }
 
 .wall-page__search-wrap {
   position: relative;
   align-self: center;
   width: min(1350px, 100%);
-  height: 166px;
-  margin-top: 98px;
+  height: 130px;
+  margin-top: 28px;
   flex-shrink: 0;
 }
 
@@ -32,10 +58,10 @@
   width: 100%;
   height: 100%;
   box-sizing: border-box;
-  border-radius: 83px;
+  border-radius: 65px;
   border: 5px solid #FF7BB7;
   background: #fff;
-  padding: 0 150px 0 72px;
+  padding: 0 120px 0 60px;
   color: #333;
   font-family: "Noto Sans", "Noto Sans KR", sans-serif;
   font-size: 44px;
@@ -50,7 +76,7 @@
 
 .wall-page__search-icon {
   position: absolute;
-  right: 56px;
+  right: 44px;
   top: 50%;
   transform: translateY(-50%);
   color: #FF7BB7;
@@ -58,7 +84,7 @@
 }
 
 .wall-page__subtitle {
-  margin: 88px 0 0;
+  margin: 14px 0 0;
   color: #bbb;
   font-family: "Noto Sans", "Noto Sans KR", sans-serif;
   font-size: 30px;
@@ -74,8 +100,8 @@
   align-items: center;
   justify-content: center;
   gap: 34px;
-  height: 88px;
-  margin-top: 44px;
+  height: 70px;
+  margin-top: 14px;
   flex-shrink: 0;
 }
 
@@ -120,41 +146,25 @@
 .wall-page__grid-panel {
   position: relative;
   width: 100%;
-  margin-top: 38px;
+  margin-top: 20px;
   min-height: 0;
   flex: 1;
-  overflow-y: auto;
-  overflow-x: hidden;
-  scrollbar-color: #FF7BB7 transparent;
-  scrollbar-width: thin;
-}
-
-.wall-page__grid-panel::-webkit-scrollbar {
-  width: 28px;
-}
-
-.wall-page__grid-panel::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.wall-page__grid-panel::-webkit-scrollbar-thumb {
-  background: #FF7BB7;
-  border-radius: 999px;
+  overflow: hidden;
 }
 
 .wall-page__grid {
   display: grid;
   grid-template-columns: repeat(3, 484px);
-  column-gap: 148px;
-  row-gap: 86px;
+  column-gap: 100px;
+  row-gap: 30px;
   align-items: start;
   justify-content: center;
-  padding: 0 74px 100px 0;
+  padding: 0;
 }
 
 .wall-page__placeholder-card {
   width: 484px;
-  height: 805px;
+  height: 520px;
   border-radius: 12px;
   background: #FAE6F2;
 }

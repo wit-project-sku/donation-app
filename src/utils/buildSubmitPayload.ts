@@ -25,6 +25,9 @@ export function buildSubmitPayload(
     throw new Error("기부 저장에 필요한 정보가 없습니다.");
   }
 
+  // blob: and data: URLs are local-only — the backend cannot access them.
+  // When capturedPhotoUrl is a blob:, the actual image is sent as the `photo` multipart part
+  // (see submitCurrentDonation below), so imageUrl stays null here.
   const shareableImageUrl =
     state.capturedPhotoUrl &&
     !state.capturedPhotoUrl.startsWith("blob:") &&
@@ -40,6 +43,25 @@ export function buildSubmitPayload(
   };
 }
 
+async function recoverBlob(url: string): Promise<Blob | null> {
+  try {
+    const res = await fetch(url);
+    return await res.blob();
+  } catch {
+    return null;
+  }
+}
+
 export async function submitCurrentDonation(state: SubmitSessionSlice) {
-  return submitDonation(buildSubmitPayload(state));
+  const payload = buildSubmitPayload(state);
+
+  // If the AR server returned raw binary, capturedPhotoUrl is a blob: URL.
+  // Recover the in-memory blob so we can send it as the `photo` multipart part.
+  // The backend uploads it to S3 and sets photoUrl on the record.
+  let photoBlob: Blob | null = null;
+  if (state.capturedPhotoUrl?.startsWith("blob:")) {
+    photoBlob = await recoverBlob(state.capturedPhotoUrl);
+  }
+
+  return submitDonation(payload, photoBlob);
 }

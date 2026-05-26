@@ -1,6 +1,6 @@
 import { ApiError, buildUrl } from "./client";
 import type {
-  PaymentHistoryDto,
+  DonationDetailsResponse,
   PaymentMethodDto,
   SubmitDonationDetailsPayload,
 } from "./types";
@@ -12,7 +12,7 @@ type SubmitEnvelope = {
   success?: boolean;
   code?: number;
   message?: string;
-  data?: PaymentHistoryDto | boolean | null;
+  data?: DonationDetailsResponse | null;
   errorCode?: string;
 };
 
@@ -29,15 +29,12 @@ export function toPaymentMethodDto(method: PaymentMethod): PaymentMethodDto {
   }
 }
 
-function fallbackRecord(payload: SubmitDonationDetailsPayload): PaymentHistoryDto {
+function fallbackRecord(payload: SubmitDonationDetailsPayload): DonationDetailsResponse {
   return {
-    id: Date.now(),
-    campaignName: "기부",
-    totalAmount: 0,
-    paymentMethod: "CARD",
+    campaignName: "",
+    imageUrl: payload.imageUrl,
+    amount: 0,
     donatorName: payload.donatorName,
-    photoUrl: payload.imageUrl,
-    donatedAt: new Date().toISOString(),
   };
 }
 
@@ -54,41 +51,42 @@ function isAlreadySavedMessage(message?: string) {
 
 export async function submitDonation(
   payload: SubmitDonationDetailsPayload,
-): Promise<PaymentHistoryDto> {
+  photoBlob?: Blob | null,
+): Promise<DonationDetailsResponse> {
+  const form = new FormData();
+
+  // "data" part — JSON object; sent as application/json so Spring @RequestPart can deserialize it
+  form.append(
+    "data",
+    new Blob([JSON.stringify(payload)], { type: "application/json" }),
+  );
+
+  // "photo" part — raw binary image; only added when we have an actual blob
+  if (photoBlob) {
+    form.append("photo", photoBlob, "photo.jpg");
+  }
+
   const response = await fetch(buildUrl(SUBMIT_PATH), {
     method: "POST",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(payload),
+    // Do NOT set Content-Type — browser sets it automatically with the multipart boundary
+    body: form,
   });
 
-  const body = (await response.json()) as SubmitEnvelope | boolean;
+  const body = (await response.json()) as SubmitEnvelope;
 
-  if (response.ok && body === true) {
+  if (response.ok && body.success !== false) {
+    if (body.data && typeof body.data === "object") return body.data;
     return fallbackRecord(payload);
   }
 
-  if (typeof body === "object" && body) {
-    if (response.ok && body.success !== false) {
-      if (body.data && typeof body.data === "object") return body.data;
-      return fallbackRecord(payload);
-    }
-
-    if (response.ok && isAlreadySavedMessage(body.message)) {
-      return fallbackRecord(payload);
-    }
-
-    throw new ApiError(
-      body.message || `Request failed (${response.status})`,
-      response.status,
-      body.code,
-      body.errorCode,
-    );
+  if (isAlreadySavedMessage(body.message)) {
+    return fallbackRecord(payload);
   }
 
-  if (response.ok) return fallbackRecord(payload);
-
-  throw new ApiError(`Request failed (${response.status})`, response.status);
+  throw new ApiError(
+    body.message || `Request failed (${response.status})`,
+    response.status,
+    body.code,
+    body.errorCode,
+  );
 }
