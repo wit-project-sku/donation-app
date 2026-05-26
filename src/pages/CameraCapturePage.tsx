@@ -21,7 +21,8 @@ interface KioskPhotoResponse {
   token?: string;
 }
 
-const VIRTUAL_CAMERA_LABELS = ["virtual camera", "camera hub"];
+const PHYSICAL_FACECAM_LABELS = ["facecam", "elgato facecam", "facecam pro"];
+const VIRTUAL_CAMERA_LABELS = ["virtual", "obs", "elgato virtual camera"];
 
 async function uploadKioskPhoto(image: Blob): Promise<KioskPhotoResponse> {
   const form = new FormData();
@@ -44,11 +45,11 @@ function isVirtualCamera(device: MediaDeviceInfo) {
   return VIRTUAL_CAMERA_LABELS.some((token) => label.includes(token));
 }
 
-function isPhysicalElgatoCamera(device: MediaDeviceInfo) {
+function isPhysicalFacecam(device: MediaDeviceInfo) {
   const label = device.label.toLowerCase();
   return (
     !isVirtualCamera(device) &&
-    (label.includes("facecam") || label.includes("elgato"))
+    PHYSICAL_FACECAM_LABELS.some((token) => label.includes(token))
   );
 }
 
@@ -64,10 +65,9 @@ function isLikelyLaptopCamera(device: MediaDeviceInfo) {
 
 function findPreferredCamera(devices: MediaDeviceInfo[]) {
   return (
-    devices.find(isPhysicalElgatoCamera) ??
+    devices.find(isPhysicalFacecam) ??
     devices.find((device) => !isVirtualCamera(device) && !isLikelyLaptopCamera(device)) ??
-    devices.find((device) => !isVirtualCamera(device)) ??
-    devices.find(isVirtualCamera)
+    devices.find((device) => !isVirtualCamera(device))
   );
 }
 
@@ -126,6 +126,7 @@ export function CameraCapturePage() {
   const [cameraDevices, setCameraDevices] = useState<MediaDeviceInfo[]>([]);
   const [selectedCameraDeviceId, setSelectedCameraDeviceId] = useState<string | null>(null);
   const [activeCameraLabel, setActiveCameraLabel] = useState("");
+  const [cameraWarning, setCameraWarning] = useState("");
 
   const support = useMemo(
     () => ({
@@ -154,6 +155,13 @@ export function CameraCapturePage() {
     try {
       const devices = await navigator.mediaDevices.enumerateDevices();
       const videoDevices = devices.filter((device) => device.kind === "videoinput");
+      console.info("[Camera] enumerateDevices", videoDevices.map((device) => ({
+        label: device.label,
+        deviceId: device.deviceId,
+        groupId: device.groupId,
+        virtual: isVirtualCamera(device),
+        physicalFacecam: isPhysicalFacecam(device),
+      })));
       setCameraDevices(videoDevices);
       return videoDevices;
     } catch {
@@ -188,6 +196,7 @@ export function CameraCapturePage() {
     setCapturedBlob(null);
     setResultImageUrl(null);
     setResultToken(null);
+    setCameraWarning("");
 
     try {
       stopStream();
@@ -198,17 +207,40 @@ export function CameraCapturePage() {
         : null;
       const preferredDevice = selectedDevice ?? findPreferredCamera(devicesBeforePermission);
 
+      console.info("[Camera] selected before permission", {
+        selectedDevice: selectedDevice?.label,
+        preferredDevice: preferredDevice?.label,
+        preferredDeviceId: preferredDevice?.deviceId,
+      });
+
       let stream = await requestCameraStream(preferredDevice?.deviceId);
       let devicesAfterPermission = await refreshDevices();
       let activeDeviceId = stream.getVideoTracks()[0]?.getSettings().deviceId;
 
+      const selectedAfterPermission = selectedCameraDeviceId
+        ? devicesAfterPermission.find((device) => device.deviceId === selectedCameraDeviceId)
+        : null;
+      const physicalFacecam = devicesAfterPermission.find(isPhysicalFacecam);
       const bestDevice =
-        (selectedCameraDeviceId
-          ? devicesAfterPermission.find((device) => device.deviceId === selectedCameraDeviceId)
-          : null) ?? findPreferredCamera(devicesAfterPermission);
+        selectedAfterPermission ?? physicalFacecam ?? findPreferredCamera(devicesAfterPermission);
+
+      const onlyVirtualDetected =
+        devicesAfterPermission.length > 0 &&
+        devicesAfterPermission.every(isVirtualCamera);
+
+      if (onlyVirtualDetected) {
+        setCameraWarning(
+          "Physical Facecam device not detected. Please open Elgato Camera Hub or reconnect the USB camera.",
+        );
+      }
 
       if (bestDevice?.deviceId && bestDevice.deviceId !== activeDeviceId) {
         stream.getTracks().forEach((track) => track.stop());
+        console.info("[Camera] switching device", {
+          from: activeDeviceId,
+          to: bestDevice.label,
+          deviceId: bestDevice.deviceId,
+        });
         stream = await requestCameraStream(bestDevice.deviceId);
         activeDeviceId = stream.getVideoTracks()[0]?.getSettings().deviceId;
         devicesAfterPermission = await refreshDevices();
@@ -221,7 +253,17 @@ export function CameraCapturePage() {
       );
       if (activeDevice) {
         setActiveCameraLabel(activeDevice.label);
+        setSelectedCameraDeviceId(activeDevice.deviceId);
+      } else if (bestDevice) {
+        setSelectedCameraDeviceId(bestDevice.deviceId);
       }
+
+      console.info("[Camera] active device", {
+        label: activeDevice?.label,
+        deviceId: activeDeviceId,
+        physicalFacecam: activeDevice ? isPhysicalFacecam(activeDevice) : false,
+        virtual: activeDevice ? isVirtualCamera(activeDevice) : false,
+      });
 
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
@@ -230,8 +272,11 @@ export function CameraCapturePage() {
 
       setStatus("streaming");
     } catch (error) {
+      console.error("[Camera] getUserMedia error", error);
       setStatus("error");
-      setErrorMsg(getCameraErrorMessage(error));
+      setErrorMsg(
+        `${getCameraErrorMessage(error)} This WebView environment may not fully support direct USB camera access.`,
+      );
       await refreshDevices();
     }
   }, [
@@ -318,6 +363,9 @@ export function CameraCapturePage() {
   const previewSrc = resultImageUrl ?? capturedDataUrl;
   const isLive = status === "streaming" || status === "requesting";
   const isUsingVirtualCamera = activeCameraLabel.toLowerCase().includes("virtual camera");
+  const selectedDevice = cameraDevices.find(
+    (device) => device.deviceId === selectedCameraDeviceId,
+  );
 
   return (
     <PageBody className="camera-page" scroll={false}>
@@ -382,6 +430,12 @@ export function CameraCapturePage() {
           </div>
         )}
 
+        {cameraWarning && (
+          <div className="camera-page__camera-warning">
+            {cameraWarning}
+          </div>
+        )}
+
         <div className="camera-page__topbar">
           <span className="camera-page__pill">
             <IconCamera size={34} aria-hidden />
@@ -394,7 +448,23 @@ export function CameraCapturePage() {
           <span>mediaDevices: {support.mediaDevices ? "yes" : "no"}</span>
           <span>getUserMedia: {support.getUserMedia ? "yes" : "no"}</span>
           <span>secureContext: {support.secureContext ? "yes" : "no"}</span>
+          <span>selected: {selectedDevice ? cameraLabel(selectedDevice, 0) : "auto"}</span>
           <span>active: {activeCameraLabel || "none"}</span>
+          <label className="camera-page__select-label">
+            Camera
+            <select
+              className="camera-page__select"
+              value={selectedCameraDeviceId ?? ""}
+              onChange={(event) => setSelectedCameraDeviceId(event.target.value || null)}
+            >
+              <option value="">Auto physical Facecam</option>
+              {cameraDevices.map((device, index) => (
+                <option key={device.deviceId || index} value={device.deviceId}>
+                  {cameraLabel(device, index)}
+                </option>
+              ))}
+            </select>
+          </label>
           <div className="camera-page__device-list">
             {cameraDevices.length ? (
               cameraDevices.map((device, index) => (
@@ -409,7 +479,11 @@ export function CameraCapturePage() {
                   }`}
                   onClick={() => setSelectedCameraDeviceId(device.deviceId)}
                 >
-                  {cameraLabel(device, index)}
+                  <strong>{cameraLabel(device, index)}</strong>
+                  <small>{isVirtualCamera(device) ? "virtual" : "physical"}</small>
+                  <small>{device.deviceId}</small>
+                  {(device.deviceId === selectedCameraDeviceId ||
+                    device.label === activeCameraLabel) && <em>selected</em>}
                 </button>
               ))
             ) : (
@@ -420,25 +494,43 @@ export function CameraCapturePage() {
 
         <div className="camera-page__controls">
           {(status === "idle" || status === "error") && (
-            <button
-              type="button"
-              className="camera-page__control camera-page__control--primary"
-              onClick={startCamera}
-            >
-              <IconCamera size={44} aria-hidden />
-              Start Camera
-            </button>
+            <>
+              <button
+                type="button"
+                className="camera-page__control camera-page__control--secondary"
+                onClick={refreshDevices}
+              >
+                Retry Devices
+              </button>
+              <button
+                type="button"
+                className="camera-page__control camera-page__control--primary"
+                onClick={startCamera}
+              >
+                <IconCamera size={44} aria-hidden />
+                Start Camera
+              </button>
+            </>
           )}
 
           {status === "streaming" && (
-            <button
-              type="button"
-              className="camera-page__control camera-page__control--primary"
-              onClick={capturePhoto}
-            >
-              <IconCamera size={44} aria-hidden />
-              Capture Photo
-            </button>
+            <>
+              <button
+                type="button"
+                className="camera-page__control camera-page__control--secondary"
+                onClick={startCamera}
+              >
+                Reload Camera
+              </button>
+              <button
+                type="button"
+                className="camera-page__control camera-page__control--primary"
+                onClick={capturePhoto}
+              >
+                <IconCamera size={44} aria-hidden />
+                Capture Photo
+              </button>
+            </>
           )}
 
           {status === "captured" && (

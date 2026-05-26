@@ -192,7 +192,7 @@
   bottom: 258px;
   z-index: 7;
   display: grid;
-  grid-template-columns: 160px repeat(4, max-content);
+  grid-template-columns: 160px repeat(5, max-content);
   align-items: center;
   gap: 18px 26px;
   padding: 22px 28px;
@@ -203,6 +203,30 @@
   font-size: 22px;
   font-weight: 800;
   line-height: 1.28;
+}
+
+.camera-page__select-label {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  color: #FFB3D1;
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
+  font-size: 24px;
+  font-weight: 900;
+}
+
+.camera-page__select {
+  width: 760px;
+  height: 58px;
+  border: 2px solid rgba(255, 255, 255, 0.42);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.94);
+  color: #111;
+  padding: 0 18px;
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
+  font-size: 22px;
+  font-weight: 900;
 }
 
 .camera-page__debug strong {
@@ -224,24 +248,48 @@
 }
 
 .camera-page__device {
-  min-height: 54px;
-  max-width: 520px;
-  padding: 0 22px;
+  min-height: 92px;
+  width: 390px;
+  padding: 12px 18px;
   border: 2px solid rgba(255, 255, 255, 0.34);
-  border-radius: 999px;
+  border-radius: 18px;
   background: rgba(255, 255, 255, 0.12);
   color: #fff;
   font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 900;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  text-align: left;
 }
 
 .camera-page__device--active {
   border-color: #FF7BB7;
   background: #FF7BB7;
+}
+
+.camera-page__device strong,
+.camera-page__device small,
+.camera-page__device em {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-style: normal;
+}
+
+.camera-page__device small {
+  opacity: 0.82;
+  font-size: 15px;
+}
+
+.camera-page__device em {
+  color: #fff;
+  font-size: 15px;
+  text-transform: uppercase;
 }
 
 .camera-page__controls {
