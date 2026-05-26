@@ -51,15 +51,21 @@
   flex-shrink: 0;
 }
 
-.outfit-page__grid-wrap {
+.outfit-page__carousel {
+  position: relative;
   width: 100%;
   margin-top: 112px;
+  flex-shrink: 0;
+}
+
+.outfit-page__grid-wrap {
+  width: 1502px;
+  margin: 0 auto;
   overflow-x: auto;
   overflow-y: hidden;
   scrollbar-width: none;
-  flex-shrink: 0;
-  display: flex;
-  justify-content: center;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
 }
 
 .outfit-page__grid-wrap::-webkit-scrollbar {
@@ -74,7 +80,65 @@
   column-gap: 34px;
   row-gap: 34px;
   width: max-content;
-  padding: 0 36px;
+  padding: 0;
+}
+
+.outfit-page__grid > *:nth-child(6n + 1) {
+  scroll-snap-align: start;
+}
+
+.outfit-page__nav {
+  position: absolute;
+  top: 50%;
+  z-index: 5;
+  width: 96px;
+  height: 96px;
+  border: 0;
+  border-radius: 50%;
+  background: #FF7BB7;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translateY(-50%);
+  cursor: pointer;
+  box-shadow: 0 18px 44px rgba(255, 123, 183, 0.28);
+}
+
+.outfit-page__nav--prev {
+  left: 34px;
+}
+
+.outfit-page__nav--next {
+  right: 34px;
+}
+
+.outfit-page__nav--next svg {
+  transform: rotate(180deg);
+}
+
+.outfit-page__nav:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.outfit-page__pager {
+  position: absolute;
+  left: 50%;
+  bottom: -82px;
+  transform: translateX(-50%);
+  min-width: 160px;
+  height: 64px;
+  padding: 0 32px;
+  border-radius: 999px;
+  background: #fff;
+  border: 3px solid #FFE1F0;
+  color: #777;
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
+  font-size: 30px;
+  font-weight: 900;
+  line-height: 64px;
+  text-align: center;
 }
 
 .outfit-card {
@@ -141,7 +205,7 @@
 }
 
 .outfit-page__camera-tip {
-  margin: 88px 0 0;
+  margin: 150px 0 0;
   padding: 0;
   color: #999;
   font-family: "Noto Sans", "Noto Sans KR", sans-serif;

@@ -68,10 +68,59 @@
   flex-shrink: 0;
 }
 
+.wall-page__pager {
+  align-self: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 34px;
+  height: 88px;
+  margin-top: 44px;
+  flex-shrink: 0;
+}
+
+.wall-page__pager-btn {
+  width: 76px;
+  height: 76px;
+  border: 4px solid #F1F1F1;
+  border-radius: 50%;
+  background: #fff;
+  color: #D0D0D0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.wall-page__pager-btn--next {
+  border-color: #FF7BB7;
+  background: #FF7BB7;
+  color: #fff;
+}
+
+.wall-page__pager-btn--next svg {
+  transform: rotate(180deg);
+}
+
+.wall-page__pager-btn:disabled {
+  opacity: 0.36;
+  cursor: not-allowed;
+}
+
+.wall-page__pager-text {
+  min-width: 124px;
+  color: #777;
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
+  font-size: 38px;
+  font-weight: 900;
+  line-height: 1;
+  text-align: center;
+}
+
 .wall-page__grid-panel {
   position: relative;
-  width: calc(100% + 36px);
-  margin-top: 82px;
+  width: 100%;
+  margin-top: 38px;
   min-height: 0;
   flex: 1;
   overflow-y: auto;
@@ -81,7 +130,7 @@
 }
 
 .wall-page__grid-panel::-webkit-scrollbar {
-  width: 32px;
+  width: 28px;
 }
 
 .wall-page__grid-panel::-webkit-scrollbar-track {
@@ -96,10 +145,11 @@
 .wall-page__grid {
   display: grid;
   grid-template-columns: repeat(3, 484px);
-  column-gap: 82px;
-  row-gap: 120px;
+  column-gap: 148px;
+  row-gap: 86px;
   align-items: start;
-  padding: 0 60px 120px 24px;
+  justify-content: center;
+  padding: 0 74px 100px 0;
 }
 
 .wall-page__placeholder-card {

@@ -22,6 +22,34 @@
   flex-direction: column;
 }
 
+.campaign-detail__back-btn {
+  width: 520px;
+  height: 192px;
+  padding: 0 48px;
+  border: 5px solid var(---5, #E8E8E8);
+  border-radius: 42.9px;
+  background: #fff;
+  color: #333;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
+  font-size: 44px;
+  font-weight: 900;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: none;
+  transition: opacity 0.15s, transform 0.1s;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+.campaign-detail__back-btn:active {
+  transform: scale(0.97);
+  opacity: 0.85;
+}
+
 .campaign-detail__hero {
   position: relative;
   height: 520px;
@@ -212,8 +240,18 @@
   box-shadow: inset 0 0 0 4px rgba(255, 123, 183, 0.14);
 }
 
-.campaign-detail__donate-btn {
+.campaign-detail__actions {
+  display: flex;
+  align-items: center;
+  gap: 18px;
   width: 1820px;
+  height: 192px;
+  flex-shrink: 0;
+}
+
+.campaign-detail__donate-btn {
+  flex: 1;
+  min-width: 0;
   height: 192px;
   border: 5px solid var(---5, #E8E8E8);
   border-radius: 42.9px;

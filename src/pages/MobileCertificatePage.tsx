@@ -17,15 +17,13 @@ function escapeXml(value: string) {
 
 export function MobileCertificatePage() {
   const [params] = useSearchParams();
-  const name = getParam(params, "name", "후원자");
-  const message = getParam(
-    params,
-    "message",
-    "귀하의 따뜻한 마음과 의미 있는 기여에 깊은 감사를 전합니다.",
-  );
-  const date = getParam(params, "date");
-  const photo = getParam(params, "photo");
-  const amount = Number(getParam(params, "amount", "0"));
+  const name = getParam(params, "n") || getParam(params, "name", "후원자");
+  const message =
+    getParam(params, "message") ||
+    "귀하의 따뜻한 마음과 의미 있는 기여에 깊은 감사를 전합니다.";
+  const date = getParam(params, "d") || getParam(params, "date");
+  const photo = getParam(params, "p") || getParam(params, "photo");
+  const amount = Number(getParam(params, "a") || getParam(params, "amount", "0"));
   const amountLabel = `${formatCurrency(amount)}원`;
 
   const svgSource = useMemo(() => {

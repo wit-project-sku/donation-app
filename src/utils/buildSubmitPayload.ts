@@ -15,18 +15,9 @@ export type SubmitSessionSlice = {
   merchantUid: string | null;
 };
 
-function isFileBackedPhoto(url: string | null): url is string {
-  return Boolean(url && (url.startsWith("data:") || url.startsWith("blob:")));
-}
-
-async function photoUrlToBlob(url: string): Promise<Blob> {
-  const response = await fetch(url);
-  return response.blob();
-}
-
-export async function buildSubmitPayload(
+export function buildSubmitPayload(
   state: SubmitSessionSlice,
-): Promise<SubmitDonationDetailsPayload> {
+): SubmitDonationDetailsPayload {
   const campaign = state.selectedCampaign;
   const paymentMethod = state.paymentMethod;
 
@@ -34,22 +25,14 @@ export async function buildSubmitPayload(
     throw new Error("기부 저장에 필요한 정보가 없습니다.");
   }
 
-  const photo =
-    isFileBackedPhoto(state.capturedPhotoUrl)
-      ? await photoUrlToBlob(state.capturedPhotoUrl)
-      : null;
-
   return {
-    data: {
-      merchantUid: state.merchantUid,
-      donatorName: state.donorName.trim() || "익명",
-      phoneNumber: state.donorPhone.replace(/\D/g, ""),
-      imageUrl: photo ? null : state.capturedPhotoUrl,
-    },
-    photo,
+    merchantUid: state.merchantUid,
+    donatorName: state.donorName.trim() || "익명",
+    phoneNumber: state.donorPhone.replace(/\D/g, ""),
+    imageUrl: state.capturedPhotoUrl,
   };
 }
 
 export async function submitCurrentDonation(state: SubmitSessionSlice) {
-  return submitDonation(await buildSubmitPayload(state));
+  return submitDonation(buildSubmitPayload(state));
 }

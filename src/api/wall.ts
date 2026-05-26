@@ -1,5 +1,5 @@
-import { fetchPaymentHistory } from "./paymentHistory";
-import type { PaymentHistoryParams } from "./types";
+import { fetchPaymentHistory, fetchPaymentHistoryPage } from "./paymentHistory";
+import type { PaginatedData, PaymentHistoryParams } from "./types";
 
 export interface WallEntry {
   id: string;
@@ -18,6 +18,16 @@ export async function fetchWallEntries(
   return fetchPaymentHistory({
     pageNum: 1,
     pageSize: params.pageSize ?? 50,
+    keyword: params.keyword ?? "",
+  });
+}
+
+export async function fetchWallEntriesPage(
+  params: PaymentHistoryParams = {},
+): Promise<PaginatedData<WallEntry>> {
+  return fetchPaymentHistoryPage({
+    pageNum: params.pageNum ?? 1,
+    pageSize: params.pageSize ?? 6,
     keyword: params.keyword ?? "",
   });
 }

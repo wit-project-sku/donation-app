@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { fetchCampaigns } from "../api/campaigns";
 import { CampaignCard } from "../components/CampaignCard";
+import { IconHeart } from "../components/Icon";
 import { PageBody } from "../components/layout/PageBody";
 import { useDonationStore } from "../store/donationStore";
 import "./CampaignsPage.css";
@@ -81,6 +82,15 @@ export function CampaignsPage() {
 
   return (
     <PageBody className="campaigns-page" scroll={false}>
+      <button
+        type="button"
+        className="campaigns-page__wall-link"
+        onClick={() => navigate("/wall")}
+      >
+        <IconHeart size={42} aria-hidden />
+        <span>기부내역 보기</span>
+      </button>
+
       <div className="campaigns-page__intro">
         <span className="campaigns-page__label">후원 분야 선택</span>
         <h2 className="campaigns-page__headline">

@@ -1,4 +1,4 @@
-import { apiPostForm } from "./client";
+import { apiPost } from "./client";
 import type {
   PaymentHistoryDto,
   PaymentMethodDto,
@@ -24,17 +24,8 @@ export function toPaymentMethodDto(method: PaymentMethod): PaymentMethodDto {
 export async function submitDonation(
   payload: SubmitDonationDetailsPayload,
 ): Promise<PaymentHistoryDto> {
-  const form = new FormData();
-  form.append(
-    "data",
-    new Blob([JSON.stringify(payload.data)], {
-      type: "application/json",
-    }),
+  return apiPost<PaymentHistoryDto, SubmitDonationDetailsPayload>(
+    SUBMIT_PATH,
+    payload,
   );
-
-  if (payload.photo) {
-    form.append("photo", payload.photo, "donation-photo.jpg");
-  }
-
-  return apiPostForm<PaymentHistoryDto>(SUBMIT_PATH, form);
 }

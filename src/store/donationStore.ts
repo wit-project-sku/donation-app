@@ -61,7 +61,8 @@ export const useDonationStore = create<DonationState>()(
     (set) => ({
       ...initialState,
 
-      setSelectedCampaign: (campaign) => set({ selectedCampaign: campaign }),
+      setSelectedCampaign: (campaign) =>
+        set(campaign ? { ...initialState, selectedCampaign: campaign } : initialState),
       setDonationType: (type) => set({ donationType: type }),
       addAmount: (value) =>
         set((s) => ({

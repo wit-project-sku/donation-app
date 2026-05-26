@@ -11,16 +11,6 @@
   background: #111;
 }
 
-.campaign-card--selected::after {
-  content: "";
-  position: absolute;
-  inset: 26px;
-  z-index: 3;
-  border: 8px solid rgba(255, 123, 183, 0.96);
-  border-radius: 42px;
-  pointer-events: none;
-}
-
 .campaign-card__bg {
   position: absolute;
   inset: 0;

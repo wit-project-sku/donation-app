@@ -1,12 +1,17 @@
 import type { Outfit } from "./outfits";
 
-const AR_PROCESS_ENDPOINT =
+const AR_PROCESS_COMBINE_ENDPOINT =
   import.meta.env.VITE_AR_PROCESS_API_URL ??
   "https://kr-ar-api.digicon.pro/api/v2/process_and_combine";
+
+const AR_PROCESS_IMAGE_ENDPOINT =
+  import.meta.env.VITE_AR_PROCESS_IMAGE_API_URL ??
+  "https://kr-kiosk.digicon.pro/api/v2/process_image";
 
 export interface ProcessArPhotoParams {
   image: Blob;
   outfit: Outfit;
+  mode: "solo" | "together";
   togetherWith?: string | null;
   requestId?: string | null;
 }
@@ -81,6 +86,7 @@ async function parseArResponse(response: Response): Promise<string> {
 export async function processArPhoto({
   image,
   outfit,
+  mode,
   togetherWith,
   requestId,
 }: ProcessArPhotoParams): Promise<string> {
@@ -89,14 +95,19 @@ export async function processArPhoto({
 
   form.append("image", image, "capture.jpg");
   form.append("outfit", inferOutfitCode(outfit));
-  if (togetherWith) form.append("together_with", togetherWith);
+  if (mode === "together" && togetherWith) {
+    form.append("together_with", togetherWith);
+  }
   if (gender) form.append("gender", gender);
   if (requestId) form.append("request_ids", requestId);
 
-  const response = await fetch(AR_PROCESS_ENDPOINT, {
+  const response = await fetch(
+    mode === "solo" ? AR_PROCESS_IMAGE_ENDPOINT : AR_PROCESS_COMBINE_ENDPOINT,
+    {
     method: "POST",
     body: form,
-  });
+    },
+  );
 
   if (!response.ok) {
     throw new Error(`AR processing failed (${response.status})`);

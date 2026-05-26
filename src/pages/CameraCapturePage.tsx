@@ -49,10 +49,6 @@ function findPreferredCamera(devices: MediaDeviceInfo[]) {
   );
 }
 
-function cameraLabel(device: MediaDeviceInfo, index: number) {
-  return device.label || `Camera ${index + 1}`;
-}
-
 async function requestCameraStream(deviceId?: string) {
   return navigator.mediaDevices.getUserMedia({
     video: deviceId
@@ -68,22 +64,22 @@ async function requestCameraStream(deviceId?: string) {
 
 function getCameraErrorMessage(error: unknown): string {
   if (!(error instanceof DOMException)) {
-    return "Camera access failed. 카메라 접근에 실패했습니다.";
+    return "카메라 접근에 실패했습니다.";
   }
 
   if (error.name === "NotAllowedError" || error.name === "SecurityError") {
-    return "Permission denied. 카메라 권한을 허용해 주세요.";
+    return "카메라 권한을 허용해 주세요.";
   }
 
   if (error.name === "NotFoundError" || error.name === "OverconstrainedError") {
-    return "No camera found. USB 카메라 연결 상태를 확인해 주세요.";
+    return "USB 카메라 연결 상태를 확인해 주세요.";
   }
 
   if (error.name === "NotReadableError" || error.name === "AbortError") {
-    return "Camera may already be in use. Elgato Camera Hub 또는 다른 프로그램의 카메라 사용을 확인해 주세요.";
+    return "카메라가 다른 프로그램에서 사용 중일 수 있습니다.";
   }
 
-  return "Camera access failed. WebView 또는 카메라 상태를 확인해 주세요.";
+  return "WebView 또는 카메라 상태를 확인해 주세요.";
 }
 
 export function CameraCapturePage() {
@@ -99,12 +95,10 @@ export function CameraCapturePage() {
   const [capturedDataUrl, setCapturedDataUrl] = useState<string | null>(null);
   const [capturedBlob, setCapturedBlob] = useState<Blob | null>(null);
   const [resultImageUrl, setResultImageUrl] = useState<string | null>(null);
-  const [resultToken, setResultToken] = useState<string | null>(null);
   const [errorMsg, setErrorMsg] = useState("");
-  const [cameraDevices, setCameraDevices] = useState<MediaDeviceInfo[]>([]);
+  const [, setCameraDevices] = useState<MediaDeviceInfo[]>([]);
   const [selectedCameraDeviceId, setSelectedCameraDeviceId] = useState<string | null>(null);
-  const [activeCameraLabel, setActiveCameraLabel] = useState("");
-  const [cameraWarning, setCameraWarning] = useState("");
+  const [, setActiveCameraLabel] = useState("");
 
   const support = useMemo(
     () => ({
@@ -156,15 +150,13 @@ export function CameraCapturePage() {
   const startCamera = useCallback(async () => {
     if (!support.mediaDevices || !support.getUserMedia) {
       setStatus("error");
-      setErrorMsg(
-        "This WebView does not support direct camera access. Please use Unity native camera bridge.",
-      );
+      setErrorMsg("현재 WebView에서는 직접 카메라 접근을 지원하지 않습니다.");
       return;
     }
 
     if (!support.secureContext) {
       setStatus("error");
-      setErrorMsg("Camera requires HTTPS or localhost. 보안 연결에서 다시 실행해 주세요.");
+      setErrorMsg("카메라는 HTTPS 또는 localhost 환경에서만 사용할 수 있습니다.");
       return;
     }
 
@@ -173,8 +165,6 @@ export function CameraCapturePage() {
     setCapturedDataUrl(null);
     setCapturedBlob(null);
     setResultImageUrl(null);
-    setResultToken(null);
-    setCameraWarning("");
 
     try {
       stopStream();
@@ -207,8 +197,8 @@ export function CameraCapturePage() {
         devicesAfterPermission.every(isVirtualCamera);
 
       if (onlyVirtualDetected) {
-        setCameraWarning(
-          "Physical Facecam device not detected. Please open Elgato Camera Hub or reconnect the USB camera.",
+        console.warn(
+          "[Camera] Physical Facecam device not detected. Please open Elgato Camera Hub or reconnect the USB camera.",
         );
       }
 
@@ -252,9 +242,7 @@ export function CameraCapturePage() {
     } catch (error) {
       console.error("[Camera] getUserMedia error", error);
       setStatus("error");
-      setErrorMsg(
-        `${getCameraErrorMessage(error)} This WebView environment may not fully support direct USB camera access.`,
-      );
+      setErrorMsg(`${getCameraErrorMessage(error)} USB 카메라 접근 환경을 확인해 주세요.`);
       await refreshDevices();
     }
   }, [
@@ -293,7 +281,6 @@ export function CameraCapturePage() {
     setCapturedDataUrl(null);
     setCapturedBlob(null);
     setResultImageUrl(null);
-    setResultToken(null);
     await startCamera();
   };
 
@@ -302,18 +289,15 @@ export function CameraCapturePage() {
 
     setStatus("uploading");
     setErrorMsg("");
-    setResultToken(null);
 
     try {
-      const shouldUseAi =
-        searchParams.get("ai") === "true" ||
-        searchParams.get("mode") === "greeting";
-
-      if (shouldUseAi && selectedOutfit) {
+      if (selectedOutfit) {
+        const isTogether = searchParams.get("mode") === "greeting";
         const processedUrl = await processArPhoto({
           image: capturedBlob,
           outfit: selectedOutfit,
-          togetherWith: searchParams.get("mode") === "greeting" ? "2" : null,
+          mode: isTogether ? "together" : "solo",
+          togetherWith: isTogether ? "2" : null,
           requestId: merchantUid,
         });
         setResultImageUrl(processedUrl);
@@ -328,7 +312,7 @@ export function CameraCapturePage() {
       setErrorMsg(
         error instanceof Error
           ? error.message
-          : "Upload failed. 업로드 또는 AI 이미지 생성에 실패했습니다.",
+          : "업로드 또는 AI 이미지 생성에 실패했습니다.",
       );
       setStatus("captured");
     }
@@ -341,10 +325,6 @@ export function CameraCapturePage() {
 
   const previewSrc = resultImageUrl ?? capturedDataUrl;
   const isLive = status === "streaming" || status === "requesting";
-  const isUsingVirtualCamera = activeCameraLabel.toLowerCase().includes("virtual camera");
-  const selectedDevice = cameraDevices.find(
-    (device) => device.deviceId === selectedCameraDeviceId,
-  );
 
   return (
     <PageBody className="camera-page" scroll={false}>
@@ -354,13 +334,13 @@ export function CameraCapturePage() {
           className={`camera-page__video${isLive ? " camera-page__video--active" : ""}`}
           playsInline
           muted
-          aria-label="Camera preview"
+          aria-label="카메라 미리보기"
         />
 
         <canvas ref={canvasRef} className="camera-page__canvas" />
 
         {(status === "captured" || status === "uploading" || status === "done") && previewSrc && (
-          <img className="camera-page__preview" src={previewSrc} alt="Captured result" />
+          <img className="camera-page__preview" src={previewSrc} alt="촬영 결과" />
         )}
 
         {(status === "idle" || status === "requesting") && (
@@ -368,21 +348,16 @@ export function CameraCapturePage() {
             <IconCamera size={136} strokeWidth={1.8} aria-hidden />
             <h1>
               {status === "requesting"
-                ? "Camera is starting..."
+                ? "카메라를 연결하는 중입니다"
                 : "카메라를 시작해 주세요"}
             </h1>
-            <p>
-              {status === "requesting"
-                ? "Elgato USB camera is being selected."
-                : "Start Camera 버튼을 눌러 Elgato / USB 카메라를 연결합니다."}
-            </p>
           </div>
         )}
 
         {status === "error" && (
           <div className="camera-page__center-state camera-page__center-state--error">
             <IconCamera size={126} strokeWidth={1.8} aria-hidden />
-            <h1>Camera access failed</h1>
+            <h1>카메라 연결 실패</h1>
             <p>{errorMsg}</p>
           </div>
         )}
@@ -390,69 +365,16 @@ export function CameraCapturePage() {
         {status === "uploading" && (
           <div className="camera-page__processing">
             <div className="camera-page__spinner" aria-hidden />
-            <h1>Generating AI image...</h1>
-            <p>업로드 및 이미지 생성 중입니다.</p>
+            <h1>AI 이미지 생성 중입니다</h1>
           </div>
         )}
 
         {status === "done" && (
           <div className="camera-page__result-badge">
             <IconCheck size={38} aria-hidden />
-            <span>Completed</span>
-            {resultToken && <small>Token: {resultToken}</small>}
+            <span>완료되었습니다</span>
           </div>
         )}
-
-        {isUsingVirtualCamera && status === "streaming" && (
-          <div className="camera-page__camera-warning">
-            Elgato Virtual Camera is active. Run Elgato Camera Hub, or select the physical Facecam device below.
-          </div>
-        )}
-
-        {cameraWarning && (
-          <div className="camera-page__camera-warning">
-            {cameraWarning}
-          </div>
-        )}
-
-        <div className="camera-page__topbar">
-          <span className="camera-page__pill">
-            <IconCamera size={34} aria-hidden />
-            Camera Capture
-          </span>
-        </div>
-
-        <div className="camera-page__debug">
-          <strong>Debug</strong>
-          <span>mediaDevices: {support.mediaDevices ? "yes" : "no"}</span>
-          <span>getUserMedia: {support.getUserMedia ? "yes" : "no"}</span>
-          <span>secureContext: {support.secureContext ? "yes" : "no"}</span>
-          <span>selected: {selectedDevice ? cameraLabel(selectedDevice, 0) : "auto"}</span>
-          <span>active: {activeCameraLabel || "none"}</span>
-          <div className="camera-page__device-list">
-            {cameraDevices.length ? (
-              cameraDevices.map((device, index) => (
-                <div
-                  key={device.deviceId || index}
-                  className={`camera-page__device${
-                    device.deviceId === selectedCameraDeviceId ||
-                    device.label === activeCameraLabel
-                      ? " camera-page__device--active"
-                      : ""
-                  }`}
-                >
-                  <strong>{cameraLabel(device, index)}</strong>
-                  <small>{isVirtualCamera(device) ? "virtual" : "physical"}</small>
-                  <small>{device.deviceId}</small>
-                  {(device.deviceId === selectedCameraDeviceId ||
-                    device.label === activeCameraLabel) && <em>selected</em>}
-                </div>
-              ))
-            ) : (
-              <span>cameras: none / labels hidden</span>
-            )}
-          </div>
-        </div>
 
         <div className="camera-page__controls">
           {(status === "idle" || status === "error") && (
@@ -462,7 +384,7 @@ export function CameraCapturePage() {
                 className="camera-page__control camera-page__control--secondary"
                 onClick={refreshDevices}
               >
-                Retry Devices
+                카메라 다시 찾기
               </button>
               <button
                 type="button"
@@ -470,7 +392,7 @@ export function CameraCapturePage() {
                 onClick={startCamera}
               >
                 <IconCamera size={44} aria-hidden />
-                Start Camera
+                카메라 시작
               </button>
             </>
           )}
@@ -482,7 +404,7 @@ export function CameraCapturePage() {
                 className="camera-page__control camera-page__control--secondary"
                 onClick={startCamera}
               >
-                Reload Camera
+                카메라 새로고침
               </button>
               <button
                 type="button"
@@ -490,7 +412,7 @@ export function CameraCapturePage() {
                 onClick={capturePhoto}
               >
                 <IconCamera size={44} aria-hidden />
-                Capture Photo
+                사진 촬영
               </button>
             </>
           )}
@@ -504,7 +426,7 @@ export function CameraCapturePage() {
                 onClick={retake}
               >
                 <IconReset size={42} aria-hidden />
-                Retake
+                다시 촬영
               </button>
               <button
                 type="button"
@@ -513,7 +435,7 @@ export function CameraCapturePage() {
                 disabled={!capturedBlob}
               >
                 <IconCheck size={42} aria-hidden />
-                Use This Photo
+                이 사진 사용
               </button>
             </>
           )}
@@ -526,7 +448,7 @@ export function CameraCapturePage() {
                 onClick={retake}
               >
                 <IconReset size={42} aria-hidden />
-                Retake
+                다시 촬영
               </button>
               <button
                 type="button"
@@ -534,7 +456,7 @@ export function CameraCapturePage() {
                 onClick={confirm}
               >
                 <IconCheck size={42} aria-hidden />
-                Continue
+                다음으로
               </button>
             </>
           )}

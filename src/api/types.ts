@@ -44,17 +44,12 @@ export interface PaymentHistoryDto {
   donatedAt: string;
 }
 
-/** Multipart data part for POST /api/donations/details */
-export interface SubmitDonationDetailsData {
+/** Body for POST /api/donations/details */
+export interface SubmitDonationDetailsPayload {
   merchantUid: string;
   donatorName: string;
   phoneNumber: string;
   imageUrl: string | null;
-}
-
-export interface SubmitDonationDetailsPayload {
-  data: SubmitDonationDetailsData;
-  photo?: Blob | null;
 }
 
 export interface PaymentHistoryParams extends PageParams {

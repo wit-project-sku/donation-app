@@ -9,6 +9,7 @@ import {
   TreePine,
   UsersRound,
 } from "lucide-react";
+import { IconBack } from "../components/Icon";
 import { PageBody } from "../components/layout/PageBody";
 import { useDonationStore } from "../store/donationStore";
 import "./CampaignDetailPage.css";
@@ -101,13 +102,25 @@ export function CampaignDetailPage() {
         </div>
       </main>
 
-      <button
-        type="button"
-        className="campaign-detail__donate-btn"
-        onClick={() => navigate("/amount")}
-      >
-        기부하기
-      </button>
+      <div className="campaign-detail__actions">
+        <button
+          type="button"
+          className="campaign-detail__back-btn"
+          onClick={() => navigate("/")}
+          aria-label="이전 화면으로 돌아가기"
+        >
+          <IconBack size={58} aria-hidden />
+          <span>다른 후원 선택</span>
+        </button>
+
+        <button
+          type="button"
+          className="campaign-detail__donate-btn"
+          onClick={() => navigate("/amount")}
+        >
+          기부하기
+        </button>
+      </div>
     </PageBody>
   );
 }

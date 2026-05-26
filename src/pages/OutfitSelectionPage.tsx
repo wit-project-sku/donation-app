@@ -2,12 +2,13 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { fetchOutfitsPage, type Outfit } from "../api/outfits";
-import { IconCamera, IconCheck, IconUsers } from "../components/Icon";
+import { IconBack, IconCamera, IconCheck, IconUsers } from "../components/Icon";
 import { PageBody } from "../components/layout/PageBody";
 import { useDonationStore } from "../store/donationStore";
 import "./OutfitSelectionPage.css";
 
 const PAGE_SIZE = 10;
+const CAROUSEL_PAGE_SIZE = 6;
 
 export function OutfitSelectionPage() {
   const navigate = useNavigate();
@@ -21,6 +22,7 @@ export function OutfitSelectionPage() {
   } = useDonationStore();
 
   const [selected, setSelected] = useState<Outfit | null>(null);
+  const [carouselPage, setCarouselPage] = useState(0);
 
   const {
     data,
@@ -47,6 +49,10 @@ export function OutfitSelectionPage() {
     () => data?.pages.flatMap((page) => page.content) ?? [],
     [data],
   );
+  const carouselPageCount = Math.max(
+    1,
+    Math.ceil(outfits.length / CAROUSEL_PAGE_SIZE),
+  );
 
   useEffect(() => {
     if (!selectedCampaign || !paymentMethod) {
@@ -56,11 +62,43 @@ export function OutfitSelectionPage() {
 
   const handleGridScroll = () => {
     const element = gridWrapRef.current;
-    if (!element || !hasNextPage || isFetchingNextPage) return;
+    if (!element) return;
+
+    const pageWidth = Math.max(1, element.clientWidth);
+    setCarouselPage(
+      Math.min(carouselPageCount - 1, Math.round(element.scrollLeft / pageWidth)),
+    );
+
+    if (!hasNextPage || isFetchingNextPage) return;
 
     const distanceFromEnd =
       element.scrollWidth - element.scrollLeft - element.clientWidth;
     if (distanceFromEnd < 420) {
+      fetchNextPage();
+    }
+  };
+
+  const scrollOutfits = (direction: "prev" | "next") => {
+    const element = gridWrapRef.current;
+    if (!element) return;
+
+    const nextPage =
+      direction === "next"
+        ? Math.min(carouselPage + 1, carouselPageCount - 1)
+        : Math.max(carouselPage - 1, 0);
+
+    element.scrollTo({
+      left: nextPage * element.clientWidth,
+      behavior: "smooth",
+    });
+    setCarouselPage(nextPage);
+
+    if (
+      direction === "next" &&
+      nextPage >= carouselPageCount - 2 &&
+      hasNextPage &&
+      !isFetchingNextPage
+    ) {
       fetchNextPage();
     }
   };
@@ -97,33 +135,59 @@ export function OutfitSelectionPage() {
       )}
 
       {!isLoading && !isError && outfits.length > 0 && (
-        <div
-          className="outfit-page__grid-wrap"
-          ref={gridWrapRef}
-          onScroll={handleGridScroll}
-        >
-          <div className="outfit-page__grid">
-            {outfits.map((outfit) => {
-              const isSelected = selected?.id === outfit.id;
-              return (
-                <button
-                  key={outfit.id}
-                  type="button"
-                  className={`outfit-card ${isSelected ? "outfit-card--selected" : ""}`}
-                  onClick={() => setSelected(isSelected ? null : outfit)}
-                >
-                  <img
-                    className="outfit-card__image"
-                    src={outfit.imageUrl}
-                    alt={outfit.name}
-                    loading="lazy"
-                  />
-                </button>
-              );
-            })}
-            {isFetchingNextPage && (
-              <div className="outfit-page__loading-card">더 불러오는 중...</div>
-            )}
+        <div className="outfit-page__carousel">
+          <button
+            type="button"
+            className="outfit-page__nav outfit-page__nav--prev"
+            onClick={() => scrollOutfits("prev")}
+            disabled={carouselPage === 0}
+            aria-label="이전 의상 보기"
+          >
+            <IconBack size={52} aria-hidden />
+          </button>
+
+          <div
+            className="outfit-page__grid-wrap"
+            ref={gridWrapRef}
+            onScroll={handleGridScroll}
+          >
+            <div className="outfit-page__grid">
+              {outfits.map((outfit) => {
+                const isSelected = selected?.id === outfit.id;
+                return (
+                  <button
+                    key={outfit.id}
+                    type="button"
+                    className={`outfit-card ${isSelected ? "outfit-card--selected" : ""}`}
+                    onClick={() => setSelected(isSelected ? null : outfit)}
+                  >
+                    <img
+                      className="outfit-card__image"
+                      src={outfit.imageUrl}
+                      alt={outfit.name}
+                      loading="lazy"
+                    />
+                  </button>
+                );
+              })}
+              {isFetchingNextPage && (
+                <div className="outfit-page__loading-card">더 불러오는 중...</div>
+              )}
+            </div>
+          </div>
+
+          <button
+            type="button"
+            className="outfit-page__nav outfit-page__nav--next"
+            onClick={() => scrollOutfits("next")}
+            disabled={!hasNextPage && carouselPage >= carouselPageCount - 1}
+            aria-label="다음 의상 보기"
+          >
+            <IconBack size={52} aria-hidden />
+          </button>
+
+          <div className="outfit-page__pager" aria-label="의상 페이지">
+            {carouselPage + 1}/{carouselPageCount}
           </div>
         </div>
       )}
@@ -155,7 +219,7 @@ export function OutfitSelectionPage() {
           disabled={isLoading || isError}
         >
           <IconUsers size={42} aria-hidden />
-          <span>사진촬영(with &apos;인사&apos;)</span>
+          <span>사진촬영(with '인사')</span>
         </button>
       </div>
     </PageBody>

@@ -13,6 +13,36 @@
   display: none;
 }
 
+.campaigns-page__wall-link {
+  position: absolute;
+  top: 58px;
+  left: 58px;
+  z-index: 8;
+  min-width: 318px;
+  height: 104px;
+  padding: 0 34px;
+  border: 5px solid rgba(255, 255, 255, 0.92);
+  border-radius: 52px;
+  background: rgba(255, 123, 183, 0.94);
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
+  font-size: 34px;
+  font-weight: 900;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 22px 58px rgba(0, 0, 0, 0.22);
+  transition: opacity 0.15s, transform 0.1s;
+}
+
+.campaigns-page__wall-link:active {
+  transform: scale(0.96);
+  opacity: 0.9;
+}
+
 .campaigns-page__swiper-wrap {
   position: relative;
   width: 100%;
