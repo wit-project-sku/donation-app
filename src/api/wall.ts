@@ -4,7 +4,6 @@ import type { PaymentHistoryParams } from "./types";
 export interface WallEntry {
   id: string;
   donorName: string;
-  message: string;
   amount: number;
   campaignName: string;
   paymentMethod: string;

@@ -1,5 +1,7 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { processArPhoto } from "../api/arPhoto";
+import { IconCamera, IconCheck, IconReset } from "../components/Icon";
 import { PageBody } from "../components/layout/PageBody";
 import { useDonationStore } from "../store/donationStore";
 import "./CameraCapturePage.css";
@@ -13,11 +15,52 @@ type CameraStatus =
   | "done"
   | "error";
 
-const UPLOAD_ENDPOINT = "/api/kiosk/photo";
+interface KioskPhotoResponse {
+  imageUrl?: string;
+  image_url?: string;
+  token?: string;
+}
+
+async function uploadKioskPhoto(image: Blob): Promise<KioskPhotoResponse> {
+  const form = new FormData();
+  form.append("image", image, "capture.jpg");
+
+  const response = await fetch("/api/kiosk/photo", {
+    method: "POST",
+    body: form,
+  });
+
+  if (!response.ok) {
+    throw new Error(`Upload failed (${response.status})`);
+  }
+
+  return response.json() as Promise<KioskPhotoResponse>;
+}
+
+function getCameraErrorMessage(error: unknown): string {
+  if (!(error instanceof DOMException)) {
+    return "Camera access failed. 카메라 접근에 실패했습니다.";
+  }
+
+  if (error.name === "NotAllowedError" || error.name === "SecurityError") {
+    return "Permission denied. 카메라 권한을 허용해 주세요.";
+  }
+
+  if (error.name === "NotFoundError" || error.name === "OverconstrainedError") {
+    return "No camera found. USB 카메라 연결 상태를 확인해 주세요.";
+  }
+
+  if (error.name === "NotReadableError" || error.name === "AbortError") {
+    return "Camera may already be in use. 다른 프로그램의 카메라 사용을 종료해 주세요.";
+  }
+
+  return "Camera access failed. WebView 또는 카메라 상태를 확인해 주세요.";
+}
 
 export function CameraCapturePage() {
   const navigate = useNavigate();
-  const { setCapturedPhotoUrl } = useDonationStore();
+  const [searchParams] = useSearchParams();
+  const { selectedOutfit, merchantUid, setCapturedPhotoUrl } = useDonationStore();
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -25,295 +68,312 @@ export function CameraCapturePage() {
 
   const [status, setStatus] = useState<CameraStatus>("idle");
   const [capturedDataUrl, setCapturedDataUrl] = useState<string | null>(null);
+  const [capturedBlob, setCapturedBlob] = useState<Blob | null>(null);
   const [resultImageUrl, setResultImageUrl] = useState<string | null>(null);
-  const [errorMsg, setErrorMsg] = useState<string>("");
+  const [resultToken, setResultToken] = useState<string | null>(null);
+  const [errorMsg, setErrorMsg] = useState("");
+  const [cameraDevices, setCameraDevices] = useState<MediaDeviceInfo[]>([]);
 
-  // Debug info
-  const [debugInfo, setDebugInfo] = useState<{
-    hasMediaDevices: boolean;
-    hasGetUserMedia: boolean;
-    isSecureContext: boolean;
-    devices: string[];
-  } | null>(null);
+  const support = useMemo(
+    () => ({
+      mediaDevices: Boolean(navigator.mediaDevices),
+      getUserMedia: Boolean(navigator.mediaDevices?.getUserMedia),
+      secureContext: window.isSecureContext,
+    }),
+    [],
+  );
 
   const stopStream = useCallback(() => {
-    streamRef.current?.getTracks().forEach((t) => t.stop());
+    streamRef.current?.getTracks().forEach((track) => track.stop());
     streamRef.current = null;
+    if (videoRef.current) {
+      videoRef.current.srcObject = null;
+    }
+  }, []);
+
+  const refreshDevices = useCallback(async () => {
+    if (!navigator.mediaDevices?.enumerateDevices) {
+      setCameraDevices([]);
+      return;
+    }
+
+    try {
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      setCameraDevices(devices.filter((device) => device.kind === "videoinput"));
+    } catch {
+      setCameraDevices([]);
+    }
   }, []);
 
   useEffect(() => {
-    // Collect debug info on mount
-    const collect = async () => {
-      const hasMediaDevices = !!navigator.mediaDevices;
-      const hasGetUserMedia = !!(
-        navigator.mediaDevices?.getUserMedia
-      );
-      const isSecureContext = window.isSecureContext;
-      let devices: string[] = [];
-      try {
-        const all = await navigator.mediaDevices.enumerateDevices();
-        devices = all
-          .filter((d) => d.kind === "videoinput")
-          .map((d) => d.label || `Camera (${d.deviceId.slice(0, 8)})`);
-      } catch {
-        devices = ["(enumerate failed)"];
-      }
-      setDebugInfo({ hasMediaDevices, hasGetUserMedia, isSecureContext, devices });
-    };
-    collect();
+    refreshDevices();
     return () => stopStream();
-  }, [stopStream]);
+  }, [refreshDevices, stopStream]);
 
-  const startCamera = async () => {
-    if (!navigator.mediaDevices?.getUserMedia) {
+  const startCamera = useCallback(async () => {
+    if (!support.mediaDevices || !support.getUserMedia) {
       setStatus("error");
       setErrorMsg(
-        "This WebView does not support direct camera access.\nPlease use Unity native camera bridge."
+        "This WebView does not support direct camera access. Please use Unity native camera bridge.",
       );
       return;
     }
+
+    if (!support.secureContext) {
+      setStatus("error");
+      setErrorMsg("Camera requires HTTPS or localhost. 보안 연결에서 다시 실행해 주세요.");
+      return;
+    }
+
     setStatus("requesting");
+    setErrorMsg("");
+    setCapturedDataUrl(null);
+    setCapturedBlob(null);
+    setResultImageUrl(null);
+    setResultToken(null);
+
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: { width: { ideal: 1920 }, height: { ideal: 1080 } },
+        video: true,
         audio: false,
       });
+
       streamRef.current = stream;
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
-        videoRef.current.play();
+        await videoRef.current.play();
       }
+      await refreshDevices();
       setStatus("streaming");
-    } catch (err: unknown) {
+    } catch (error) {
       setStatus("error");
-      const name = (err as { name?: string }).name ?? "";
-      if (name === "NotAllowedError" || name === "PermissionDeniedError") {
-        setErrorMsg("카메라 접근 권한이 거부되었습니다.\nCamera access was denied.");
-      } else if (name === "NotFoundError" || name === "DevicesNotFoundError") {
-        setErrorMsg("카메라를 찾을 수 없습니다.\nNo camera device found.");
-      } else if (name === "NotReadableError" || name === "TrackStartError") {
-        setErrorMsg("카메라가 이미 사용 중입니다.\nCamera is already in use.");
-      } else {
-        setErrorMsg(`카메라 오류: ${name || String(err)}`);
-      }
+      setErrorMsg(getCameraErrorMessage(error));
+      await refreshDevices();
     }
-  };
+  }, [refreshDevices, support.getUserMedia, support.mediaDevices, support.secureContext]);
 
   const capturePhoto = () => {
     const video = videoRef.current;
     const canvas = canvasRef.current;
     if (!video || !canvas) return;
 
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    canvas.getContext("2d")?.drawImage(video, 0, 0);
-    const dataUrl = canvas.toDataURL("image/jpeg", 0.92);
-    setCapturedDataUrl(dataUrl);
-    stopStream();
-    setStatus("captured");
+    const width = video.videoWidth || 1920;
+    const height = video.videoHeight || 1080;
+    canvas.width = width;
+    canvas.height = height;
+    canvas.getContext("2d")?.drawImage(video, 0, 0, width, height);
+
+    setCapturedDataUrl(canvas.toDataURL("image/jpeg", 0.96));
+    canvas.toBlob(
+      (blob) => {
+        setCapturedBlob(blob);
+        setStatus("captured");
+        stopStream();
+      },
+      "image/jpeg",
+      0.96,
+    );
   };
 
   const retake = async () => {
     setCapturedDataUrl(null);
+    setCapturedBlob(null);
     setResultImageUrl(null);
+    setResultToken(null);
     await startCamera();
   };
 
-  const uploadPhoto = async () => {
-    if (!capturedDataUrl) return;
+  const usePhoto = async () => {
+    if (!capturedBlob || !capturedDataUrl) return;
+
     setStatus("uploading");
+    setErrorMsg("");
+    setResultToken(null);
+
     try {
-      const res = await fetch(capturedDataUrl);
-      const blob = await res.blob();
-      const form = new FormData();
-      form.append("image", blob, "capture.jpg");
-
-      const response = await fetch(UPLOAD_ENDPOINT, {
-        method: "POST",
-        body: form,
-      });
-
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-      const json = await response.json();
-      const url: string = json.imageUrl ?? capturedDataUrl;
-
-      setResultImageUrl(url);
-      setCapturedPhotoUrl(url);
+      if (selectedOutfit) {
+        const processedUrl = await processArPhoto({
+          image: capturedBlob,
+          outfit: selectedOutfit,
+          togetherWith: searchParams.get("mode") === "greeting" ? "2" : null,
+          requestId: merchantUid,
+        });
+        setResultImageUrl(processedUrl);
+        setCapturedPhotoUrl(processedUrl);
+      } else {
+        const result = await uploadKioskPhoto(capturedBlob);
+        const imageUrl = result.imageUrl ?? result.image_url ?? null;
+        setResultImageUrl(imageUrl ?? capturedDataUrl);
+        setResultToken(result.token ?? null);
+        setCapturedPhotoUrl(imageUrl ?? capturedDataUrl);
+      }
+      stopStream();
       setStatus("done");
-    } catch {
-      // Fallback: use captured image directly without upload
-      setCapturedPhotoUrl(capturedDataUrl);
-      setResultImageUrl(capturedDataUrl);
-      setStatus("done");
+    } catch (error) {
+      setErrorMsg(
+        error instanceof Error
+          ? error.message
+          : "Upload failed. 업로드 또는 AI 이미지 생성에 실패했습니다.",
+      );
+      setStatus("captured");
     }
   };
 
   const confirm = () => {
+    stopStream();
     navigate("/certificate");
   };
 
-  const statusLabel: Record<CameraStatus, string> = {
-    idle: "",
-    requesting: "카메라 시작 중...",
-    streaming: "촬영 준비 완료",
-    captured: "사진 촬영됨",
-    uploading: "AI 이미지 생성 중...",
-    done: "완료",
-    error: "카메라 오류",
-  };
+  const previewSrc = resultImageUrl ?? capturedDataUrl;
+  const isLive = status === "streaming" || status === "requesting";
 
   return (
     <PageBody className="camera-page" scroll={false}>
-      {/* ── Header ── */}
-      <div className="camera-page__header">
-        <span className="camera-page__step-badge">📷</span>
-        <div>
-          <h2 className="camera-page__title">사진 촬영</h2>
-          {status !== "idle" && status !== "error" && (
-            <p className="camera-page__status-label">{statusLabel[status]}</p>
-          )}
-        </div>
-      </div>
-
-      {/* ── Main area ── */}
-      <div className="camera-page__main">
-        {/* Video preview */}
+      <div className="camera-page__surface">
         <video
           ref={videoRef}
-          className={`camera-page__video${status === "streaming" ? " camera-page__video--active" : ""}`}
+          className={`camera-page__video${isLive ? " camera-page__video--active" : ""}`}
           playsInline
           muted
           aria-label="Camera preview"
         />
 
-        {/* Hidden canvas for capture */}
         <canvas ref={canvasRef} className="camera-page__canvas" />
 
-        {/* Captured / result image */}
-        {(status === "captured" || status === "uploading" || status === "done") &&
-          (resultImageUrl ?? capturedDataUrl) && (
-            <img
-              className="camera-page__preview"
-              src={resultImageUrl ?? capturedDataUrl ?? ""}
-              alt="Captured"
-            />
-          )}
+        {(status === "captured" || status === "uploading" || status === "done") && previewSrc && (
+          <img className="camera-page__preview" src={previewSrc} alt="Captured result" />
+        )}
 
-        {/* Idle — nothing streaming yet */}
-        {status === "idle" && (
-          <div className="camera-page__placeholder">
-            <span className="camera-page__placeholder-icon">📷</span>
-            <p className="camera-page__placeholder-text">카메라가 꺼져 있습니다</p>
+        {(status === "idle" || status === "requesting") && (
+          <div className="camera-page__center-state">
+            <IconCamera size={136} strokeWidth={1.8} aria-hidden />
+            <h1>
+              {status === "requesting"
+                ? "Camera is starting..."
+                : "카메라를 시작해 주세요"}
+            </h1>
+            <p>
+              {status === "requesting"
+                ? "카메라 권한을 요청하고 있습니다."
+                : "Start Camera 버튼을 눌러 USB 카메라를 연결합니다."}
+            </p>
           </div>
         )}
 
-        {/* Error state */}
         {status === "error" && (
-          <div className="camera-page__error-box">
-            <p className="camera-page__error-text">{errorMsg}</p>
+          <div className="camera-page__center-state camera-page__center-state--error">
+            <IconCamera size={126} strokeWidth={1.8} aria-hidden />
+            <h1>Camera access failed</h1>
+            <p>{errorMsg}</p>
           </div>
         )}
 
-        {/* Upload spinner overlay */}
         {status === "uploading" && (
-          <div className="camera-page__spinner-overlay">
-            <div className="camera-page__spinner" />
-            <p className="camera-page__uploading-text">AI 이미지 생성 중...</p>
+          <div className="camera-page__processing">
+            <div className="camera-page__spinner" aria-hidden />
+            <h1>Generating AI image...</h1>
+            <p>업로드 및 이미지 생성 중입니다.</p>
           </div>
-        )}
-      </div>
-
-      {/* ── Action buttons ── */}
-      <div className="camera-page__actions">
-        {(status === "idle" || status === "error") && (
-          <button
-            type="button"
-            className="camera-page__btn camera-page__btn--primary"
-            onClick={startCamera}
-          >
-            카메라 시작
-          </button>
-        )}
-
-        {status === "streaming" && (
-          <button
-            type="button"
-            className="camera-page__btn camera-page__btn--capture"
-            onClick={capturePhoto}
-          >
-            촬영하기
-          </button>
-        )}
-
-        {status === "captured" && (
-          <>
-            <button
-              type="button"
-              className="camera-page__btn camera-page__btn--outline"
-              onClick={retake}
-            >
-              다시 찍기
-            </button>
-            <button
-              type="button"
-              className="camera-page__btn camera-page__btn--primary"
-              onClick={uploadPhoto}
-            >
-              이 사진 사용
-            </button>
-          </>
         )}
 
         {status === "done" && (
-          <>
-            <button
-              type="button"
-              className="camera-page__btn camera-page__btn--outline"
-              onClick={retake}
-            >
-              다시 찍기
-            </button>
-            <button
-              type="button"
-              className="camera-page__btn camera-page__btn--primary"
-              onClick={confirm}
-            >
-              계속
-            </button>
-          </>
+          <div className="camera-page__result-badge">
+            <IconCheck size={38} aria-hidden />
+            <span>Completed</span>
+            {resultToken && <small>Token: {resultToken}</small>}
+          </div>
         )}
 
-        {/* Back / skip */}
-        {(status === "idle" || status === "error" || status === "streaming") && (
-          <button
-            type="button"
-            className="camera-page__btn camera-page__btn--skip"
-            onClick={() => { stopStream(); navigate("/certificate"); }}
-          >
-            건너뛰기
-          </button>
-        )}
+        <div className="camera-page__topbar">
+          <span className="camera-page__pill">
+            <IconCamera size={34} aria-hidden />
+            Camera Capture
+          </span>
+        </div>
+
+        <div className="camera-page__debug">
+          <strong>Debug</strong>
+          <span>mediaDevices: {support.mediaDevices ? "yes" : "no"}</span>
+          <span>getUserMedia: {support.getUserMedia ? "yes" : "no"}</span>
+          <span>secureContext: {support.secureContext ? "yes" : "no"}</span>
+          <span>
+            cameras:{" "}
+            {cameraDevices.length
+              ? cameraDevices
+                  .map((device, index) => device.label || `Camera ${index + 1}`)
+                  .join(", ")
+              : "none / labels hidden"}
+          </span>
+        </div>
+
+        <div className="camera-page__controls">
+          {(status === "idle" || status === "error") && (
+            <button
+              type="button"
+              className="camera-page__control camera-page__control--primary"
+              onClick={startCamera}
+            >
+              <IconCamera size={44} aria-hidden />
+              Start Camera
+            </button>
+          )}
+
+          {status === "streaming" && (
+            <button
+              type="button"
+              className="camera-page__control camera-page__control--primary"
+              onClick={capturePhoto}
+            >
+              <IconCamera size={44} aria-hidden />
+              Capture Photo
+            </button>
+          )}
+
+          {status === "captured" && (
+            <>
+              {errorMsg && <p className="camera-page__inline-error">{errorMsg}</p>}
+              <button
+                type="button"
+                className="camera-page__control camera-page__control--secondary"
+                onClick={retake}
+              >
+                <IconReset size={42} aria-hidden />
+                Retake
+              </button>
+              <button
+                type="button"
+                className="camera-page__control camera-page__control--primary"
+                onClick={usePhoto}
+                disabled={!capturedBlob}
+              >
+                <IconCheck size={42} aria-hidden />
+                Use This Photo
+              </button>
+            </>
+          )}
+
+          {status === "done" && (
+            <>
+              <button
+                type="button"
+                className="camera-page__control camera-page__control--secondary"
+                onClick={retake}
+              >
+                <IconReset size={42} aria-hidden />
+                Retake
+              </button>
+              <button
+                type="button"
+                className="camera-page__control camera-page__control--primary"
+                onClick={confirm}
+              >
+                <IconCheck size={42} aria-hidden />
+                Continue
+              </button>
+            </>
+          )}
+        </div>
       </div>
-
-      {/* ── Debug panel ── */}
-      {debugInfo && (
-        <details className="camera-page__debug">
-          <summary className="camera-page__debug-summary">Debug Info</summary>
-          <ul className="camera-page__debug-list">
-            <li>mediaDevices: {debugInfo.hasMediaDevices ? "✅" : "❌"}</li>
-            <li>getUserMedia: {debugInfo.hasGetUserMedia ? "✅" : "❌"}</li>
-            <li>secureContext: {debugInfo.isSecureContext ? "✅" : "❌"}</li>
-            <li>
-              cameras:
-              {debugInfo.devices.length === 0
-                ? " (none found)"
-                : debugInfo.devices.map((d, i) => (
-                    <span key={i} className="camera-page__debug-device">{d}</span>
-                  ))}
-            </li>
-          </ul>
-        </details>
-      )}
     </PageBody>
   );
 }

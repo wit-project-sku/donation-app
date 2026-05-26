@@ -21,7 +21,7 @@ export class ApiError extends Error {
   }
 }
 
-function buildUrl(
+export function buildUrl(
   path: string,
   params?: Record<string, string | number | undefined>,
 ): string {
@@ -87,6 +87,32 @@ export async function apiPost<T, B = unknown>(
       "Content-Type": "application/json",
     },
     body: JSON.stringify(body),
+  });
+
+  const envelope = (await response.json()) as ApiResponse<T> & {
+    errorCode?: string;
+  };
+
+  if (!response.ok || !envelope.success) {
+    throw new ApiError(
+      envelope.message || `Request failed (${response.status})`,
+      response.status,
+      envelope.code,
+      envelope.errorCode,
+    );
+  }
+
+  return envelope.data;
+}
+
+export async function apiPostForm<T>(
+  path: string,
+  form: FormData,
+): Promise<T> {
+  const response = await fetch(buildUrl(path), {
+    method: "POST",
+    headers: { Accept: "application/json" },
+    body: form,
   });
 
   const envelope = (await response.json()) as ApiResponse<T> & {

@@ -1,19 +1,24 @@
 .campaign-card {
   position: relative;
   width: 100%;
-  min-height: 1426px;
-  border-radius: 42.9px;
+  height: 100%;
+  border: 0;
+  border-radius: 0;
   overflow: hidden;
   cursor: pointer;
   text-align: left;
   padding: 0;
-  background: transparent;
-  border: 10px solid transparent;
-  transition: border-color 0.2s;
+  background: #111;
 }
 
-.campaign-card--selected {
-  border-color: #FE6C50;
+.campaign-card--selected::after {
+  content: "";
+  position: absolute;
+  inset: 26px;
+  z-index: 3;
+  border: 8px solid rgba(255, 123, 183, 0.96);
+  border-radius: 42px;
+  pointer-events: none;
 }
 
 .campaign-card__bg {
@@ -21,126 +26,51 @@
   inset: 0;
   background-size: cover;
   background-position: center;
+  transform: scale(1.02);
 }
 
 .campaign-card__overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(0deg, rgba(0, 0, 0, 0.50) 0%, rgba(0, 0, 0, 0.50) 100%);
+  background:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.24) 0%, rgba(0, 0, 0, 0.1) 38%, rgba(0, 0, 0, 0.76) 100%),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.58) 0%, rgba(0, 0, 0, 0.14) 46%, rgba(0, 0, 0, 0.32) 100%);
 }
 
 .campaign-card__content {
   position: relative;
-  z-index: 1;
+  z-index: 2;
   display: flex;
-  justify-content: space-between;
-  padding: 56px 64px 100px;
-  gap: 40px;
+  align-items: flex-end;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 0 150px 178px;
 }
 
-/* ── Left side ── */
-.campaign-card__location {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 32px;
-  font-style: normal;
-  font-weight: 700;
-  line-height: 100%;
-  color: #FE6C50;
-  text-transform: uppercase;
-}
-
-.campaign-card__dot {
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: #FE6C50;
-  flex-shrink: 0;
+.campaign-card__left {
+  max-width: 1180px;
 }
 
 .campaign-card__title {
-  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 96px;
-  font-style: normal;
-  font-weight: 700;
-  line-height: normal;
+  margin: 0 0 38px;
   color: #fff;
-  margin: 24px 0 16px;
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
+  font-size: 118px;
+  font-weight: 900;
+  line-height: 1.05;
+  text-shadow: 0 16px 50px rgba(0, 0, 0, 0.42);
+  word-break: keep-all;
 }
 
 .campaign-card__desc {
-  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 32px;
-  font-style: normal;
-  font-weight: 700;
-  line-height: normal;
-  color: #FE6C50;
+  max-width: 1080px;
   margin: 0;
-  max-width: 760px;
-}
-
-/* ── Right side stats ── */
-.campaign-card__stats {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  flex-shrink: 0;
-}
-
-.campaign-card__stat {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 6px;
-}
-
-.campaign-card__stat-label {
+  color: #FFD4E8;
   font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 32px;
-  color: rgba(255, 255, 255, 0.65);
-}
-
-.campaign-card__stat-value {
-  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 40px;
-  font-weight: 700;
-  color: white;
-}
-
-/* ── Progress bar ── */
-.campaign-card__progress-wrap {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 2;
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  padding: 20px 48px 80px;
-}
-
-.campaign-card__progress-bar {
-  flex: 1;
-  height: 14px;
-  background: rgba(255, 255, 255, 0.25);
-  border-radius: var(--radius-pill);
-  overflow: hidden;
-}
-
-.campaign-card__progress-fill {
-  height: 100%;
-  background: #FE6C50;
-  border-radius: var(--radius-pill);
-  transition: width 0.3s;
-}
-
-.campaign-card__progress-pct {
-  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 38px;
-  font-weight: 700;
-  color: white;
-  min-width: 80px;
+  font-size: 42px;
+  font-weight: 800;
+  line-height: 1.35;
+  word-break: keep-all;
+  text-shadow: 0 10px 36px rgba(0, 0, 0, 0.38);
 }

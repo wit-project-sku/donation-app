@@ -12,57 +12,56 @@ interface VirtualKeyboardProps {
   onSpace: () => void;
 }
 
-export function VirtualKeyboard({ onKeyPress, onBackspace, onSpace }: VirtualKeyboardProps) {
+export function VirtualKeyboard({
+  onKeyPress,
+  onBackspace,
+  onSpace,
+}: VirtualKeyboardProps) {
   return (
     <div className="virtual-keyboard">
-      {/* Row 1 — numbers + backspace */}
       <div className="virtual-keyboard__row">
-        {ROW1.map((k) => (
-          <button key={k} type="button" className="virtual-keyboard__key" onClick={() => onKeyPress(k)}>
-            {k}
+        {ROW1.map((key) => (
+          <button key={key} type="button" className="virtual-keyboard__key" onClick={() => onKeyPress(key)}>
+            {key}
           </button>
         ))}
-        <button type="button" className="virtual-keyboard__key virtual-keyboard__key--special" onClick={onBackspace} aria-label="Delete">
-          <IconDelete size={28} />
+        <button type="button" className="virtual-keyboard__key virtual-keyboard__key--special" onClick={onBackspace} aria-label="삭제">
+          <IconDelete size={30} />
         </button>
       </div>
 
-      {/* Row 2 — top consonants/vowels */}
-      <div className="virtual-keyboard__row">
-        {ROW2.map((k) => (
-          <button key={k} type="button" className="virtual-keyboard__key" onClick={() => onKeyPress(k)}>
-            {k}
+      <div className="virtual-keyboard__row virtual-keyboard__row--narrow">
+        {ROW2.map((key) => (
+          <button key={key} type="button" className="virtual-keyboard__key" onClick={() => onKeyPress(key)}>
+            {key}
           </button>
         ))}
       </div>
 
-      {/* Row 3 — middle consonants/vowels + return */}
-      <div className="virtual-keyboard__row">
-        {ROW3.map((k) => (
-          <button key={k} type="button" className="virtual-keyboard__key" onClick={() => onKeyPress(k)}>
-            {k}
+      <div className="virtual-keyboard__row virtual-keyboard__row--middle">
+        {ROW3.map((key) => (
+          <button key={key} type="button" className="virtual-keyboard__key" onClick={() => onKeyPress(key)}>
+            {key}
           </button>
         ))}
-        <button type="button" className="virtual-keyboard__key virtual-keyboard__key--special" onClick={() => onKeyPress("\n")} aria-label="Return">
+        <button type="button" className="virtual-keyboard__key virtual-keyboard__key--return" onClick={() => onKeyPress("\n")} aria-label="줄바꿈">
           ↵
         </button>
       </div>
 
-      {/* Row 4 — shift + bottom consonants (no backspace on right) */}
-      <div className="virtual-keyboard__row">
-        <button type="button" className="virtual-keyboard__key virtual-keyboard__key--special" aria-label="Shift">
-          <IconShift size={28} />
+      <div className="virtual-keyboard__row virtual-keyboard__row--bottom">
+        <button type="button" className="virtual-keyboard__key virtual-keyboard__key--special" aria-label="자판 전환">
+          <IconShift size={30} />
         </button>
-        {ROW4.map((k) => (
-          <button key={k} type="button" className="virtual-keyboard__key" onClick={() => onKeyPress(k)}>
-            {k}
+        {ROW4.map((key) => (
+          <button key={key} type="button" className="virtual-keyboard__key" onClick={() => onKeyPress(key)}>
+            {key}
           </button>
         ))}
       </div>
 
-      {/* Row 5 — globe + space */}
-      <div className="virtual-keyboard__row">
-        <button type="button" className="virtual-keyboard__key virtual-keyboard__key--special virtual-keyboard__key--globe" aria-label="Language">
+      <div className="virtual-keyboard__row virtual-keyboard__row--space">
+        <button type="button" className="virtual-keyboard__key virtual-keyboard__key--globe" aria-label="언어">
           <IconGlobe size={28} />
         </button>
         <button type="button" className="virtual-keyboard__key virtual-keyboard__key--spacebar" onClick={onSpace}>

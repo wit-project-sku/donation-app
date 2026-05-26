@@ -1,3 +1,5 @@
+import { useState } from "react";
+import defaultDonationImage from "../assets/hero.png";
 import type { Campaign, DonationType } from "../types";
 import "./ReceiptCard.css";
 
@@ -8,34 +10,30 @@ interface ReceiptCardProps {
   note?: string;
 }
 
-export function ReceiptCard({
-  amount,
-  donationType,
-  campaign,
-}: ReceiptCardProps) {
-  const typeLabel = donationType === "one-time" ? "/ 일시 후원" : "/ 정기 후원";
+export function ReceiptCard({ amount, campaign }: ReceiptCardProps) {
   const formattedAmount = amount.toLocaleString("ko-KR");
+  const [imageSrc, setImageSrc] = useState(
+    campaign.imageUrl || defaultDonationImage,
+  );
+
   return (
     <div className="receipt-card">
-      {/* Left half — price */}
-      <div className="receipt-card__left">
-        <div className="receipt-card__price-box">
-          <span className="receipt-card__amount">{formattedAmount}</span>
-          <span className="receipt-card__won">원</span>
-          <span className="receipt-card__type">{typeLabel}</span>
-        </div>
+      <div className="receipt-card__amount-row">
+        <span className="receipt-card__amount">{formattedAmount}</span>
+        <span className="receipt-card__won">원</span>
       </div>
 
       <div className="receipt-card__divider" />
 
-      {/* Right half — campaign info */}
-      <div className="receipt-card__right">
-        <div className="receipt-card__campaign-image">
-          {campaign.imageUrl ? (
-            <img src={campaign.imageUrl} alt={campaign.title} className="receipt-card__img" />
-          ) : (
-            <div className="receipt-card__img-placeholder" />
-          )}
+      <div className="receipt-card__campaign">
+        <div className="receipt-card__image-wrap">
+          <img
+            className="receipt-card__image"
+            src={imageSrc}
+            alt={campaign.title}
+            onError={() => setImageSrc(defaultDonationImage)}
+          />
+          <span className="receipt-card__brand">unicef</span>
         </div>
         <div className="receipt-card__campaign-text">
           <span className="receipt-card__title">{campaign.title}</span>

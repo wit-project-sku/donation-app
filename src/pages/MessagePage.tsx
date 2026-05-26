@@ -2,8 +2,8 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { VirtualKeyboard } from "../components/VirtualKeyboard";
 import { PageBody } from "../components/layout/PageBody";
-import { PageFooter } from "../components/layout/PageFooter";
 import { useDonationStore } from "../store/donationStore";
+import { appendHangul, removeLastHangul } from "../utils/hangulInput";
 import "./MessagePage.css";
 
 export function MessagePage() {
@@ -11,13 +11,12 @@ export function MessagePage() {
   const {
     selectedCampaign,
     amount,
-    donationType,
     paymentMethod,
-    message,
     donorName,
+    donorPhone,
     activeField,
-    setMessage,
     setDonorName,
+    setDonorPhone,
     setActiveField,
   } = useDonationStore();
 
@@ -33,116 +32,77 @@ export function MessagePage() {
 
   if (!selectedCampaign) return null;
 
-  const typeLabel = donationType === "one-time" ? "일시 후원" : "정기 후원";
-  const formattedAmount = amount.toLocaleString("ko-KR");
-
   const handleKeyPress = (key: string) => {
     const field = activeField ?? "name";
-    if (field === "message") {
-      setMessage(message + key);
-    } else {
-      setDonorName(donorName + key);
+    if (field === "phone") {
+      if (!/^\d$/.test(key)) return;
+      setDonorPhone(donorPhone + key);
+      return;
     }
+    setDonorName(appendHangul(donorName, key));
   };
 
   const handleBackspace = () => {
     const field = activeField ?? "name";
-    if (field === "message") {
-      setMessage(message.slice(0, -1));
-    } else {
-      setDonorName(donorName.slice(0, -1));
+    if (field === "phone") {
+      setDonorPhone(donorPhone.slice(0, -1));
+      return;
     }
+    setDonorName(removeLastHangul(donorName));
   };
 
   const handleSpace = () => {
     const field = activeField ?? "name";
-    if (field === "message") {
-      setMessage(message + " ");
-    } else {
-      setDonorName(donorName + " ");
+    if (field === "phone") {
+      return;
     }
+    setDonorName(donorName + " ");
   };
 
   return (
     <PageBody className="message-page" scroll={false}>
-      {/* Compact campaign + amount summary */}
-      <div className="message-page__summary">
-        <div className="message-page__summary-img-wrap">
-          {selectedCampaign.imageUrl ? (
-            <img
-              src={selectedCampaign.imageUrl}
-              alt={selectedCampaign.title}
-              className="message-page__summary-img"
-            />
-          ) : (
-            <div className="message-page__summary-placeholder" />
-          )}
-        </div>
-        <div className="message-page__summary-info">
-          <span className="message-page__summary-title">
-            {selectedCampaign.title}
-          </span>
-          <span className="message-page__summary-desc">
-            {selectedCampaign.description}
-          </span>
-        </div>
-        <div className="message-page__summary-amount">
-          <span className="message-page__summary-type">{typeLabel}</span>
-          <span className="message-page__summary-price">
-            {formattedAmount} 원
-          </span>
-        </div>
-      </div>
+      <h2 className="message-page__title">후원자님의 이름을 남겨주세요.</h2>
+      <p className="message-page__subtitle">*모바일로 기부증서를 보내드립니다.</p>
 
-      <h2 className="message-page__title">메세지를 남겨주세요</h2>
-
-      {/* Form card + keyboard overlay */}
-      <div className="message-page__form-area">
-        <div className="message-page__form-card">
-          <div
-            className={`message-page__field${activeField === "name" ? " message-page__field--active" : ""}`}
-            onClick={() => setActiveField("name")}
-          >
-            <span className="message-page__field-label">이름 :</span>
-            <span className="message-page__field-value">
-              {donorName || <span className="message-page__field-placeholder">이름을 입력하세요</span>}
-            </span>
-          </div>
-          <div className="message-page__field-divider" />
-          <div
-            className={`message-page__field${activeField === "message" ? " message-page__field--active" : ""}`}
-            onClick={() => setActiveField("message")}
-          >
-            <span className="message-page__field-label">내용 :</span>
-            <span className="message-page__field-value">
-              {message || <span className="message-page__field-placeholder">내용을 입력하세요</span>}
-            </span>
-          </div>
-        </div>
-
-        <VirtualKeyboard
-          onKeyPress={handleKeyPress}
-          onBackspace={handleBackspace}
-          onSpace={handleSpace}
-        />
-      </div>
-
-      <PageFooter>
+      <div className="message-page__form-card">
         <button
           type="button"
-          className="message-page__skip"
-          onClick={() => navigate("/outfit")}
+          className={`message-page__field${activeField === "name" || activeField === null ? " message-page__field--active" : ""}`}
+          onClick={() => setActiveField("name")}
         >
-          건너뛰기
+          <span className="message-page__field-label">이름/닉네임 :</span>
+          <span className={`message-page__field-value${donorName ? "" : " message-page__field-value--empty"}`}>
+            {donorName || "이름을 입력하세요"}
+          </span>
         </button>
+
+        <span className="message-page__divider" />
+
         <button
           type="button"
-          className="message-page__continue"
-          onClick={() => navigate("/outfit")}
+          className={`message-page__field${activeField === "phone" ? " message-page__field--active" : ""}`}
+          onClick={() => setActiveField("phone")}
         >
-          계속
+          <span className="message-page__field-label">전화번호:</span>
+          <span className={`message-page__field-value${donorPhone ? "" : " message-page__field-value--empty"}`}>
+            {donorPhone || "전화번호를 입력하세요"}
+          </span>
         </button>
-      </PageFooter>
+      </div>
+
+      <VirtualKeyboard
+        onKeyPress={handleKeyPress}
+        onBackspace={handleBackspace}
+        onSpace={handleSpace}
+      />
+
+      <button
+        type="button"
+        className="message-page__photo-btn"
+        onClick={() => navigate("/outfit")}
+      >
+        사진 촬영하기
+      </button>
     </PageBody>
   );
 }

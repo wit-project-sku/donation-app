@@ -1,4 +1,4 @@
-.page-footer {
+﻿.page-footer {
   flex-shrink: 0;
   padding-top: 24px;
   width: 100%;
@@ -45,6 +45,6 @@
 }
 
 .page-footer__back-btn:active {
-  border-color: #FE6C50;
+  border-color: #FF7BB7;
   transform: scale(0.97);
 }

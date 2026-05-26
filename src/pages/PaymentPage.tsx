@@ -6,6 +6,8 @@ import {
   createMerchantUid,
   processPayment,
 } from "../api/payments";
+import kakaoPayIcon from "../assets/kakao-pay.svg";
+import naverPayIcon from "../assets/naver-pay.svg";
 import { CardPaymentOverlay } from "../components/CardPaymentOverlay";
 import { EasyPayOverlay } from "../components/EasyPayOverlay";
 import { IconCreditCard } from "../components/Icon";
@@ -84,7 +86,7 @@ export function PaymentPage() {
 
   const finishPayment = () => {
     setOverlay(null);
-    navigate("/complete");
+    navigate("/message");
   };
 
   const cancelPayment = () => {
@@ -119,16 +121,16 @@ export function PaymentPage() {
           </p>
           <button
             type="button"
-            className="payment-page__card-btn"
+            className="payment-page__pay-tile payment-page__pay-tile--card"
             onClick={() => startPayment("card")}
             disabled={overlay != null}
           >
-            <IconCreditCard size={96} strokeWidth={1.5} aria-hidden />
+            <IconCreditCard size={118} strokeWidth={1.8} aria-hidden />
             <span>신용/체크카드</span>
           </button>
         </section>
 
-        <section className="payment-page__section">
+        <section className="payment-page__section payment-page__section--easy">
           <h2 className="payment-page__section-title">간편 결제</h2>
           <p className="payment-page__section-desc">
             QR 코드를 스캔한 후, 결제가 완료될 때까지 화면을 유지해주세요
@@ -136,20 +138,28 @@ export function PaymentPage() {
           <div className="payment-page__easy-pay">
             <button
               type="button"
-              className="payment-page__easy-btn"
+              className="payment-page__pay-tile"
               onClick={() => startPayment("kakao")}
               disabled={overlay != null}
             >
-              <span className="payment-page__kakao-logo">pay</span>
+              <img
+                className="payment-page__pay-logo payment-page__pay-logo--kakao"
+                src={kakaoPayIcon}
+                alt="카카오 페이"
+              />
               <span>카카오 페이</span>
             </button>
             <button
               type="button"
-              className="payment-page__easy-btn"
+              className="payment-page__pay-tile"
               onClick={() => startPayment("naver")}
               disabled={overlay != null}
             >
-              <span className="payment-page__naver-logo">N pay</span>
+              <img
+                className="payment-page__pay-logo payment-page__pay-logo--naver"
+                src={naverPayIcon}
+                alt="네이버 페이"
+              />
               <span>네이버 페이</span>
             </button>
           </div>

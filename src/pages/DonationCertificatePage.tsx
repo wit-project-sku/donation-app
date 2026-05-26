@@ -8,27 +8,41 @@ import { useDonationStore } from "../store/donationStore";
 import { formatCurrency } from "../utils/format";
 import "./DonationCertificatePage.css";
 
+function buildMobileCertificateUrl(params: {
+  amount: number;
+  date: string;
+  message: string;
+  name: string;
+  photoUrl: string;
+}) {
+  const search = new URLSearchParams({
+    amount: String(params.amount),
+    date: params.date,
+    message: params.message,
+    name: params.name,
+  });
+
+  if (params.photoUrl) {
+    search.set("photo", params.photoUrl);
+  }
+
+  return `${window.location.origin}/mobile-certificate?${search.toString()}`;
+}
+
 export function DonationCertificatePage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const {
     selectedCampaign,
     paymentMethod,
-    donationType,
     amount,
-    message,
     donorName,
+    message,
     selectedOutfit,
     capturedPhotoUrl,
     submittedRecordId,
     setSubmittedRecordId,
   } = useDonationStore();
-
-  useEffect(() => {
-    if (!selectedCampaign || !paymentMethod) {
-      navigate("/complete", { replace: true });
-    }
-  }, [selectedCampaign, paymentMethod, navigate]);
 
   const submitMutation = useMutation({
     mutationFn: () => {
@@ -38,98 +52,83 @@ export function DonationCertificatePage() {
     onSuccess: (record) => {
       setSubmittedRecordId(record.id);
       queryClient.invalidateQueries({ queryKey: ["wallEntries"] });
-      navigate("/wall");
     },
   });
 
-  const handleContinue = () => {
-    if (submittedRecordId != null) {
+  useEffect(() => {
+    if (!selectedCampaign || !paymentMethod || amount <= 0) {
+      navigate("/", { replace: true });
+    }
+  }, [selectedCampaign, paymentMethod, amount, navigate]);
+
+  const handleNext = () => {
+    if (submittedRecordId != null || submitMutation.isSuccess) {
       navigate("/wall");
       return;
     }
-    submitMutation.mutate();
+
+    submitMutation.mutate(undefined, {
+      onSuccess: () => navigate("/wall"),
+    });
   };
 
   if (!selectedCampaign) return null;
 
-  const displayName = donorName.trim() || "";
-  const displayMessage = message.trim() || "";
-  const donationLabel =
-    donationType === "regular" ? "정기 후원" : "일시 후원";
-  const photoSrc =
-    capturedPhotoUrl ?? selectedOutfit?.imageUrl ?? null;
+  const displayName = donorName.trim() || "후원자";
+  const displayMessage =
+    message.trim() || "귀하의 따뜻한 마음과 의미 있는 기여에 깊은 감사를 전합니다.";
+  const photoSrc = capturedPhotoUrl ?? selectedOutfit?.imageUrl ?? null;
+  const mobilePhotoUrl =
+    photoSrc && !photoSrc.startsWith("data:") && photoSrc.length <= 1000
+      ? photoSrc
+      : selectedOutfit?.imageUrl ?? selectedCampaign.imageUrl;
+
+  const today = new Date();
+  const dateLabel = `${today.getFullYear()}년 ${today.getMonth() + 1}월 ${today.getDate()}일`;
+  const qrValue = buildMobileCertificateUrl({
+    amount,
+    date: dateLabel,
+    message: displayMessage,
+    name: displayName,
+    photoUrl: mobilePhotoUrl,
+  });
 
   return (
-    <PageBody className="cert-page">
+    <PageBody className="cert-page" scroll={false}>
       <article className="cert-page__card" aria-label="기부 증서">
-        <h1 className="cert-page__title">기부 증서</h1>
-
-        <div className="cert-page__body">
-          <div className="cert-page__photo-wrap">
-            {photoSrc ? (
-              <img
-                className="cert-page__photo"
-                src={photoSrc}
-                alt=""
-                loading="lazy"
-              />
-            ) : (
-              <div className="cert-page__photo cert-page__photo--placeholder" />
-            )}
+        <div className="cert-page__card-header">
+          <h1 className="cert-page__title">기부증서</h1>
+          <div className="cert-page__qr" aria-label="모바일 증서 QR 코드">
+            <QRCodeSVG
+              value={qrValue}
+              size={86}
+              bgColor="#fff"
+              fgColor="#1a1a1a"
+            />
           </div>
-
-          <div className="cert-page__fields">
-            <div className="cert-page__field">
-              <span className="cert-page__field-line" aria-hidden />
-              <span
-                className={`cert-page__field-value${!displayName ? " cert-page__field-value--placeholder" : ""}`}
-              >
-                {displayName || "이름"}
-              </span>
-            </div>
-            <div className="cert-page__field">
-              <span className="cert-page__field-line" aria-hidden />
-              <span
-                className={`cert-page__field-value${!displayMessage ? " cert-page__field-value--placeholder" : ""}`}
-              >
-                {displayMessage || "메세지"}
-              </span>
-            </div>
-          </div>
-
-          {photoSrc && (
-            <div className="cert-page__qr" aria-label="QR code">
-              <QRCodeSVG
-                value={photoSrc}
-                size={176}
-                bgColor="#fff"
-                fgColor="#1a1a1a"
-              />
-            </div>
-          )}
         </div>
 
-        <div className="cert-page__campaign">
-          <img
-            className="cert-page__campaign-thumb"
-            src={selectedCampaign.imageUrl}
-            alt=""
-            loading="lazy"
-          />
-          <div className="cert-page__campaign-info">
-            <h2 className="cert-page__campaign-title">
-              {selectedCampaign.title}
-            </h2>
-            <p className="cert-page__campaign-desc">
-              {selectedCampaign.description}
-            </p>
-          </div>
-          <div className="cert-page__campaign-amount">
-            <span className="cert-page__campaign-type">{donationLabel}</span>
-            <span className="cert-page__campaign-value">
-              {formatCurrency(amount)} 원
-            </span>
-          </div>
+        <div className="cert-page__photo-wrap">
+          {photoSrc ? (
+            <img
+              className="cert-page__photo"
+              src={photoSrc}
+              alt=""
+              loading="lazy"
+            />
+          ) : (
+            <div className="cert-page__photo cert-page__photo--placeholder" />
+          )}
+          <span className="cert-page__photo-brand">unicef</span>
+        </div>
+
+        <div className="cert-page__info">
+          <span className="cert-page__amount">
+            {formatCurrency(amount)}원
+          </span>
+          <span className="cert-page__name">{displayName}</span>
+          <p className="cert-page__thanks">{displayMessage}</p>
+          <span className="cert-page__date">{dateLabel}</span>
         </div>
       </article>
 
@@ -139,24 +138,14 @@ export function DonationCertificatePage() {
         </p>
       )}
 
-      <div className="cert-page__actions">
-        <button
-          type="button"
-          className="cert-page__btn cert-page__btn--skip"
-          onClick={() => navigate("/wall")}
-          disabled={submitMutation.isPending}
-        >
-          건너뛰기
-        </button>
-        <button
-          type="button"
-          className="cert-page__btn cert-page__btn--continue"
-          onClick={handleContinue}
-          disabled={submitMutation.isPending}
-        >
-          {submitMutation.isPending ? "저장 중..." : "계속"}
-        </button>
-      </div>
+      <button
+        type="button"
+        className="cert-page__next"
+        onClick={handleNext}
+        disabled={submitMutation.isPending}
+      >
+        {submitMutation.isPending ? "저장 중..." : "다음"}
+      </button>
     </PageBody>
   );
 }

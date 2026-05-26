@@ -1,7 +1,6 @@
 /** Routes where the back button must not appear (forward-only or terminal steps) */
 export const ROUTES_WITHOUT_BACK: ReadonlySet<string> = new Set([
   "/",
-  "/complete",
   "/message",
   "/wall",
 ]);

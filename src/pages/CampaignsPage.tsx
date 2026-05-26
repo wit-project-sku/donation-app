@@ -4,11 +4,10 @@ import { useNavigate } from "react-router-dom";
 import { fetchCampaigns } from "../api/campaigns";
 import { CampaignCard } from "../components/CampaignCard";
 import { PageBody } from "../components/layout/PageBody";
-import { PageFooter } from "../components/layout/PageFooter";
 import { useDonationStore } from "../store/donationStore";
 import "./CampaignsPage.css";
 
-const CARD_WIDTH = 1231;
+const CARD_WIDTH = 1820;
 
 export function CampaignsPage() {
   const navigate = useNavigate();
@@ -32,7 +31,6 @@ export function CampaignsPage() {
     track.scrollTo({ left: Math.max(0, offset), behavior });
   }, []);
 
-  // Scroll to middle card once campaigns load
   useEffect(() => {
     if (campaigns.length === 0) return;
     const mid = Math.floor(campaigns.length / 2);
@@ -42,7 +40,6 @@ export function CampaignsPage() {
     );
   }, [campaigns.length, scrollToIndex]);
 
-  // Track which card is centered as the user scrolls freely
   const handleScroll = useCallback(() => {
     clearTimeout(scrollTimerRef.current);
     scrollTimerRef.current = setTimeout(() => {
@@ -60,7 +57,6 @@ export function CampaignsPage() {
     }, 60);
   }, []);
 
-  // Clicking the centered card navigates; clicking an off-center card snaps to it
   const handleSelect = (campaign: (typeof campaigns)[0], index: number) => {
     if (index !== activeIndex) {
       scrollToIndex(index);
@@ -68,7 +64,19 @@ export function CampaignsPage() {
       return;
     }
     setSelectedCampaign(campaign);
-    navigate("/amount");
+    navigate("/campaign");
+  };
+
+  const goPrev = () => {
+    const next = Math.max(0, activeIndex - 1);
+    setActiveIndex(next);
+    scrollToIndex(next);
+  };
+
+  const goNext = () => {
+    const next = Math.min(campaigns.length - 1, activeIndex + 1);
+    setActiveIndex(next);
+    scrollToIndex(next);
   };
 
   return (
@@ -115,7 +123,29 @@ export function CampaignsPage() {
         </div>
       </div>
 
-      <PageFooter />
+      {/* Swiper navigation buttons — far left / far right below swiper */}
+      {!isLoading && !isError && campaigns.length > 1 && (
+        <div className="campaigns-page__nav">
+          <button
+            type="button"
+            className="campaigns-page__nav-btn"
+            onClick={goPrev}
+            disabled={activeIndex === 0}
+            aria-label="이전"
+          >
+            ‹
+          </button>
+          <button
+            type="button"
+            className="campaigns-page__nav-btn"
+            onClick={goNext}
+            disabled={activeIndex === campaigns.length - 1}
+            aria-label="다음"
+          >
+            ›
+          </button>
+        </div>
+      )}
     </PageBody>
   );
 }

@@ -1,60 +1,70 @@
 .virtual-keyboard {
   width: 100%;
-  height: 720px;
-  opacity: 0.7;
-  background: #C5C5C1;
-  border-radius: 12px;
-  padding: 10px 12px 14px;
+  height: 868px;
+  box-sizing: border-box;
+  padding: 86px 46px 72px;
+  background: #D8D8D4;
+  border-radius: 0;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  box-sizing: border-box;
-  flex-shrink: 0;
+  gap: 44px;
 }
 
 .virtual-keyboard__row {
   display: flex;
-  gap: 8px;
   justify-content: center;
-  flex: 1;
+  gap: 24px;
+  height: 88px;
+  flex-shrink: 0;
 }
 
-/* ── Letter keys — white ── */
+.virtual-keyboard__row--narrow {
+  padding: 0 116px;
+}
+
+.virtual-keyboard__row--middle {
+  padding: 0 50px;
+}
+
+.virtual-keyboard__row--bottom {
+  padding: 0 190px;
+}
+
+.virtual-keyboard__row--space {
+  padding: 0 202px;
+}
+
 .virtual-keyboard__key {
-  flex: 1;
-  height: 100%;
-  background: #FFFFFF;
-  border: none;
-  border-radius: 8px;
-  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 26px;
-  font-weight: 400;
+  min-width: 126px;
+  height: 88px;
+  border: 0;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.28);
   color: #000;
-  cursor: pointer;
-  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.35);
-  transition: opacity 0.1s;
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
+  font-size: 34px;
+  font-weight: 900;
+  line-height: 1;
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
+  flex: 1;
 }
 
 .virtual-keyboard__key:active {
-  opacity: 0.6;
+  opacity: 0.65;
 }
 
-/* ── Special keys — darker gray ── */
-.virtual-keyboard__key--special {
-  background: #ADB5BD;
-  color: #000;
-  flex: 1.5;
-}
-
-/* ── Space bar ── */
-.virtual-keyboard__key--spacebar {
-  flex: 5;
-}
-
-/* ── Globe key ── */
+.virtual-keyboard__key--special,
+.virtual-keyboard__key--return,
 .virtual-keyboard__key--globe {
-  flex: 1.5;
+  background: #fff;
+  flex: 1.35;
+}
+
+.virtual-keyboard__key--spacebar {
+  flex: 6;
+  font-size: 30px;
 }

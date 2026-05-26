@@ -1,229 +1,141 @@
 .message-page {
-  padding-bottom: 36px;
-  gap: 32px;
-}
-
-/* ── Top summary card ── */
-.message-page__summary {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 40px;
-  padding: 32px 48px;
   width: 1820px;
-  max-width: 100%;
-  height: 316px;
-  border-radius: 42.9px;
-  border: 5px solid #E8E8E8;
-  background: #FFF;
-  flex-shrink: 0;
+  height: 2250px;
   box-sizing: border-box;
-}
-
-.message-page__summary-img-wrap {
-  width: 160px;
-  height: 160px;
-  border-radius: 20px;
+  gap: 0;
+  padding: 0 36px;
   overflow: hidden;
-  flex-shrink: 0;
+  background: #fff;
 }
 
-.message-page__summary-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-.message-page__summary-placeholder {
-  width: 100%;
-  height: 100%;
-  background: #E8E8E8;
-}
-
-.message-page__summary-info {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  min-width: 0;
-}
-
-.message-page__summary-location {
-  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 20px;
-  font-weight: 700;
-  color: #FE6C50;
-  line-height: 100%;
-}
-
-.message-page__summary-title {
-  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 40px;
-  font-weight: 700;
-  color: #999;
-  line-height: 1.2;
-  word-break: keep-all;
-}
-
-.message-page__summary-desc {
-  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 20px;
-  font-weight: 400;
-  color: #999;
-  line-height: 1.4;
-  word-break: keep-all;
-}
-
-.message-page__summary-amount {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 8px;
-  flex-shrink: 0;
-}
-
-.message-page__summary-type {
-  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 28px;
-  font-weight: 700;
-  color: #999;
-}
-
-.message-page__summary-price {
-  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 60px;
-  font-weight: 700;
-  color: #FE6C50;
-  letter-spacing: -0.02em;
-}
-
-/* ── Page title ── */
 .message-page__title {
+  margin: 12px 0 0;
+  color: #333;
   font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 60px;
-  font-weight: 500;
+  font-size: 32px;
+  font-weight: 900;
+  line-height: 1.15;
+  flex-shrink: 0;
+}
+
+.message-page__subtitle {
+  margin: 8px 0 0;
   color: #999;
-  margin: 0;
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1;
   flex-shrink: 0;
 }
 
-/* ── Form area — positions form card + keyboard overlay ── */
-.message-page__form-area {
-  position: relative;
-  width: 1820px;
-  max-width: 100%;
-  height: 1365px;
-  flex-shrink: 0;
-}
-
-/* ── Form card ── */
 .message-page__form-card {
-  position: absolute;
-  inset: 0;
-  border-radius: 42.9px;
-  border: 5px solid #E8E8E8;
-  background: #FFF;
-  overflow-y: auto;
+  width: 100%;
+  height: 456px;
+  margin-top: 54px;
   box-sizing: border-box;
-  padding: 20px 0;
-  scrollbar-width: none;
-}
-
-.message-page__form-card::-webkit-scrollbar {
-  display: none;
+  border-radius: 24px;
+  border: 4px solid #FF7BB7;
+  background: #fff;
+  padding: 86px 108px 54px;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
 }
 
 .message-page__field {
-  padding: 40px 56px;
+  position: relative;
   display: flex;
-  flex-direction: column;
-  gap: 12px;
+  align-items: center;
+  gap: 30px;
+  height: 92px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  text-align: left;
   cursor: pointer;
-  transition: background 0.15s;
-}
-
-.message-page__field--active {
-  background: #FBF3EA;
-}
-
-.message-page__field-divider {
-  height: 5px;
-  background: #E8E8E8;
-  margin: 0;
+  border-radius: 18px;
+  transition: background 0.15s, box-shadow 0.15s;
 }
 
 .message-page__field-label {
-  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 32px;
-  font-weight: 700;
   color: #999;
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
+  font-size: 36px;
+  font-weight: 900;
+  line-height: 1;
+  white-space: nowrap;
 }
 
 .message-page__field-value {
-  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 40px;
-  font-weight: 400;
   color: #333;
-  min-height: 52px;
-  display: block;
-  word-break: break-all;
-}
-
-.message-page__field-placeholder {
-  color: #ccc;
-  font-weight: 400;
-}
-
-/* ── Virtual keyboard — sits at bottom of form area, covers bottom of form card ── */
-.message-page .virtual-keyboard {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 10;
-  border-radius: 0 0 42.9px 42.9px;
-  opacity: 0.85;
-}
-
-/* ── Footer — skip far left, continue far right ── */
-.message-page .page-footer__actions {
-  justify-content: space-between;
-}
-
-/* ── Footer buttons ── */
-.message-page__skip,
-.message-page__continue {
-  height: 148px;
-  border-radius: 42.9px;
   font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 48px;
+  font-size: 36px;
+  font-weight: 900;
+  line-height: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.message-page__field-value--empty {
+  color: #c7c7c7;
   font-weight: 700;
+}
+
+.message-page__field--active .message-page__field-value {
+  color: #333;
+}
+
+.message-page__field--active {
+  background: #fff0f7;
+  box-shadow: inset 0 0 0 3px #FF7BB7;
+}
+
+.message-page__field--active::before {
+  content: "";
+  width: 12px;
+  height: 54px;
+  border-radius: 999px;
+  background: #FF7BB7;
+  margin-left: 18px;
+  flex-shrink: 0;
+}
+
+.message-page__divider {
+  display: block;
+  width: 100%;
+  height: 2px;
+  margin: 18px 0 28px;
+  background: #E8E8E8;
+  flex-shrink: 0;
+}
+
+.message-page .virtual-keyboard {
+  margin-top: 80px;
+  flex-shrink: 0;
+}
+
+.message-page__photo-btn {
+  align-self: flex-end;
+  width: 416px;
+  height: 112px;
+  margin-top: 114px;
+  margin-right: 0;
+  border: 0;
+  border-radius: 56px;
+  background: #FF7BB7;
+  color: #fff;
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
+  font-size: 27px;
+  font-weight: 900;
+  line-height: 1;
   cursor: pointer;
+  flex-shrink: 0;
   transition: opacity 0.15s, transform 0.1s;
 }
 
-.message-page__skip:active,
-.message-page__continue:active {
+.message-page__photo-btn:active {
   transform: scale(0.98);
-}
-
-.message-page__skip {
-  width: 514px;
-  height: 148px;
-  flex: none;
-  background: #FFF;
-  color: #999;
-  border: 5px solid #E8E8E8;
-  border-radius: 42.9px;
-}
-
-.message-page__continue {
-  width: 416px;
-  height: 148px;
-  flex: none;
-  background: #FFF;
-  color: #999;
-  border: 5px solid #E8E8E8;
-  border-radius: 42.9px;
+  opacity: 0.9;
 }

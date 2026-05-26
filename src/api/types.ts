@@ -41,20 +41,20 @@ export interface PaymentHistoryDto {
   paymentMethod: PaymentMethodDto;
   donatorName: string;
   photoUrl: string | null;
-  message?: string | null;
   donatedAt: string;
 }
 
-/** Body for POST /api/donations/payment — saved before Wall of Givers */
-export interface SubmitDonationPayload {
-  campaignId: number;
-  campaignName: string;
-  totalAmount: number;
-  paymentMethod: PaymentMethodDto;
+/** Multipart data part for POST /api/donations/details */
+export interface SubmitDonationDetailsData {
+  merchantUid: string;
   donatorName: string;
-  message?: string;
-  photoUrl?: string | null;
-  outfitId?: number;
+  phoneNumber: string;
+  imageUrl: string | null;
+}
+
+export interface SubmitDonationDetailsPayload {
+  data: SubmitDonationDetailsData;
+  photo?: Blob | null;
 }
 
 export interface PaymentHistoryParams extends PageParams {

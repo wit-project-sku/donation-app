@@ -1,5 +1,5 @@
-import { submitDonation, toPaymentMethodDto } from "../api/submitDonation";
-import type { SubmitDonationPayload } from "../api/types";
+import { submitDonation } from "../api/submitDonation";
+import type { SubmitDonationDetailsPayload } from "../api/types";
 import type { Outfit } from "../api/outfits";
 import type { Campaign, PaymentMethod } from "../types";
 
@@ -8,36 +8,48 @@ export type SubmitSessionSlice = {
   amount: number;
   paymentMethod: PaymentMethod;
   donorName: string;
+  donorPhone: string;
   message: string;
   capturedPhotoUrl: string | null;
   selectedOutfit: Outfit | null;
+  merchantUid: string | null;
 };
 
-export function buildSubmitPayload(state: SubmitSessionSlice): SubmitDonationPayload {
+function isFileBackedPhoto(url: string | null): url is string {
+  return Boolean(url && (url.startsWith("data:") || url.startsWith("blob:")));
+}
+
+async function photoUrlToBlob(url: string): Promise<Blob> {
+  const response = await fetch(url);
+  return response.blob();
+}
+
+export async function buildSubmitPayload(
+  state: SubmitSessionSlice,
+): Promise<SubmitDonationDetailsPayload> {
   const campaign = state.selectedCampaign;
   const paymentMethod = state.paymentMethod;
 
-  if (!campaign || !paymentMethod || state.amount <= 0) {
-    throw new Error("Missing campaign, payment method, or amount");
+  if (!campaign || !paymentMethod || state.amount <= 0 || !state.merchantUid) {
+    throw new Error("기부 저장에 필요한 정보가 없습니다.");
   }
 
-  const photoUrl =
-    state.capturedPhotoUrl ?? state.selectedOutfit?.imageUrl ?? null;
+  const photo =
+    isFileBackedPhoto(state.capturedPhotoUrl)
+      ? await photoUrlToBlob(state.capturedPhotoUrl)
+      : null;
 
   return {
-    campaignId: Number(campaign.id),
-    campaignName: campaign.title,
-    totalAmount: state.amount,
-    paymentMethod: toPaymentMethodDto(paymentMethod),
-    donatorName: state.donorName.trim() || "Anonymous",
-    message: state.message.trim() || undefined,
-    photoUrl,
-    outfitId: state.selectedOutfit
-      ? Number(state.selectedOutfit.id)
-      : undefined,
+    data: {
+      merchantUid: state.merchantUid,
+      donatorName: state.donorName.trim() || "익명",
+      phoneNumber: state.donorPhone.replace(/\D/g, ""),
+      imageUrl: photo ? null : state.capturedPhotoUrl,
+    },
+    photo,
   };
 }
 
 export async function submitCurrentDonation(state: SubmitSessionSlice) {
-  return submitDonation(buildSubmitPayload(state));
+  return submitDonation(await buildSubmitPayload(state));
 }

@@ -1,4 +1,4 @@
-.donation-toggle {
+﻿.donation-toggle {
   display: flex;
   align-items: center;
   width: 100%;
@@ -31,7 +31,7 @@
 }
 
 .donation-toggle__btn--active {
-  border-color: #FE6C50;
+  border-color: #FF7BB7;
   background: #FFF;
-  color: #FE6C50;
+  color: #FF7BB7;
 }

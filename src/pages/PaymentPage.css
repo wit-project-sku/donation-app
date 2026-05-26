@@ -1,15 +1,18 @@
 .payment-page {
   position: relative;
-  gap: 48px;
-  padding-bottom: 52px;
+  width: 1820px;
+  height: 2250px;
+  box-sizing: border-box;
+  gap: 0;
+  padding: 24px 24px 0;
   overflow: hidden;
+  background: #fff;
 }
 
 .payment-page__content {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 48px;
   min-height: 0;
   overflow-y: auto;
   transition: opacity 0.3s;
@@ -21,128 +24,100 @@
 }
 
 .payment-page__error {
-  margin: 0;
+  margin: 34px 0 0;
   padding: 24px 32px;
-  border-radius: var(--radius-lg);
-  background: #fff0f0;
+  border-radius: 28px;
+  background: #fff;
   border: 3px solid #e8a0a0;
-  font-size: 32px;
-  font-weight: 600;
+  font-size: 30px;
+  font-weight: 700;
   color: #b42318;
   line-height: 1.4;
 }
 
-/* ── Section ── */
 .payment-page__section {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 18px;
+  margin-top: 64px;
+}
+
+.payment-page__section--easy {
+  margin-top: 96px;
 }
 
 .payment-page__section-title {
-  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 68px;
-  font-weight: 700;
-  color: #999;
   margin: 0;
+  color: #555;
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
+  font-size: 46px;
+  font-weight: 900;
+  line-height: 1;
 }
 
 .payment-page__section-desc {
-  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 32px;
-  font-weight: 400;
-  color: #999;
   margin: 0;
-  line-height: 1.55;
+  color: #999;
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.35;
 }
 
-/* ── Card payment button ── */
-.payment-page__card-btn {
+.payment-page__pay-tile {
   width: 400px;
   height: 400px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 24px;
-  background: #FFF;
-  border: 5px solid #FE6C50;
-  border-radius: 42.9px;
-  color: #FE6C50;
+  gap: 34px;
+  background: #fff;
+  border: 3px solid #E8E8E8;
+  border-radius: 28px;
+  color: #999;
   font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 40px;
-  font-weight: 700;
+  font-size: 24px;
+  font-weight: 800;
   cursor: pointer;
-  transition: transform 0.1s, opacity 0.15s;
+  transition: border-color 0.15s, transform 0.1s, opacity 0.15s;
 }
 
-.payment-page__card-btn:active:not(:disabled) {
+.payment-page__pay-tile:active:not(:disabled) {
+  border-color: #FF7BB7;
   transform: scale(0.97);
 }
 
-.payment-page__card-btn:disabled {
+.payment-page__pay-tile:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
 
-/* ── Easy pay grid ── */
+.payment-page__pay-tile--card {
+  border-color: #FF7BB7;
+  color: #FF7BB7;
+}
+
+.payment-page__pay-tile--card span {
+  color: #FF4FA3;
+}
+
 .payment-page__easy-pay {
   display: flex;
-  gap: 28px;
+  gap: 64px;
 }
 
-.payment-page__easy-btn {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 20px;
-  width: 400px;
-  height: 400px;
-  background: #FFF;
-  border: 5px solid #E8E8E8;
-  border-radius: 42.9px;
-  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 40px;
-  font-weight: 700;
-  color: #999;
-  cursor: pointer;
-  transition: border-color 0.15s, transform 0.1s;
+.payment-page__pay-logo {
+  display: block;
+  object-fit: contain;
 }
 
-.payment-page__easy-btn:active:not(:disabled) {
-  border-color: #FE6C50;
-  transform: scale(0.97);
+.payment-page__pay-logo--kakao {
+  width: 280px;
+  height: 110px;
 }
 
-.payment-page__easy-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-/* Payment provider brand colors (intentional) */
-.payment-page__kakao-logo {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 150px;
-  height: 84px;
-  background: #fee500;
-  border-radius: var(--radius-pill);
-  font-size: var(--font-size-md);
-  font-weight: 900;
-  color: #3c1e1e;
-}
-
-.payment-page__naver-logo {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 150px;
-  height: 84px;
-  background: #03c75a;
-  border-radius: var(--radius-pill);
-  font-size: var(--font-size-sm);
-  font-weight: 900;
-  color: white;
+.payment-page__pay-logo--naver {
+  width: 284px;
+  height: 148px;
 }

@@ -45,7 +45,6 @@ function mapPaymentToWallEntry(item: PaymentHistoryDto): WallEntry {
   return {
     id: String(item.id),
     donorName: item.donatorName || "Anonymous",
-    message: item.message?.trim() ?? "",
     amount: item.totalAmount,
     campaignName: item.campaignName,
     paymentMethod: formatPaymentMethod(item.paymentMethod),

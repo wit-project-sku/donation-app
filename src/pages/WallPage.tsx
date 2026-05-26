@@ -1,18 +1,13 @@
+import { Search } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
-import {
-  buildWallColumns,
-  fetchWallEntries,
-  type WallEntry,
-} from "../api/wall";
+import { useDeferredValue, useEffect, useRef, useState } from "react";
+import { fetchWallEntries, type WallEntry } from "../api/wall";
+import { VirtualKeyboard } from "../components/VirtualKeyboard";
 import { WallGiverCard } from "../components/WallGiverCard";
 import { PageBody } from "../components/layout/PageBody";
-import { finishDonationFlow } from "../config/navigation";
 import { useDonationStore } from "../store/donationStore";
+import { appendHangul, removeLastHangul } from "../utils/hangulInput";
 import "./WallPage.css";
-
-const MARQUEE_TEXT = "THE WALL OF GIVERS";
-const MARQUEE_REPEAT = 6;
 
 function donationTypeLabel(
   entry: WallEntry,
@@ -25,9 +20,13 @@ function donationTypeLabel(
 }
 
 export function WallPage() {
-  const navigate = useNavigate();
+  const [search, setSearch] = useState("");
+  const [keyboardOpen, setKeyboardOpen] = useState(false);
+  const deferredSearch = useDeferredValue(search.trim());
+  const searchRef = useRef<HTMLDivElement>(null);
+  const keyboardRef = useRef<HTMLDivElement>(null);
+
   const {
-    message,
     donorName,
     amount,
     donationType,
@@ -35,58 +34,83 @@ export function WallPage() {
     capturedPhotoUrl,
     selectedOutfit,
     submittedRecordId,
-    resetSession,
   } = useDonationStore();
 
   const { data: entries = [], isLoading, isError } = useQuery({
-    queryKey: ["wallEntries", { pageSize: 50 }],
-    queryFn: () => fetchWallEntries({ pageSize: 50 }),
+    queryKey: ["wallEntries", { pageSize: 50, keyword: deferredSearch }],
+    queryFn: () => fetchWallEntries({ pageSize: 50, keyword: deferredSearch }),
   });
 
-  /** Local preview only until certificate POST succeeds */
+  useEffect(() => {
+    if (!keyboardOpen) return;
+
+    const handlePointerDown = (event: PointerEvent) => {
+      const target = event.target as Node;
+      if (
+        searchRef.current?.contains(target) ||
+        keyboardRef.current?.contains(target)
+      ) {
+        return;
+      }
+      setKeyboardOpen(false);
+    };
+
+    document.addEventListener("pointerdown", handlePointerDown);
+    return () => document.removeEventListener("pointerdown", handlePointerDown);
+  }, [keyboardOpen]);
+
   const userEntry: WallEntry | null =
-    submittedRecordId == null
+    submittedRecordId == null && selectedCampaign
       ? {
           id: "current",
-          message: message.trim(),
           donorName: donorName.trim(),
           amount: amount || 0,
-          campaignName: selectedCampaign?.title ?? "",
+          campaignName: selectedCampaign.title,
           paymentMethod:
             donationType === "regular" ? "정기 후원" : "일시 후원",
           timeAgo: "NOW",
           photoUrl:
             capturedPhotoUrl ??
             selectedOutfit?.imageUrl ??
-            selectedCampaign?.imageUrl,
+            selectedCampaign.imageUrl,
           isNew: true,
         }
       : null;
 
   const allEntries = userEntry ? [userEntry, ...entries] : entries;
-  const columns = buildWallColumns(allEntries, 5);
+  const visibleEntries = allEntries.slice(0, 3);
+  const placeholderCount = Math.max(0, 6 - visibleEntries.length);
+
+  const handleKeyPress = (key: string) => {
+    if (key === "\n") {
+      setKeyboardOpen(false);
+      return;
+    }
+    setSearch((value) => appendHangul(value, key));
+  };
 
   return (
     <PageBody className="wall-page" scroll={false}>
-      <header className="wall-page__header">
-        <h1 className="wall-page__title">THE WALL OF GIVERS</h1>
-        <div className="wall-page__marquee-wrap" aria-hidden>
-          <div className="wall-page__marquee-track">
-            {Array.from({ length: MARQUEE_REPEAT }, (_, i) => (
-              <span key={i} className="wall-page__marquee-item">
-                {MARQUEE_TEXT}
-              </span>
-            ))}
-            {Array.from({ length: MARQUEE_REPEAT }, (_, i) => (
-              <span key={`dup-${i}`} className="wall-page__marquee-item">
-                {MARQUEE_TEXT}
-              </span>
-            ))}
-          </div>
-        </div>
-      </header>
+      <h1 className="wall-page__title">기억되는 나눔</h1>
 
-      <section className="wall-page__swiper-panel" aria-label="Donor wall">
+      <div className="wall-page__search-wrap" ref={searchRef}>
+        <input
+          className="wall-page__search"
+          type="text"
+          placeholder="이름으로 검색해보세요!"
+          value={search}
+          onChange={(event) => setSearch(event.target.value)}
+          onFocus={() => setKeyboardOpen(true)}
+          onClick={() => setKeyboardOpen(true)}
+        />
+        <Search className="wall-page__search-icon" size={74} strokeWidth={2.5} />
+      </div>
+
+      <p className="wall-page__subtitle">
+        후원자님들의 따뜻한 마음에 감사드립니다.
+      </p>
+
+      <section className="wall-page__grid-panel" aria-label="기부자의 벽">
         {isLoading && <p className="wall-page__status">불러오는 중...</p>}
         {isError && (
           <p className="wall-page__status wall-page__status--error">
@@ -97,41 +121,42 @@ export function WallPage() {
           <p className="wall-page__status">표시할 기부 내역이 없습니다</p>
         )}
         {!isLoading && !isError && allEntries.length > 0 && (
-          <div className="wall-page__swiper">
-            <div className="wall-page__track">
-              {columns.map((column, colIndex) => (
-                <div key={colIndex} className="wall-page__column">
-                  {column.map((entry) => (
-                    <WallGiverCard
-                      key={entry.id}
-                      donorName={entry.donorName}
-                      message={entry.message}
-                      amount={entry.amount}
-                      campaignName={entry.campaignName}
-                      campaignImageUrl={
-                        entry.id === "current"
-                          ? selectedCampaign?.imageUrl
-                          : entry.photoUrl
-                      }
-                      donationType={donationTypeLabel(entry, donationType)}
-                      photoUrl={entry.photoUrl}
-                      isNew={entry.isNew}
-                    />
-                  ))}
-                </div>
-              ))}
-            </div>
+          <div className="wall-page__grid">
+            {visibleEntries.map((entry) => (
+              <WallGiverCard
+                key={entry.id}
+                donorName={entry.donorName}
+                amount={entry.amount}
+                campaignName={entry.campaignName}
+                campaignImageUrl={
+                  entry.id === "current"
+                    ? selectedCampaign?.imageUrl
+                    : entry.photoUrl
+                }
+                donationType={donationTypeLabel(entry, donationType)}
+                photoUrl={entry.photoUrl}
+                isNew={entry.isNew}
+              />
+            ))}
+            {Array.from({ length: placeholderCount }).map((_, index) => (
+              <div
+                key={`placeholder-${index}`}
+                className="wall-page__placeholder-card"
+              />
+            ))}
           </div>
         )}
       </section>
 
-      <button
-        type="button"
-        className="wall-page__done"
-        onClick={() => finishDonationFlow(navigate, resetSession)}
-      >
-        완료
-      </button>
+      {keyboardOpen && (
+        <div className="wall-page__keyboard" ref={keyboardRef}>
+          <VirtualKeyboard
+            onKeyPress={handleKeyPress}
+            onBackspace={() => setSearch((value) => removeLastHangul(value))}
+            onSpace={() => setSearch((value) => `${value} `)}
+          />
+        </div>
+      )}
     </PageBody>
   );
 }

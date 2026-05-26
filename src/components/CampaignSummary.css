@@ -1,4 +1,4 @@
-.campaign-summary {
+﻿.campaign-summary {
   display: flex;
   gap: 36px;
   align-items: stretch;
@@ -39,7 +39,7 @@
   font-style: normal;
   font-weight: 700;
   line-height: 100%;
-  color: #FE6C50;
+  color: #FF7BB7;
   text-transform: uppercase;
   letter-spacing: 0.03em;
 }

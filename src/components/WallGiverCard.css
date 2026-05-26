@@ -1,172 +1,107 @@
 .wall-giver-card {
-  width: 488.871px;
-  height: 510.193px;
-  background: #fff;
-  border-radius: 20px;
-  border: 2px solid #E8E8E8;
+  width: 484px;
+  height: 805px;
+  box-sizing: border-box;
+  border-radius: 12px;
+  border: 1px solid #FFB6D8;
+  background: #FAE6F2;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  padding: 36px 30px 28px;
   overflow: hidden;
   flex-shrink: 0;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
-  box-sizing: border-box;
 }
 
 .wall-giver-card--new {
-  border-color: #FE6C50;
-  box-shadow: 0 4px 20px rgba(254, 108, 80, 0.2);
+  border-color: #FF7BB7;
 }
 
-/* ── Title row ── */
 .wall-giver-card__title {
-  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 26px;
-  font-weight: 700;
-  color: #FE6C50;
-  text-align: center;
   margin: 0;
-  padding: 18px 16px 14px;
-  flex-shrink: 0;
-}
-
-/* ── Body: photo left, fields right ── */
-.wall-giver-card__body {
-  display: grid;
-  grid-template-columns: 44% 1fr;
-  gap: 14px;
-  padding: 0 16px 14px;
-  flex: 1;
-  min-height: 0;
+  color: #111;
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
+  font-size: 22px;
+  font-weight: 900;
+  line-height: 1;
+  text-align: center;
 }
 
 .wall-giver-card__photo-wrap {
-  width: 100%;
-  height: 100%;
+  position: relative;
+  width: 260px;
+  height: 450px;
+  margin-top: 28px;
+  overflow: hidden;
+  border-radius: 8px;
+  background: #e8e8e8;
+  flex-shrink: 0;
 }
 
 .wall-giver-card__photo {
   width: 100%;
   height: 100%;
-  border-radius: 10px;
   object-fit: cover;
+  object-position: top center;
   display: block;
 }
 
 .wall-giver-card__photo--placeholder {
-  background: #C4C4C4;
-  border-radius: 10px;
+  background: #e8e8e8;
 }
 
-/* ── Fields ── */
-.wall-giver-card__fields {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  padding-top: 10px;
-}
-
-.wall-giver-card__field {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.wall-giver-card__field-value {
+.wall-giver-card__photo-brand {
+  position: absolute;
+  left: 50%;
+  bottom: 10px;
+  transform: translateX(-50%);
+  color: #00a4e4;
   font-family: "Noto Sans", "Noto Sans KR", sans-serif;
   font-size: 20px;
-  font-weight: 600;
-  color: #333;
-  line-height: 1.3;
-  word-break: break-word;
-}
-
-.wall-giver-card__field-value--placeholder {
-  color: #ccc;
-  font-weight: 400;
-}
-
-.wall-giver-card__field-line {
-  display: block;
-  width: 100%;
-  height: 2px;
-  background: #333;
-}
-
-/* ── Campaign strip — same data style as other pages ── */
-.wall-giver-card__campaign {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: #F8ECDE;
-  border-top: 2px solid #E8E8E8;
-  padding: 10px 14px;
-  flex-shrink: 0;
-  height: 100px;
-  box-sizing: border-box;
-}
-
-.wall-giver-card__campaign-thumb {
-  width: 70px;
-  height: 70px;
-  border-radius: 8px;
-  object-fit: cover;
-  display: block;
-  flex-shrink: 0;
-}
-
-.wall-giver-card__campaign-thumb--placeholder {
-  background: #C4C4C4;
-}
-
-.wall-giver-card__campaign-info {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  min-width: 0;
-}
-
-.wall-giver-card__location {
-  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-  color: #FE6C50;
+  font-weight: 900;
   line-height: 1;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
-.wall-giver-card__campaign-name {
-  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 18px;
-  font-weight: 700;
-  color: #333;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.wall-giver-card__amount-wrap {
+.wall-giver-card__info {
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
-  gap: 4px;
-  flex-shrink: 0;
-}
-
-.wall-giver-card__type {
-  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-  color: #999;
-  white-space: nowrap;
+  align-items: center;
+  width: 260px;
+  margin-top: 22px;
+  padding-top: 12px;
+  border-top: 1px solid #FF9BC9;
 }
 
 .wall-giver-card__amount {
+  color: #FF7BB7;
   font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 20px;
-  font-weight: 700;
-  color: #FE6C50;
+  font-size: 26px;
+  font-weight: 900;
+  line-height: 1;
   white-space: nowrap;
+}
+
+.wall-giver-card__name {
+  width: 100%;
+  margin-top: 8px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid #FF9BC9;
+  color: #333;
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
+  font-size: 18px;
+  font-weight: 900;
+  line-height: 1;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wall-giver-card__date {
+  margin-top: 34px;
+  color: #999;
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 1;
 }

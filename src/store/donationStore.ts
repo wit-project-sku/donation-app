@@ -11,7 +11,8 @@ interface DonationState {
   paymentMethod: PaymentMethod;
   message: string;
   donorName: string;
-  activeField: "message" | "name" | null;
+  donorPhone: string;
+  activeField: "phone" | "name" | null;
   skipPhoto: boolean;
   selectedOutfit: Outfit | null;
   /** Booth / token image URL (from Unity camera or outfit preview) */
@@ -28,7 +29,8 @@ interface DonationState {
   setPaymentMethod: (method: PaymentMethod) => void;
   setMessage: (message: string) => void;
   setDonorName: (name: string) => void;
-  setActiveField: (field: "message" | "name" | null) => void;
+  setDonorPhone: (phone: string) => void;
+  setActiveField: (field: "phone" | "name" | null) => void;
   setSkipPhoto: (skip: boolean) => void;
   setSelectedOutfit: (outfit: Outfit | null) => void;
   setCapturedPhotoUrl: (url: string | null) => void;
@@ -45,7 +47,8 @@ const initialState = {
   paymentMethod: null as PaymentMethod,
   message: "",
   donorName: "",
-  activeField: null as "message" | "name" | null,
+  donorPhone: "",
+  activeField: null as "phone" | "name" | null,
   skipPhoto: false,
   selectedOutfit: null as Outfit | null,
   capturedPhotoUrl: null as string | null,
@@ -69,6 +72,7 @@ export const useDonationStore = create<DonationState>()(
       setPaymentMethod: (method) => set({ paymentMethod: method }),
       setMessage: (message) => set({ message }),
       setDonorName: (name) => set({ donorName: name }),
+      setDonorPhone: (phone) => set({ donorPhone: phone }),
       setActiveField: (field) => set({ activeField: field }),
       setSkipPhoto: (skip) => set({ skipPhoto: skip }),
       setSelectedOutfit: (outfit) => set({ selectedOutfit: outfit }),
@@ -87,6 +91,7 @@ export const useDonationStore = create<DonationState>()(
         paymentMethod: state.paymentMethod,
         message: state.message,
         donorName: state.donorName,
+        donorPhone: state.donorPhone,
         skipPhoto: state.skipPhoto,
         selectedOutfit: state.selectedOutfit,
         capturedPhotoUrl: state.capturedPhotoUrl,

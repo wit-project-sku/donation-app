@@ -1,4 +1,4 @@
-.amount-page {
+﻿.amount-page {
   gap: 28px;
   padding-bottom: 40px;
   overflow: hidden;
@@ -12,7 +12,7 @@
   margin: 0 auto;
   border-radius: 42.9px;
   border: 5px solid #E8E8E8;
-  background: #F8ECDE;
+  background: #FFF0F7;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -42,7 +42,7 @@
 
 .amount-page__num--active,
 .amount-page__won--active {
-  color: #FE6C50;
+  color: #FF7BB7;
 }
 
 /* ── Preset grid ── */
@@ -77,9 +77,9 @@
 }
 
 .amount-page__preset--active {
-  border-color: #FE6C50;
+  border-color: #FF7BB7;
   background: #FFF;
-  color: #FE6C50;
+  color: #FF7BB7;
 }
 
 .amount-page__preset--reset {
@@ -105,7 +105,7 @@
 }
 
 .amount-page__donate-btn--active {
-  background: #FE6C50;
+  background: #FF7BB7;
   cursor: pointer;
 }
 
