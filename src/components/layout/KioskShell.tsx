@@ -6,7 +6,7 @@ interface KioskShellProps {
 }
 
 const DESIGN_WIDTH = 1820;
-const DESIGN_HEIGHT = 2250;
+const DESIGN_HEIGHT = 2290;
 
 export function KioskShell({ children }: KioskShellProps) {
   const stageRef = useRef<HTMLDivElement>(null);

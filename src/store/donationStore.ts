@@ -25,6 +25,7 @@ interface DonationState {
   setSelectedCampaign: (campaign: Campaign | null) => void;
   setDonationType: (type: DonationType) => void;
   addAmount: (value: number) => void;
+  setAmount: (value: number) => void;
   resetAmount: () => void;
   setPaymentMethod: (method: PaymentMethod) => void;
   setMessage: (message: string) => void;
@@ -65,10 +66,11 @@ export const useDonationStore = create<DonationState>()(
         set(campaign ? { ...initialState, selectedCampaign: campaign } : initialState),
       setDonationType: (type) => set({ donationType: type }),
       addAmount: (value) =>
-        set((s) => ({
-          amount: s.amount + value,
+        set({
+          amount: value,
           lastAddedPreset: value,
-        })),
+        }),
+      setAmount: (value) => set({ amount: value, lastAddedPreset: value }),
       resetAmount: () => set({ amount: 0, lastAddedPreset: null }),
       setPaymentMethod: (method) => set({ paymentMethod: method }),
       setMessage: (message) => set({ message }),

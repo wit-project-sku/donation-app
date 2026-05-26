@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { CampaignSummary } from "../components/CampaignSummary";
-import { DonationTypeToggle } from "../components/DonationTypeToggle";
 import { PageBody } from "../components/layout/PageBody";
 import { PageFooter } from "../components/layout/PageFooter";
 import { useDonationStore } from "../store/donationStore";
@@ -12,10 +11,8 @@ export function AmountPage() {
   const navigate = useNavigate();
   const {
     selectedCampaign,
-    donationType,
     amount,
     lastAddedPreset,
-    setDonationType,
     addAmount,
     resetAmount,
   } = useDonationStore();
@@ -33,8 +30,6 @@ export function AmountPage() {
   return (
     <PageBody className="amount-page" scroll={false}>
       <CampaignSummary campaign={selectedCampaign} />
-
-      <DonationTypeToggle value={donationType} onChange={setDonationType} />
 
       <div className="amount-page__display">
         <span className={`amount-page__num${hasAmount ? " amount-page__num--active" : ""}`}>

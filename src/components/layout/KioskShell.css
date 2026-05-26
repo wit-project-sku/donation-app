@@ -10,7 +10,7 @@
 
 .kiosk-stage {
   width: 1820px;
-  height: 2250px;
+  height: 2290px;
   transform: scale(var(--kiosk-scale, 1));
   transform-origin: center center;
   flex-shrink: 0;

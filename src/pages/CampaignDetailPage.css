@@ -1,7 +1,7 @@
 .campaign-detail {
   position: relative;
   width: 1820px;
-  height: 2250px;
+  height: 2290px;
   gap: 18px;
   padding: 0;
   overflow: hidden;
@@ -246,7 +246,9 @@
   gap: 18px;
   width: 1820px;
   height: 192px;
+  padding: 0 36px;
   flex-shrink: 0;
+  box-sizing: border-box;
 }
 
 .campaign-detail__donate-btn {

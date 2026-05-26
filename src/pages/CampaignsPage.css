@@ -1,7 +1,7 @@
 .campaigns-page {
   position: relative;
   width: 1820px;
-  height: 2250px;
+  height: 2290px;
   box-sizing: border-box;
   padding: 0;
   gap: 0;
@@ -67,17 +67,16 @@
 
 .campaigns-page__slide {
   width: 1820px;
-  height: 2250px;
+  height: 2290px;
   flex-shrink: 0;
   scroll-snap-align: center;
-  opacity: 0.42;
-  transform: scale(0.985);
-  transition: opacity 0.28s, transform 0.28s;
+  opacity: 1;
+  transform: none;
 }
 
 .campaigns-page__slide--active {
   opacity: 1;
-  transform: scale(1);
+  transform: none;
 }
 
 .campaigns-page__loading {

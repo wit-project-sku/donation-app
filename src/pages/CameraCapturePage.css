@@ -1,6 +1,6 @@
 .camera-page {
   width: 1820px;
-  height: 2250px;
+  height: 2290px;
   box-sizing: border-box;
   padding: 0;
   gap: 0;
@@ -11,7 +11,7 @@
 .camera-page__surface {
   position: relative;
   width: 1820px;
-  height: 2250px;
+  height: 2290px;
   background: #050505;
   overflow: hidden;
 }
@@ -22,9 +22,17 @@
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
   object-position: center;
   display: block;
+}
+
+.camera-page__video {
+  object-fit: cover;
+}
+
+.camera-page__preview {
+  object-fit: contain;
+  background: #050505;
 }
 
 .camera-page__video {

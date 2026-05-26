@@ -25,11 +25,18 @@ export function buildSubmitPayload(
     throw new Error("기부 저장에 필요한 정보가 없습니다.");
   }
 
+  const shareableImageUrl =
+    state.capturedPhotoUrl &&
+    !state.capturedPhotoUrl.startsWith("blob:") &&
+    !state.capturedPhotoUrl.startsWith("data:")
+      ? state.capturedPhotoUrl
+      : null;
+
   return {
     merchantUid: state.merchantUid,
     donatorName: state.donorName.trim() || "익명",
     phoneNumber: state.donorPhone.replace(/\D/g, ""),
-    imageUrl: state.capturedPhotoUrl,
+    imageUrl: shareableImageUrl,
   };
 }
 

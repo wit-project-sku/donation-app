@@ -1,6 +1,6 @@
 .outfit-page {
   width: 1820px;
-  height: 2250px;
+  height: 2290px;
   box-sizing: border-box;
   gap: 0;
   padding: 42px 36px 0;
@@ -59,7 +59,7 @@
 }
 
 .outfit-page__grid-wrap {
-  width: 1502px;
+  width: 1528px;
   margin: 0 auto;
   overflow-x: auto;
   overflow-y: hidden;
@@ -77,7 +77,7 @@
   grid-auto-flow: column;
   grid-template-rows: repeat(2, 490px);
   grid-auto-columns: 478px;
-  column-gap: 34px;
+  column-gap: 47px;
   row-gap: 34px;
   width: max-content;
   padding: 0;
