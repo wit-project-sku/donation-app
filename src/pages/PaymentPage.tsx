@@ -66,7 +66,7 @@ export function PaymentPage() {
     setPaymentMethod(method);
     merchantUidRef.current = createMerchantUid();
     setMerchantUid(merchantUidRef.current);
-    setOverlay(method === "card" ? "card" : method);
+    setOverlay("card");
   };
 
   const handlePaymentError = (err: unknown) => {
