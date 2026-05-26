@@ -8,7 +8,7 @@ interface CardPaymentOverlayProps {
   amount: number;
   onProcessPayment: () => Promise<void>;
   onComplete: () => void;
-  onCancel: () => void;
+  onCancel: () => void | Promise<void>;
   onPaymentFailed: (error: unknown) => void;
 }
 

@@ -9,6 +9,7 @@ const PAYMENT_API_BASE = (
 ).replace(/\/$/, "");
 
 const PAYMENTS_PATH = "/api/donations/payments";
+const CANCEL_PENDING_PATH = "/api/donations/payments/cancel-pending";
 
 export interface ProcessPaymentRequest {
   merchantUid: string;
@@ -18,6 +19,14 @@ export interface ProcessPaymentRequest {
 }
 
 export interface ProcessPaymentResponse {
+  message: string;
+}
+
+export interface CancelPendingPaymentRequest {
+  merchantUid: string;
+}
+
+export interface CancelPendingPaymentResponse {
   message: string;
 }
 
@@ -55,6 +64,34 @@ export async function processPayment(
   if (!response.ok || !body.success) {
     throw new ApiError(
       body.message || `Payment failed (${response.status})`,
+      response.status,
+      body.code,
+      body.errorCode,
+    );
+  }
+
+  return body.data ?? { message: body.message };
+}
+
+export async function cancelPendingPayment(
+  payload: CancelPendingPaymentRequest,
+): Promise<CancelPendingPaymentResponse> {
+  const url = `${PAYMENT_API_BASE}${CANCEL_PENDING_PATH}`;
+
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+
+  const body = (await response.json()) as PaymentApiEnvelope<CancelPendingPaymentResponse>;
+
+  if (!response.ok || !body.success) {
+    throw new ApiError(
+      body.message || `Cancel failed (${response.status})`,
       response.status,
       body.code,
       body.errorCode,

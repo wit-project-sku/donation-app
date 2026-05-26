@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { ApiError } from "../api/client";
 import {
   buildPaymentRequest,
+  cancelPendingPayment,
   createMerchantUid,
   processPayment,
 } from "../api/payments";
@@ -89,10 +90,25 @@ export function PaymentPage() {
     navigate("/message");
   };
 
-  const cancelPayment = () => {
-    merchantUidRef.current = null;
-    setMerchantUid(null);
-    setOverlay(null);
+  const cancelPayment = async () => {
+    const merchantUid = merchantUidRef.current;
+
+    try {
+      if (merchantUid) {
+        await cancelPendingPayment({ merchantUid });
+      }
+    } catch (err) {
+      if (err instanceof ApiError) {
+        const detail = err.errorCode ? ` (${err.errorCode})` : "";
+        setError(`${err.message}${detail}`);
+      } else {
+        setError("결제 취소 요청 중 오류가 발생했습니다");
+      }
+    } finally {
+      merchantUidRef.current = null;
+      setMerchantUid(null);
+      setOverlay(null);
+    }
   };
 
   if (!selectedCampaign) return null;
