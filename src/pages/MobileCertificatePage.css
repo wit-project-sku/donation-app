@@ -132,12 +132,30 @@
 
 .mobile-cert__download {
   width: min(100%, 360px);
-  height: 56px;
+  height: 58px;
   border: 0;
-  border-radius: 16px;
+  border-radius: 999px;
   background: #FF7BB7;
   color: #fff;
-  font-size: 18px;
+  font-family: "Noto Sans", "Noto Sans KR", -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 17px;
   font-weight: 900;
+  letter-spacing: -0.01em;
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 8px 24px rgba(255, 123, 183, 0.38);
+  transition: opacity 0.15s, transform 0.12s;
+}
+
+.mobile-cert__download:active {
+  transform: scale(0.97);
+  opacity: 0.88;
+}
+
+.mobile-cert__download:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }

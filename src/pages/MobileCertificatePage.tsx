@@ -1,5 +1,6 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
+import { Download } from "lucide-react";
 import { formatCurrency } from "../utils/format";
 import "./MobileCertificatePage.css";
 
@@ -52,16 +53,39 @@ export function MobileCertificatePage() {
 </svg>`;
   }, [amountLabel, date, message, name, photo]);
 
-  const downloadCertificate = () => {
-    const blob = new Blob([svgSource], { type: "image/svg+xml;charset=utf-8" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = "donation-certificate.svg";
-    document.body.append(link);
-    link.click();
-    link.remove();
-    URL.revokeObjectURL(url);
+  const [downloading, setDownloading] = useState(false);
+
+  const downloadImage = async () => {
+    if (downloading) return;
+    setDownloading(true);
+    try {
+      if (photo) {
+        // fetch the S3 image as a blob so the browser saves it as a file
+        const res = await fetch(photo);
+        const blob = await res.blob();
+        const ext = blob.type.includes("png") ? "png" : "jpg";
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `unicef-donation.${ext}`;
+        link.click();
+        URL.revokeObjectURL(url);
+      } else {
+        // no photo — fall back to downloading the SVG certificate
+        const blob = new Blob([svgSource], { type: "image/svg+xml;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "donation-certificate.svg";
+        link.click();
+        URL.revokeObjectURL(url);
+      }
+    } catch {
+      // CORS blocked — open in new tab so the user can long-press → save
+      if (photo) window.open(photo, "_blank");
+    } finally {
+      setDownloading(false);
+    }
   };
 
   return (
@@ -89,9 +113,11 @@ export function MobileCertificatePage() {
       <button
         type="button"
         className="mobile-cert__download"
-        onClick={downloadCertificate}
+        onClick={downloadImage}
+        disabled={downloading}
       >
-        증서 다운로드
+        <Download size={20} strokeWidth={2.5} aria-hidden />
+        {downloading ? "저장 중..." : "사진 저장하기"}
       </button>
     </main>
   );
