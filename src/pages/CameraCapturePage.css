@@ -173,7 +173,7 @@
   bottom: 258px;
   z-index: 7;
   display: grid;
-  grid-template-columns: 160px repeat(3, max-content) minmax(0, 1fr);
+  grid-template-columns: 160px repeat(4, max-content);
   align-items: center;
   gap: 18px 26px;
   padding: 22px 28px;
@@ -195,6 +195,34 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.camera-page__device-list {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.camera-page__device {
+  min-height: 54px;
+  max-width: 520px;
+  padding: 0 22px;
+  border: 2px solid rgba(255, 255, 255, 0.34);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
+  font-size: 20px;
+  font-weight: 900;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.camera-page__device--active {
+  border-color: #FF7BB7;
+  background: #FF7BB7;
 }
 
 .camera-page__controls {

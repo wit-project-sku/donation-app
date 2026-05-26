@@ -21,6 +21,8 @@ interface KioskPhotoResponse {
   token?: string;
 }
 
+const ELGATO_LABELS = ["elgato", "facecam", "camera hub", "virtual camera"];
+
 async function uploadKioskPhoto(image: Blob): Promise<KioskPhotoResponse> {
   const form = new FormData();
   form.append("image", image, "capture.jpg");
@@ -37,6 +39,28 @@ async function uploadKioskPhoto(image: Blob): Promise<KioskPhotoResponse> {
   return response.json() as Promise<KioskPhotoResponse>;
 }
 
+function isPreferredUsbCamera(device: MediaDeviceInfo) {
+  const label = device.label.toLowerCase();
+  return ELGATO_LABELS.some((token) => label.includes(token));
+}
+
+function cameraLabel(device: MediaDeviceInfo, index: number) {
+  return device.label || `Camera ${index + 1}`;
+}
+
+async function requestCameraStream(deviceId?: string) {
+  return navigator.mediaDevices.getUserMedia({
+    video: deviceId
+      ? {
+          deviceId: { exact: deviceId },
+          width: { ideal: 1920 },
+          height: { ideal: 1080 },
+        }
+      : true,
+    audio: false,
+  });
+}
+
 function getCameraErrorMessage(error: unknown): string {
   if (!(error instanceof DOMException)) {
     return "Camera access failed. 카메라 접근에 실패했습니다.";
@@ -51,7 +75,7 @@ function getCameraErrorMessage(error: unknown): string {
   }
 
   if (error.name === "NotReadableError" || error.name === "AbortError") {
-    return "Camera may already be in use. 다른 프로그램의 카메라 사용을 종료해 주세요.";
+    return "Camera may already be in use. Elgato Camera Hub 또는 다른 프로그램의 카메라 사용을 확인해 주세요.";
   }
 
   return "Camera access failed. WebView 또는 카메라 상태를 확인해 주세요.";
@@ -73,6 +97,8 @@ export function CameraCapturePage() {
   const [resultToken, setResultToken] = useState<string | null>(null);
   const [errorMsg, setErrorMsg] = useState("");
   const [cameraDevices, setCameraDevices] = useState<MediaDeviceInfo[]>([]);
+  const [selectedCameraDeviceId, setSelectedCameraDeviceId] = useState<string | null>(null);
+  const [activeCameraLabel, setActiveCameraLabel] = useState("");
 
   const support = useMemo(
     () => ({
@@ -89,19 +115,23 @@ export function CameraCapturePage() {
     if (videoRef.current) {
       videoRef.current.srcObject = null;
     }
+    setActiveCameraLabel("");
   }, []);
 
   const refreshDevices = useCallback(async () => {
     if (!navigator.mediaDevices?.enumerateDevices) {
       setCameraDevices([]);
-      return;
+      return [] as MediaDeviceInfo[];
     }
 
     try {
       const devices = await navigator.mediaDevices.enumerateDevices();
-      setCameraDevices(devices.filter((device) => device.kind === "videoinput"));
+      const videoDevices = devices.filter((device) => device.kind === "videoinput");
+      setCameraDevices(videoDevices);
+      return videoDevices;
     } catch {
       setCameraDevices([]);
+      return [] as MediaDeviceInfo[];
     }
   }, []);
 
@@ -133,24 +163,60 @@ export function CameraCapturePage() {
     setResultToken(null);
 
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: true,
-        audio: false,
-      });
+      stopStream();
+
+      const devicesBeforePermission = await refreshDevices();
+      const selectedDevice = selectedCameraDeviceId
+        ? devicesBeforePermission.find((device) => device.deviceId === selectedCameraDeviceId)
+        : null;
+      const preferredDevice =
+        selectedDevice ?? devicesBeforePermission.find(isPreferredUsbCamera);
+
+      let stream = await requestCameraStream(preferredDevice?.deviceId);
+      let devicesAfterPermission = await refreshDevices();
+      let activeDeviceId = stream.getVideoTracks()[0]?.getSettings().deviceId;
+
+      const elgatoDevice =
+        (selectedCameraDeviceId
+          ? devicesAfterPermission.find((device) => device.deviceId === selectedCameraDeviceId)
+          : null) ?? devicesAfterPermission.find(isPreferredUsbCamera);
+
+      if (elgatoDevice?.deviceId && elgatoDevice.deviceId !== activeDeviceId) {
+        stream.getTracks().forEach((track) => track.stop());
+        stream = await requestCameraStream(elgatoDevice.deviceId);
+        activeDeviceId = stream.getVideoTracks()[0]?.getSettings().deviceId;
+        devicesAfterPermission = await refreshDevices();
+      }
 
       streamRef.current = stream;
+
+      const activeDevice = devicesAfterPermission.find(
+        (device) => device.deviceId === activeDeviceId,
+      );
+      if (activeDevice) {
+        setSelectedCameraDeviceId(activeDevice.deviceId);
+        setActiveCameraLabel(activeDevice.label);
+      }
+
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
         await videoRef.current.play();
       }
-      await refreshDevices();
+
       setStatus("streaming");
     } catch (error) {
       setStatus("error");
       setErrorMsg(getCameraErrorMessage(error));
       await refreshDevices();
     }
-  }, [refreshDevices, support.getUserMedia, support.mediaDevices, support.secureContext]);
+  }, [
+    refreshDevices,
+    selectedCameraDeviceId,
+    stopStream,
+    support.getUserMedia,
+    support.mediaDevices,
+    support.secureContext,
+  ]);
 
   const capturePhoto = () => {
     const video = videoRef.current;
@@ -254,8 +320,8 @@ export function CameraCapturePage() {
             </h1>
             <p>
               {status === "requesting"
-                ? "카메라 권한을 요청하고 있습니다."
-                : "Start Camera 버튼을 눌러 USB 카메라를 연결합니다."}
+                ? "Elgato USB camera is being selected."
+                : "Start Camera 버튼을 눌러 Elgato / USB 카메라를 연결합니다."}
             </p>
           </div>
         )}
@@ -296,14 +362,27 @@ export function CameraCapturePage() {
           <span>mediaDevices: {support.mediaDevices ? "yes" : "no"}</span>
           <span>getUserMedia: {support.getUserMedia ? "yes" : "no"}</span>
           <span>secureContext: {support.secureContext ? "yes" : "no"}</span>
-          <span>
-            cameras:{" "}
-            {cameraDevices.length
-              ? cameraDevices
-                  .map((device, index) => device.label || `Camera ${index + 1}`)
-                  .join(", ")
-              : "none / labels hidden"}
-          </span>
+          <span>active: {activeCameraLabel || "none"}</span>
+          <div className="camera-page__device-list">
+            {cameraDevices.length ? (
+              cameraDevices.map((device, index) => (
+                <button
+                  key={device.deviceId || index}
+                  type="button"
+                  className={`camera-page__device${
+                    device.deviceId === selectedCameraDeviceId
+                      ? " camera-page__device--active"
+                      : ""
+                  }`}
+                  onClick={() => setSelectedCameraDeviceId(device.deviceId)}
+                >
+                  {cameraLabel(device, index)}
+                </button>
+              ))
+            ) : (
+              <span>cameras: none / labels hidden</span>
+            )}
+          </div>
         </div>
 
         <div className="camera-page__controls">
