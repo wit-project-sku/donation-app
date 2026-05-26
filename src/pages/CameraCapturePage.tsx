@@ -15,30 +15,8 @@ type CameraStatus =
   | "done"
   | "error";
 
-interface KioskPhotoResponse {
-  imageUrl?: string;
-  image_url?: string;
-  token?: string;
-}
-
 const PHYSICAL_FACECAM_LABELS = ["facecam", "elgato facecam", "facecam pro"];
 const VIRTUAL_CAMERA_LABELS = ["virtual", "obs", "elgato virtual camera"];
-
-async function uploadKioskPhoto(image: Blob): Promise<KioskPhotoResponse> {
-  const form = new FormData();
-  form.append("image", image, "capture.jpg");
-
-  const response = await fetch("/api/kiosk/photo", {
-    method: "POST",
-    body: form,
-  });
-
-  if (!response.ok) {
-    throw new Error(`Upload failed (${response.status})`);
-  }
-
-  return response.json() as Promise<KioskPhotoResponse>;
-}
 
 function isVirtualCamera(device: MediaDeviceInfo) {
   const label = device.label.toLowerCase();
@@ -327,7 +305,11 @@ export function CameraCapturePage() {
     setResultToken(null);
 
     try {
-      if (selectedOutfit) {
+      const shouldUseAi =
+        searchParams.get("ai") === "true" ||
+        searchParams.get("mode") === "greeting";
+
+      if (shouldUseAi && selectedOutfit) {
         const processedUrl = await processArPhoto({
           image: capturedBlob,
           outfit: selectedOutfit,
@@ -337,11 +319,8 @@ export function CameraCapturePage() {
         setResultImageUrl(processedUrl);
         setCapturedPhotoUrl(processedUrl);
       } else {
-        const result = await uploadKioskPhoto(capturedBlob);
-        const imageUrl = result.imageUrl ?? result.image_url ?? null;
-        setResultImageUrl(imageUrl ?? capturedDataUrl);
-        setResultToken(result.token ?? null);
-        setCapturedPhotoUrl(imageUrl ?? capturedDataUrl);
+        setResultImageUrl(capturedDataUrl);
+        setCapturedPhotoUrl(capturedDataUrl);
       }
       stopStream();
       setStatus("done");
@@ -450,41 +429,24 @@ export function CameraCapturePage() {
           <span>secureContext: {support.secureContext ? "yes" : "no"}</span>
           <span>selected: {selectedDevice ? cameraLabel(selectedDevice, 0) : "auto"}</span>
           <span>active: {activeCameraLabel || "none"}</span>
-          <label className="camera-page__select-label">
-            Camera
-            <select
-              className="camera-page__select"
-              value={selectedCameraDeviceId ?? ""}
-              onChange={(event) => setSelectedCameraDeviceId(event.target.value || null)}
-            >
-              <option value="">Auto physical Facecam</option>
-              {cameraDevices.map((device, index) => (
-                <option key={device.deviceId || index} value={device.deviceId}>
-                  {cameraLabel(device, index)}
-                </option>
-              ))}
-            </select>
-          </label>
           <div className="camera-page__device-list">
             {cameraDevices.length ? (
               cameraDevices.map((device, index) => (
-                <button
+                <div
                   key={device.deviceId || index}
-                  type="button"
                   className={`camera-page__device${
                     device.deviceId === selectedCameraDeviceId ||
                     device.label === activeCameraLabel
                       ? " camera-page__device--active"
                       : ""
                   }`}
-                  onClick={() => setSelectedCameraDeviceId(device.deviceId)}
                 >
                   <strong>{cameraLabel(device, index)}</strong>
                   <small>{isVirtualCamera(device) ? "virtual" : "physical"}</small>
                   <small>{device.deviceId}</small>
                   {(device.deviceId === selectedCameraDeviceId ||
                     device.label === activeCameraLabel) && <em>selected</em>}
-                </button>
+                </div>
               ))
             ) : (
               <span>cameras: none / labels hidden</span>

@@ -205,30 +205,6 @@
   line-height: 1.28;
 }
 
-.camera-page__select-label {
-  grid-column: 1 / -1;
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  color: #FFB3D1;
-  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 24px;
-  font-weight: 900;
-}
-
-.camera-page__select {
-  width: 760px;
-  height: 58px;
-  border: 2px solid rgba(255, 255, 255, 0.42);
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.94);
-  color: #111;
-  padding: 0 18px;
-  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 22px;
-  font-weight: 900;
-}
-
 .camera-page__debug strong {
   color: #FFB3D1;
   font-size: 26px;

@@ -69,7 +69,7 @@ export function OutfitSelectionPage() {
     setSelectedOutfit(selected);
     setSkipPhoto(false);
     setCapturedPhotoUrl(null);
-    navigate(withGreeting ? "/camera?mode=greeting" : "/camera");
+    navigate(withGreeting ? "/camera?ai=true&mode=greeting" : "/camera?ai=false");
   };
 
   return (
