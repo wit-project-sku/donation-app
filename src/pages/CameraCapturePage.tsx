@@ -21,7 +21,7 @@ interface KioskPhotoResponse {
   token?: string;
 }
 
-const ELGATO_LABELS = ["elgato", "facecam", "camera hub", "virtual camera"];
+const VIRTUAL_CAMERA_LABELS = ["virtual camera", "camera hub"];
 
 async function uploadKioskPhoto(image: Blob): Promise<KioskPhotoResponse> {
   const form = new FormData();
@@ -39,9 +39,36 @@ async function uploadKioskPhoto(image: Blob): Promise<KioskPhotoResponse> {
   return response.json() as Promise<KioskPhotoResponse>;
 }
 
-function isPreferredUsbCamera(device: MediaDeviceInfo) {
+function isVirtualCamera(device: MediaDeviceInfo) {
   const label = device.label.toLowerCase();
-  return ELGATO_LABELS.some((token) => label.includes(token));
+  return VIRTUAL_CAMERA_LABELS.some((token) => label.includes(token));
+}
+
+function isPhysicalElgatoCamera(device: MediaDeviceInfo) {
+  const label = device.label.toLowerCase();
+  return (
+    !isVirtualCamera(device) &&
+    (label.includes("facecam") || label.includes("elgato"))
+  );
+}
+
+function isLikelyLaptopCamera(device: MediaDeviceInfo) {
+  const label = device.label.toLowerCase();
+  return (
+    label.includes("integrated") ||
+    label.includes("built-in") ||
+    label.includes("facetime") ||
+    label.includes("laptop")
+  );
+}
+
+function findPreferredCamera(devices: MediaDeviceInfo[]) {
+  return (
+    devices.find(isPhysicalElgatoCamera) ??
+    devices.find((device) => !isVirtualCamera(device) && !isLikelyLaptopCamera(device)) ??
+    devices.find((device) => !isVirtualCamera(device)) ??
+    devices.find(isVirtualCamera)
+  );
 }
 
 function cameraLabel(device: MediaDeviceInfo, index: number) {
@@ -169,21 +196,20 @@ export function CameraCapturePage() {
       const selectedDevice = selectedCameraDeviceId
         ? devicesBeforePermission.find((device) => device.deviceId === selectedCameraDeviceId)
         : null;
-      const preferredDevice =
-        selectedDevice ?? devicesBeforePermission.find(isPreferredUsbCamera);
+      const preferredDevice = selectedDevice ?? findPreferredCamera(devicesBeforePermission);
 
       let stream = await requestCameraStream(preferredDevice?.deviceId);
       let devicesAfterPermission = await refreshDevices();
       let activeDeviceId = stream.getVideoTracks()[0]?.getSettings().deviceId;
 
-      const elgatoDevice =
+      const bestDevice =
         (selectedCameraDeviceId
           ? devicesAfterPermission.find((device) => device.deviceId === selectedCameraDeviceId)
-          : null) ?? devicesAfterPermission.find(isPreferredUsbCamera);
+          : null) ?? findPreferredCamera(devicesAfterPermission);
 
-      if (elgatoDevice?.deviceId && elgatoDevice.deviceId !== activeDeviceId) {
+      if (bestDevice?.deviceId && bestDevice.deviceId !== activeDeviceId) {
         stream.getTracks().forEach((track) => track.stop());
-        stream = await requestCameraStream(elgatoDevice.deviceId);
+        stream = await requestCameraStream(bestDevice.deviceId);
         activeDeviceId = stream.getVideoTracks()[0]?.getSettings().deviceId;
         devicesAfterPermission = await refreshDevices();
       }
@@ -194,7 +220,6 @@ export function CameraCapturePage() {
         (device) => device.deviceId === activeDeviceId,
       );
       if (activeDevice) {
-        setSelectedCameraDeviceId(activeDevice.deviceId);
         setActiveCameraLabel(activeDevice.label);
       }
 
@@ -292,6 +317,7 @@ export function CameraCapturePage() {
 
   const previewSrc = resultImageUrl ?? capturedDataUrl;
   const isLive = status === "streaming" || status === "requesting";
+  const isUsingVirtualCamera = activeCameraLabel.toLowerCase().includes("virtual camera");
 
   return (
     <PageBody className="camera-page" scroll={false}>
@@ -350,6 +376,12 @@ export function CameraCapturePage() {
           </div>
         )}
 
+        {isUsingVirtualCamera && status === "streaming" && (
+          <div className="camera-page__camera-warning">
+            Elgato Virtual Camera is active. Run Elgato Camera Hub, or select the physical Facecam device below.
+          </div>
+        )}
+
         <div className="camera-page__topbar">
           <span className="camera-page__pill">
             <IconCamera size={34} aria-hidden />
@@ -370,7 +402,8 @@ export function CameraCapturePage() {
                   key={device.deviceId || index}
                   type="button"
                   className={`camera-page__device${
-                    device.deviceId === selectedCameraDeviceId
+                    device.deviceId === selectedCameraDeviceId ||
+                    device.label === activeCameraLabel
                       ? " camera-page__device--active"
                       : ""
                   }`}
