@@ -354,7 +354,7 @@ export function CameraCapturePage() {
           onClick={() => { stopStream(); navigate("/outfit"); }}
           aria-label="의상 선택으로 돌아가기"
         >
-          ‹ 뒤로
+          뒤로
         </button>
 
         <video

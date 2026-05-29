@@ -1,6 +1,5 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { getBackRoute } from "../../config/navigation";
-import { IconBack } from "../Icon";
 import "./BackButton.css";
 
 interface BackButtonProps {
@@ -29,7 +28,7 @@ export function BackButton({ to, className = "" }: BackButtonProps) {
       onClick={handleBack}
       aria-label="뒤로 가기"
     >
-      <IconBack size={48} aria-hidden />
+      뒤로
     </button>
   );
 }

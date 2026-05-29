@@ -33,7 +33,6 @@ export function ReceiptCard({ amount, campaign }: ReceiptCardProps) {
             alt={campaign.title}
             onError={() => setImageSrc(defaultDonationImage)}
           />
-          <span className="receipt-card__brand">unicef</span>
         </div>
         <div className="receipt-card__campaign-text">
           <span className="receipt-card__title">{campaign.title}</span>

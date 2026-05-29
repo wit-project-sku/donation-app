@@ -25,11 +25,13 @@
 
 .card-overlay__desc {
   margin: 0;
-  color: #333;
+  color: #656262;
+  text-align: center;
   font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 36px;
-  font-weight: 700;
-  line-height: 1.55;
+  font-size: 51px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
 }
 
 .card-overlay__spinner {
@@ -51,25 +53,33 @@
 
 .card-overlay__status {
   margin: 88px 0 0;
-  color: #555;
+  color: #656262;
+  text-align: center;
   font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 29px;
-  font-weight: 700;
-  line-height: 1;
+  font-size: 51px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
 }
 
 .card-overlay__cancel {
-  width: 1424px;
-  height: 108px;
+  width: 1464px;
+  max-width: 100%;
+  height: 148px;
   margin-top: auto;
   border: 0;
   border-radius: 54px;
   background: #999;
-  color: #fff;
+  color: #FFF;
   font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 36px;
-  font-weight: 900;
-  line-height: 1;
+  font-size: 68px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
   cursor: pointer;
   transition: opacity 0.15s, transform 0.1s;
 }
@@ -105,56 +115,34 @@
 }
 
 .card-overlay__success-copy {
-  margin-top: 74px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 32px;
-  color: #555;
+  margin: 74px 0 0;
+  padding: 0;
+  color: #656262;
+  text-align: center;
   font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-}
-
-.card-overlay__success-copy strong {
-  font-size: 34px;
-  font-weight: 900;
-  line-height: 1;
-}
-
-.card-overlay__success-copy span {
-  font-size: 30px;
-  font-weight: 600;
-  line-height: 1;
-}
-
-.card-overlay__route {
-  align-self: flex-start;
-  margin: 168px 0 0 70px;
-  width: 965px;
-  height: 62px;
-  border-radius: 12px;
-  background: #178CDD;
-  color: #fff;
-  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 34px;
-  font-weight: 900;
-  line-height: 62px;
-  text-align: left;
-  padding-left: 26px;
-  box-sizing: border-box;
+  font-size: 51px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
 }
 
 .card-overlay__countdown {
-  width: 1424px;
-  height: 108px;
-  margin-top: 20px;
+  width: 1464px;
+  max-width: 100%;
+  height: 148px;
+  margin-top: auto;
   box-sizing: border-box;
-  border-radius: 54px;
-  border: 5px solid #178CDD;
+  border-radius: 74px;
+  border: 5px solid var(---5, #E8E8E8);
   background: #FF7BB7;
-  color: #fff;
+  color: #FFF;
   font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 29px;
-  font-weight: 900;
-  line-height: 98px;
+  font-size: 51px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   text-align: center;
 }

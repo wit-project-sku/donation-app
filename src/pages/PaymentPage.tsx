@@ -8,7 +8,7 @@ import {
   processPayment,
 } from "../api/payments";
 import { CardPaymentOverlay } from "../components/CardPaymentOverlay";
-import { IconCreditCard } from "../components/Icon";
+import creditCardIcon from "../assets/credit-card.png";
 import { ReceiptCard } from "../components/ReceiptCard";
 import { PageBody } from "../components/layout/PageBody";
 import { PageFooter } from "../components/layout/PageFooter";
@@ -137,9 +137,21 @@ export function PaymentPage() {
             className="payment-page__pay-tile payment-page__pay-tile--card"
             onClick={() => startPayment("card")}
             disabled={overlay != null}
+            style={{marginTop: "1.5rem"}}
           >
-            <IconCreditCard size={118} strokeWidth={1.8} aria-hidden />
-            <span>신용/체크카드</span>
+            <span
+              className="payment-page__pay-card-icon-wrap"
+              aria-hidden
+              style={{ transform: "rotate(90deg)" }}
+            >
+              <img
+                className="payment-page__pay-card-icon"
+                src={creditCardIcon}
+                alt=""
+                style={{ transform: "rotate(90deg)" }}
+              />
+            </span>
+            <span className="payment-page__pay-card-label">신용/체크카드</span>
           </button>
         </section>
 

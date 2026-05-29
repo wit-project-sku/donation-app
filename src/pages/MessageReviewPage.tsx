@@ -28,8 +28,8 @@ export function MessageReviewPage() {
     }
   }, [selectedCampaign, amount, paymentMethod, navigate]);
 
-  const displayMessage = message.trim() || "안녕하세요";
-  const displayName = donorName.trim() ? donorName : "이름";
+  const displayMessage = message.trim();
+  const displayName = donorName.trim();
 
   const goNext = (skipPhoto: boolean) => {
     setSkipPhoto(skipPhoto);
@@ -42,12 +42,14 @@ export function MessageReviewPage() {
 
   return (
     <PageBody className="message-review-page" scroll={false}>
-      <p className="message-review-page__hint">★ 페이지 설명문</p>
-
       <div className="message-review-page__center">
         <div className="message-review-page__card">
-          <p className="message-review-page__message">{displayMessage}</p>
-          <p className="message-review-page__name">— {displayName}</p>
+          {displayMessage ? (
+            <p className="message-review-page__message">{displayMessage}</p>
+          ) : null}
+          {displayName ? (
+            <p className="message-review-page__name">— {displayName}</p>
+          ) : null}
         </div>
       </div>
 

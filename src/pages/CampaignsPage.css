@@ -112,25 +112,47 @@
 .campaigns-page__nav-btn {
   width: 156px;
   height: 156px;
+  padding: 0;
   border-radius: 50%;
   border: 5px solid rgba(255, 255, 255, 0.88);
   background: rgba(255, 255, 255, 0.82);
   color: #FF4FA3;
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
   font-size: 108px;
   font-weight: 300;
   line-height: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: grid;
+  place-items: center;
   cursor: pointer;
   pointer-events: auto;
-  padding-bottom: 10px;
+  box-sizing: border-box;
   box-shadow: 0 24px 70px rgba(0, 0, 0, 0.24);
   transition: background 0.15s, transform 0.1s, opacity 0.15s;
 }
 
+.campaigns-page__nav-icon {
+  display: block;
+  line-height: 1;
+}
+
+.campaigns-page__nav-btn--prev .campaigns-page__nav-icon {
+  transform: translate(3px, -10px);
+}
+
+.campaigns-page__nav-btn--next .campaigns-page__nav-icon {
+  transform: translate(6px, -10px);
+}
+
 .campaigns-page__nav-btn:active:not(:disabled) {
   transform: scale(0.94);
+}
+
+.campaigns-page__nav-btn:active:not(:disabled) .campaigns-page__nav-icon {
+  transform: translate(3px, -10px);
+}
+
+.campaigns-page__nav-btn--next:active:not(:disabled) .campaigns-page__nav-icon {
+  transform: translate(6px, -10px);
 }
 
 .campaigns-page__nav-btn:disabled {

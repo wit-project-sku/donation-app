@@ -1,9 +1,8 @@
-import { Search } from "lucide-react";
+import { ChevronLeft, ChevronRight, Search } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { useDeferredValue, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { fetchWallEntriesPage, type WallEntry } from "../api/wall";
-import { IconBack } from "../components/Icon";
 import { VirtualKeyboard } from "../components/VirtualKeyboard";
 import { WallGiverCard } from "../components/WallGiverCard";
 import { PageBody } from "../components/layout/PageBody";
@@ -131,36 +130,12 @@ export function WallPage() {
           onFocus={() => setKeyboardOpen(true)}
           onClick={() => setKeyboardOpen(true)}
         />
-        <Search className="wall-page__search-icon" size={74} strokeWidth={2.5} />
+        <Search className="wall-page__search-icon" size={72} strokeWidth={2.5} />
       </div>
 
       <p className="wall-page__subtitle">
         후원자님들의 따뜻한 마음에 감사드립니다.
       </p>
-
-      <div className="wall-page__pager" aria-label="기부자 목록 페이지">
-        <button
-          type="button"
-          className="wall-page__pager-btn"
-          onClick={() => setPageNum((page) => Math.max(1, page - 1))}
-          disabled={pageNum <= 1}
-          aria-label="이전 페이지"
-        >
-          <IconBack size={48} aria-hidden />
-        </button>
-        <span className="wall-page__pager-text">
-          {pageNum}/{totalPages}
-        </span>
-        <button
-          type="button"
-          className="wall-page__pager-btn wall-page__pager-btn--next"
-          onClick={() => setPageNum((page) => Math.min(totalPages, page + 1))}
-          disabled={pageNum >= totalPages}
-          aria-label="다음 페이지"
-        >
-          <IconBack size={48} aria-hidden />
-        </button>
-      </div>
 
       <section className="wall-page__grid-panel" aria-label="기부자의 벽">
         {isLoading && <p className="wall-page__status">불러오는 중...</p>}
@@ -187,6 +162,7 @@ export function WallPage() {
                 }
                 donationType={donationTypeLabel(entry, donationType)}
                 photoUrl={entry.photoUrl}
+                timeAgo={entry.timeAgo}
                 isNew={entry.isNew}
               />
             ))}
@@ -199,6 +175,30 @@ export function WallPage() {
           </div>
         )}
       </section>
+
+      <div className="wall-page__pager" aria-label="기부자 목록 페이지">
+        <button
+          type="button"
+          className="wall-page__pager-btn"
+          onClick={() => setPageNum((page) => Math.max(1, page - 1))}
+          disabled={pageNum <= 1}
+          aria-label="이전 페이지"
+        >
+          <ChevronLeft size={56} strokeWidth={2.5} aria-hidden />
+        </button>
+        <span className="wall-page__pager-text">
+          {pageNum}/{totalPages}
+        </span>
+        <button
+          type="button"
+          className="wall-page__pager-btn wall-page__pager-btn--next"
+          onClick={() => setPageNum((page) => Math.min(totalPages, page + 1))}
+          disabled={pageNum >= totalPages}
+          aria-label="다음 페이지"
+        >
+          <ChevronRight size={56} strokeWidth={2.5} aria-hidden />
+        </button>
+      </div>
 
       {keyboardOpen && (
         <div className="wall-page__keyboard" ref={keyboardRef}>

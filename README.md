@@ -43,7 +43,7 @@ npm run preview
 
 ```
 src/
-  api/          # Mock API + React Query data sources
+  api/          # API clients + React Query data sources
   components/   # Reusable UI (Header, CampaignCard, etc.)
   pages/        # Route screens
   store/        # Zustand donation store

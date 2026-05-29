@@ -25,7 +25,7 @@ export function PageFooter({ children, stack, onBack }: PageFooterProps) {
             className="page-footer__back-btn"
             onClick={onBack}
           >
-            ←
+            뒤로
           </button>
         )}
         {children}

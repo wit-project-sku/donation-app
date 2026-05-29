@@ -71,9 +71,9 @@ export function MessagePage() {
           onClick={() => setActiveField("name")}
         >
           <span className="message-page__field-label">이름/닉네임 :</span>
-          <span className={`message-page__field-value${donorName ? "" : " message-page__field-value--empty"}`}>
-            {donorName || "이름을 입력하세요"}
-          </span>
+          {donorName ? (
+            <span className="message-page__field-value">{donorName}</span>
+          ) : null}
         </button>
 
         <span className="message-page__divider" />
@@ -84,9 +84,9 @@ export function MessagePage() {
           onClick={() => setActiveField("phone")}
         >
           <span className="message-page__field-label">전화번호:</span>
-          <span className={`message-page__field-value${donorPhone ? "" : " message-page__field-value--empty"}`}>
-            {donorPhone || "전화번호를 입력하세요"}
-          </span>
+          {donorPhone ? (
+            <span className="message-page__field-value">{donorPhone}</span>
+          ) : null}
         </button>
       </div>
 

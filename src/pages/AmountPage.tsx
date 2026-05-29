@@ -31,13 +31,17 @@ export function AmountPage() {
     <PageBody className="amount-page" scroll={false}>
       <CampaignSummary campaign={selectedCampaign} />
 
-      <div className="amount-page__display">
+      <p className="amount-page__notice">
+        기부금 전액이 현장 지원에 사용되며, 법정 기부금으로서 세액공제 혜택이 적용됩니다.
+      </p>
+
+      <div
+        className={`amount-page__display${hasAmount ? " amount-page__display--active" : ""}`}
+      >
         <span className={`amount-page__num${hasAmount ? " amount-page__num--active" : ""}`}>
           {amount === 0 ? "0" : amount.toLocaleString("ko-KR")}
         </span>
-        <span className={`amount-page__won${hasAmount ? " amount-page__won--active" : ""}`}>
-          원
-        </span>
+        <span className="amount-page__won">원</span>
       </div>
 
       {presets.length > 0 ? (

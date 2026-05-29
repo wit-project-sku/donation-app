@@ -2,7 +2,7 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { fetchOutfitsPage, type Outfit } from "../api/outfits";
-import { IconBack, IconCamera, IconCheck, IconUsers } from "../components/Icon";
+import { IconCamera, IconCheck } from "../components/Icon";
 import { PageBody } from "../components/layout/PageBody";
 import { useDonationStore } from "../store/donationStore";
 import "./OutfitSelectionPage.css";
@@ -136,16 +136,6 @@ export function OutfitSelectionPage() {
 
       {!isLoading && !isError && outfits.length > 0 && (
         <div className="outfit-page__carousel">
-          <button
-            type="button"
-            className="outfit-page__nav outfit-page__nav--prev"
-            onClick={() => scrollOutfits("prev")}
-            disabled={carouselPage === 0}
-            aria-label="이전 의상 보기"
-          >
-            <IconBack size={52} aria-hidden />
-          </button>
-
           <div
             className="outfit-page__grid-wrap"
             ref={gridWrapRef}
@@ -176,18 +166,30 @@ export function OutfitSelectionPage() {
             </div>
           </div>
 
-          <button
-            type="button"
-            className="outfit-page__nav outfit-page__nav--next"
-            onClick={() => scrollOutfits("next")}
-            disabled={!hasNextPage && carouselPage >= carouselPageCount - 1}
-            aria-label="다음 의상 보기"
-          >
-            <IconBack size={52} aria-hidden />
-          </button>
+          <div className="outfit-page__controls">
+            <button
+              type="button"
+              className="outfit-page__nav outfit-page__nav--prev"
+              onClick={() => scrollOutfits("prev")}
+              disabled={carouselPage === 0}
+              aria-label="이전 의상 보기"
+            >
+              이전
+            </button>
 
-          <div className="outfit-page__pager" aria-label="의상 페이지">
-            {carouselPage + 1}/{carouselPageCount}
+            <div className="outfit-page__pager" aria-label="의상 페이지">
+              {carouselPage + 1}/{carouselPageCount}
+            </div>
+
+            <button
+              type="button"
+              className="outfit-page__nav outfit-page__nav--next"
+              onClick={() => scrollOutfits("next")}
+              disabled={!hasNextPage && carouselPage >= carouselPageCount - 1}
+              aria-label="다음 의상 보기"
+            >
+              다음
+            </button>
           </div>
         </div>
       )}
@@ -197,9 +199,12 @@ export function OutfitSelectionPage() {
       )}
 
       <p className="outfit-page__camera-tip">
-        * 사진 촬영 버튼을 누르고 좌측 카메라에 얼굴을 바라봐주세요.
-        <br />
-        카메라 화면에서 직접 촬영을 시작합니다.
+        <span className="outfit-page__camera-tip-line">
+          * 사진 촬영 버튼을 누르고 좌측 카메라에 얼굴을 바라봐주세요.
+        </span>
+        <span className="outfit-page__camera-tip-line">
+          카메라 화면에서 직접 촬영을 시작합니다.
+        </span>
       </p>
 
       <div className="outfit-page__photo-btns">
@@ -209,7 +214,7 @@ export function OutfitSelectionPage() {
           onClick={() => handlePhoto(false)}
           disabled={isLoading || isError}
         >
-          <IconCamera size={42} aria-hidden />
+          <IconCamera aria-hidden />
           <span>사진촬영 (혼자 찍기)</span>
         </button>
         <button
@@ -218,7 +223,7 @@ export function OutfitSelectionPage() {
           onClick={() => handlePhoto(true)}
           disabled={isLoading || isError}
         >
-          <IconUsers size={42} aria-hidden />
+          <IconCamera aria-hidden />
           <span>사진촬영(with '인사')</span>
         </button>
       </div>

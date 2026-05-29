@@ -26,7 +26,6 @@ function isAlreadySavedError(error: unknown) {
 function buildMobileCertificateUrl(params: {
   amount: number;
   date: string;
-  message: string;
   name: string;
   photoUrl: string;
 }) {
@@ -54,7 +53,6 @@ export function DonationCertificatePage() {
     paymentMethod,
     amount,
     donorName,
-    message,
     selectedOutfit,
     capturedPhotoUrl,
     submittedRecordId,
@@ -106,9 +104,7 @@ export function DonationCertificatePage() {
 
   if (!selectedCampaign) return null;
 
-  const displayName = donorName.trim() || "후원자";
-  const displayMessage =
-    message.trim() || "귀하의 따뜻한 마음과 의미 있는 기여에 깊은 감사를 전합니다.";
+  const displayName = donorName.trim();
   const photoSrc = capturedPhotoUrl ?? selectedOutfit?.imageUrl ?? null;
   const canSharePhotoUrl =
     photoSrc &&
@@ -124,7 +120,6 @@ export function DonationCertificatePage() {
   const qrValue = buildMobileCertificateUrl({
     amount,
     date: dateLabel,
-    message: displayMessage,
     name: displayName,
     photoUrl: mobilePhotoUrl,
   });
@@ -132,16 +127,23 @@ export function DonationCertificatePage() {
   return (
     <PageBody className="cert-page" scroll={false}>
       <article className="cert-page__card" aria-label="기부 증서">
+        <div className="cert-page__notches" aria-hidden>
+          <span className="cert-page__notch cert-page__notch--tl" />
+          <span className="cert-page__notch cert-page__notch--tr" />
+          <span className="cert-page__notch cert-page__notch--bl" />
+          <span className="cert-page__notch cert-page__notch--br" />
+        </div>
+
         <div className="cert-page__card-header">
           <h1 className="cert-page__title">기부증서</h1>
           <div className="cert-page__qr" aria-label="모바일 증서 QR 코드">
             <QRCodeSVG
               value={qrValue}
-              size={230}
+              size={168}
               bgColor="#fff"
               fgColor="#1a1a1a"
               level="L"
-              marginSize={2}
+              marginSize={1}
             />
           </div>
         </div>
@@ -157,15 +159,15 @@ export function DonationCertificatePage() {
           ) : (
             <div className="cert-page__photo cert-page__photo--placeholder" />
           )}
-          <span className="cert-page__photo-brand">unicef</span>
         </div>
 
         <div className="cert-page__info">
           <span className="cert-page__amount">
             {formatCurrency(amount)}원
           </span>
-          <span className="cert-page__name">{displayName}</span>
-          <p className="cert-page__thanks">{displayMessage}</p>
+          {displayName ? (
+            <span className="cert-page__name">{displayName}</span>
+          ) : null}
           <span className="cert-page__date">{dateLabel}</span>
         </div>
       </article>

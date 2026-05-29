@@ -1,9 +1,10 @@
 .receipt-card {
-  width: 100%;
-  height: 690px;
-  border-radius: 28px;
-  border: 5px solid #FF7BB7;
-  background: #fff;
+  width: 1820px;
+  max-width: 100%;
+  height: 851px;
+  border-radius: 42.9px;
+  border: 5px solid var(---5, #E8E8E8);
+  background: #FFF;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
@@ -12,30 +13,33 @@
 }
 
 .receipt-card__amount-row {
-  height: 368px;
+  flex: 1;
+  min-height: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 16px;
-  padding-top: 8px;
   box-sizing: border-box;
 }
 
 .receipt-card__amount {
-  color: #FF63B3;
+  color: #FF64C1;
+  -webkit-text-stroke-width: 1px;
+  -webkit-text-stroke-color: #FF7BB7;
   font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 150px;
-  font-weight: 900;
-  line-height: 1;
-  letter-spacing: 0;
+  font-size: 200px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
 }
 
 .receipt-card__won {
-  color: #999;
+  color: var(--main, #999);
   font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 70px;
-  font-weight: 900;
-  line-height: 1;
+  font-size: 128px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
 }
 
 .receipt-card__divider {
@@ -47,6 +51,7 @@
 
 .receipt-card__campaign {
   flex: 1;
+  min-height: 0;
   display: grid;
   grid-template-columns: 320px minmax(0, 1fr);
   align-items: center;
@@ -105,11 +110,12 @@
 }
 
 .receipt-card__title {
-  color: #777;
+  color: #656262;
   font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 42px;
-  font-weight: 900;
-  line-height: 1.2;
+  font-size: 68px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -117,11 +123,12 @@
 
 .receipt-card__desc {
   max-width: 760px;
-  color: #8d8d8d;
+  color: #656262;
   font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 20px;
-  font-weight: 600;
-  line-height: 1.42;
+  font-size: 36px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 3;

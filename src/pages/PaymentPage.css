@@ -23,6 +23,10 @@
   pointer-events: none;
 }
 
+.payment-page .receipt-card__desc {
+  -webkit-line-clamp: 2;
+}
+
 .payment-page__error {
   margin: 34px 0 0;
   padding: 24px 32px;
@@ -48,20 +52,22 @@
 
 .payment-page__section-title {
   margin: 0;
-  color: #555;
+  color: #656262;
   font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 46px;
-  font-weight: 900;
-  line-height: 1;
+  font-size: 68px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
 }
 
 .payment-page__section-desc {
   margin: 0;
-  color: #999;
+  color: #656262;
   font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 24px;
-  font-weight: 700;
-  line-height: 1.35;
+  font-size: 32px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
 }
 
 .payment-page__pay-tile {
@@ -85,7 +91,10 @@
 
 .payment-page__pay-tile:active:not(:disabled) {
   border-color: #FF7BB7;
-  transform: scale(0.97);
+}
+
+.payment-page__pay-tile--card:active:not(:disabled) {
+  opacity: 0.92;
 }
 
 .payment-page__pay-tile:disabled {
@@ -94,12 +103,42 @@
 }
 
 .payment-page__pay-tile--card {
-  border-color: #FF7BB7;
-  color: #FF7BB7;
+  border-radius: 42.9px;
+  border: 5px solid #FF7BB7;
+  background: #FFF;
+  width: 400px;
+  height: 400px;
+  box-sizing: border-box;
+  gap: 24px;
+  overflow: visible;
 }
 
-.payment-page__pay-tile--card span {
-  color: #FF4FA3;
+.payment-page__pay-card-icon-wrap {
+  display: block;
+  width: 296px;
+  height: 296px;
+  flex: 0 0 296px;
+  transform: rotate(90deg);
+  transform-origin: center center;
+}
+
+.payment-page__pay-card-icon {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+.payment-page__pay-card-label {
+  color: #FF64C1;
+  -webkit-text-stroke-width: 1px;
+  -webkit-text-stroke-color: #FF7BB7;
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
+  font-size: 40px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
 }
 
 .payment-page__easy-pay {

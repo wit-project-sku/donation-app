@@ -138,21 +138,21 @@ export function CampaignsPage() {
         <div className="campaigns-page__nav">
           <button
             type="button"
-            className="campaigns-page__nav-btn"
+            className="campaigns-page__nav-btn campaigns-page__nav-btn--prev"
             onClick={goPrev}
             disabled={activeIndex === 0}
             aria-label="이전"
           >
-            ‹
+            <span className="campaigns-page__nav-icon" aria-hidden>‹</span>
           </button>
           <button
             type="button"
-            className="campaigns-page__nav-btn"
+            className="campaigns-page__nav-btn campaigns-page__nav-btn--next"
             onClick={goNext}
             disabled={activeIndex === campaigns.length - 1}
             aria-label="다음"
           >
-            ›
+            <span className="campaigns-page__nav-icon" aria-hidden>›</span>
           </button>
         </div>
       )}

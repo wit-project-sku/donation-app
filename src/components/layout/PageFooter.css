@@ -1,7 +1,9 @@
 ﻿.page-footer {
   flex-shrink: 0;
   padding-top: 24px;
+  padding-bottom: 40px;
   width: 100%;
+  box-sizing: border-box;
 }
 
 .page-footer__actions {
@@ -14,6 +16,8 @@
 .page-footer__actions > * {
   flex: 1;
   min-width: 0;
+  height: 192px;
+  box-sizing: border-box;
 }
 
 .page-footer--stack .page-footer__actions {
@@ -31,7 +35,7 @@
   flex: none !important;
   width: 240px;
   border-radius: 42.9px;
-  border: 5px solid #E8E8E8;
+  border: 5px solid var(---5, #E8E8E8);
   background: #FFF;
   color: #999;
   font-family: "Noto Sans", "Noto Sans KR", sans-serif;
@@ -45,6 +49,6 @@
 }
 
 .page-footer__back-btn:active {
-  border-color: #FF7BB7;
+  border-color: var(--color-primary);
   transform: scale(0.97);
 }

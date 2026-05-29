@@ -2,7 +2,6 @@
   align-items: center;
   justify-content: center;
   gap: 40px;
-  padding-bottom: 40px;
   overflow: hidden;
 }
 
@@ -71,12 +70,14 @@
 
 .message-review-page__skip-photo,
 .message-review-page__continue {
-  padding: 40px 48px;
+  height: 192px;
+  padding: 0 48px;
   border: none;
   border-radius: var(--radius-lg);
   font-size: var(--font-size-md);
   font-family: inherit;
   cursor: pointer;
+  box-sizing: border-box;
   transition: opacity 0.15s, transform 0.1s;
 }
 

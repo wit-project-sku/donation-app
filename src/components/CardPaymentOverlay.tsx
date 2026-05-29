@@ -89,13 +89,11 @@ export function CardPaymentOverlay({
             <div className="card-overlay__check" aria-hidden>
               <IconCheck size={72} strokeWidth={3.2} />
             </div>
-            <div className="card-overlay__success-copy">
-              <strong>감사합니다</strong>
-              <span>당신의 마음이 필요한 곳에 전해집니다</span>
-            </div>
-            <div className="card-overlay__route">
-              → R&gt;컴포넌트-환율 리스트-
-            </div>
+            <p className="card-overlay__success-copy">
+              감사합니다
+              <br />
+              당신의 마음이 필요한 곳에 전해집니다
+            </p>
             <div className="card-overlay__countdown">
               3초 후 다음 단계로 자동 전환됩니다
             </div>

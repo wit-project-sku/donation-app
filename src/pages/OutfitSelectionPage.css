@@ -33,9 +33,10 @@
 .outfit-page__banner-text {
   color: #FF7BB7;
   font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 54px;
-  font-weight: 900;
-  line-height: 1.2;
+  font-size: 68px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
   white-space: normal;
   word-break: keep-all;
 }
@@ -43,19 +44,36 @@
 .outfit-page__instruction {
   margin: 110px 0 0;
   padding: 0;
-  color: #999;
+  color: #909090;
+  text-align: left;
   font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 31px;
+  font-size: 47px;
+  font-style: normal;
   font-weight: 700;
-  line-height: 1.4;
+  line-height: 100%;
   flex-shrink: 0;
+  box-sizing: border-box;
 }
 
 .outfit-page__carousel {
-  position: relative;
   width: 100%;
   margin-top: 112px;
   flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.outfit-page__controls {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  min-height: 96px;
+  margin-top: 48px;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 .outfit-page__grid-wrap {
@@ -88,33 +106,25 @@
 }
 
 .outfit-page__nav {
-  position: absolute;
-  top: 50%;
-  z-index: 5;
-  width: 96px;
+  position: relative;
+  z-index: 1;
+  min-width: 96px;
   height: 96px;
+  padding: 0 28px;
   border: 0;
-  border-radius: 50%;
+  border-radius: 48px;
   background: #FF7BB7;
   color: #fff;
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  transform: translateY(-50%);
+  flex-shrink: 0;
   cursor: pointer;
   box-shadow: 0 18px 44px rgba(255, 123, 183, 0.28);
-}
-
-.outfit-page__nav--prev {
-  left: 34px;
-}
-
-.outfit-page__nav--next {
-  right: 34px;
-}
-
-.outfit-page__nav--next svg {
-  transform: rotate(180deg);
 }
 
 .outfit-page__nav:disabled {
@@ -125,8 +135,8 @@
 .outfit-page__pager {
   position: absolute;
   left: 50%;
-  bottom: -82px;
-  transform: translateX(-50%);
+  top: 50%;
+  transform: translate(-50%, -50%);
   min-width: 160px;
   height: 64px;
   padding: 0 32px;
@@ -139,6 +149,7 @@
   font-weight: 900;
   line-height: 64px;
   text-align: center;
+  pointer-events: none;
 }
 
 .outfit-card {
@@ -207,12 +218,19 @@
 .outfit-page__camera-tip {
   margin: 150px 0 0;
   padding: 0;
-  color: #999;
+  width: 100%;
+  color: #909090;
+  text-align: left;
   font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 31px;
+  font-size: 47px;
+  font-style: normal;
   font-weight: 700;
-  line-height: 1.45;
+  line-height: 140%;
   flex-shrink: 0;
+}
+
+.outfit-page__camera-tip-line {
+  display: block;
 }
 
 .outfit-page__photo-btns {
@@ -236,14 +254,27 @@
   flex-shrink: 0;
   border: 0;
   border-radius: 30px;
-  color: #fff;
+  color: #E9E9E9;
   font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 38px;
-  font-weight: 900;
-  line-height: 1;
   cursor: pointer;
-  white-space: nowrap;
+  box-sizing: border-box;
   transition: opacity 0.15s, transform 0.1s;
+}
+
+.outfit-page__photo-btn svg {
+  width: 68.64px;
+  height: 68.64px;
+  flex-shrink: 0;
+}
+
+.outfit-page__photo-btn span {
+  color: #E9E9E9;
+  text-align: center;
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
+  font-size: 58px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 100%;
 }
 
 .outfit-page__photo-btn--primary {

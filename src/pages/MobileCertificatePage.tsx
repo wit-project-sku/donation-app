@@ -19,9 +19,7 @@ function escapeXml(value: string) {
 export function MobileCertificatePage() {
   const [params] = useSearchParams();
   const name = getParam(params, "n") || getParam(params, "name", "후원자");
-  const message =
-    getParam(params, "message") ||
-    "귀하의 따뜻한 마음과 의미 있는 기여에 깊은 감사를 전합니다.";
+  const message = getParam(params, "message");
   const date = getParam(params, "d") || getParam(params, "date");
   const photo = getParam(params, "p") || getParam(params, "photo");
   const amount = Number(getParam(params, "a") || getParam(params, "amount", "0"));
@@ -43,7 +41,6 @@ export function MobileCertificatePage() {
   <circle cx="70" cy="1040" r="42" fill="#ffd3e9"/>
   <text x="360" y="132" text-anchor="middle" font-family="Arial, sans-serif" font-size="34" font-weight="700" fill="#333333">기부증서</text>
   ${imageNode}
-  <text x="360" y="805" text-anchor="middle" font-family="Arial, sans-serif" font-size="28" font-weight="700" fill="#00a4e4">unicef</text>
   <line x1="150" y1="870" x2="570" y2="870" stroke="#ff9bc9" stroke-width="2"/>
   <text x="360" y="925" text-anchor="middle" font-family="Arial, sans-serif" font-size="46" font-weight="700" fill="#FF7BB7">${escapeXml(amountLabel)}</text>
   <text x="360" y="975" text-anchor="middle" font-family="Arial, sans-serif" font-size="30" font-weight="700" fill="#333333">${escapeXml(name)}</text>
@@ -67,7 +64,7 @@ export function MobileCertificatePage() {
         const url = URL.createObjectURL(blob);
         const link = document.createElement("a");
         link.href = url;
-        link.download = `unicef-donation.${ext}`;
+        link.download = `donation.${ext}`;
         link.click();
         URL.revokeObjectURL(url);
       } else {
@@ -99,14 +96,13 @@ export function MobileCertificatePage() {
           ) : (
             <div className="mobile-cert__photo mobile-cert__photo--empty" />
           )}
-          <span className="mobile-cert__brand">unicef</span>
         </div>
 
         <div className="mobile-cert__info">
           <strong className="mobile-cert__amount">{amountLabel}</strong>
-          <span className="mobile-cert__name">{name}</span>
-          <p className="mobile-cert__message">{message}</p>
-          <span className="mobile-cert__date">{date}</span>
+          {name ? <span className="mobile-cert__name">{name}</span> : null}
+          {message ? <p className="mobile-cert__message">{message}</p> : null}
+          {date ? <span className="mobile-cert__date">{date}</span> : null}
         </div>
       </article>
 
