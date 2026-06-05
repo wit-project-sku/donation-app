@@ -16,7 +16,7 @@ import {
 } from "../utils/hangulInput";
 import "./WallPage.css";
 
-const WALL_PAGE_SIZE = 4;
+const WALL_PAGE_SIZE = 6;
 
 function donationTypeLabel(
   entry: WallEntry,
@@ -121,10 +121,9 @@ export function WallPage() {
     ["--wall-text-primary" as string]: theme.text.primary,
     ["--wall-text-secondary" as string]: theme.text.secondary,
     ["--wall-card-bg" as string]: theme.card.background,
-    ["--wall-photo-bg" as string]: theme.background,
     ["--wall-soft-bg" as string]: `color-mix(in srgb, ${theme.secondary} 22%, ${theme.card.background})`,
-    ["--wall-soft-border" as string]: `color-mix(in srgb, ${theme.secondary} 50%, ${theme.card.background})`,
-    ["--wall-accent-border" as string]: `color-mix(in srgb, ${theme.primary} 55%, ${theme.card.background})`,
+    ["--wall-soft-border" as string]: `color-mix(in srgb, ${theme.secondary} 55%, ${theme.card.background})`,
+    ["--wall-accent-border" as string]: `color-mix(in srgb, ${theme.primary} 65%, ${theme.card.background})`,
   };
 
   return (

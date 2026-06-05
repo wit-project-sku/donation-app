@@ -1,73 +1,110 @@
 .wall-giver-card {
   position: relative;
-  width: 780px;
-  height: 800px;
+  width: 100%;
+  height: 820px;
   box-sizing: border-box;
   border-radius: var(--radius-lg);
-  border: none;
+  border: 14px solid var(--wall-soft-border);
   background: var(--wall-card-bg);
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 28px 36px 24px;
+  padding: 40px 18px 22px;
   overflow: hidden;
   flex-shrink: 0;
 }
 
-.wall-giver-card--new {
-  background: color-mix(in srgb, var(--wall-primary) 8%, var(--wall-card-bg));
+.wall-giver-card__notches {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
 }
 
-.wall-giver-card__badge {
+.wall-giver-card__notch {
   position: absolute;
-  top: 24px;
-  right: 24px;
-  z-index: 2;
-  min-height: 52px;
-  padding: 0 22px;
-  border-radius: var(--radius-lg);
-  background: var(--wall-primary);
-  color: var(--wall-on-primary);
-  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 24px;
-  font-weight: 800;
-  line-height: 52px;
-  white-space: nowrap;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--wall-soft-border);
+}
+
+.wall-giver-card__notch--tl {
+  left: -20px;
+  top: -20px;
+}
+
+.wall-giver-card__notch--tr {
+  right: -20px;
+  top: -20px;
+}
+
+.wall-giver-card__notch--bl {
+  left: -20px;
+  bottom: -20px;
+}
+
+.wall-giver-card__notch--br {
+  right: -20px;
+  bottom: -20px;
+}
+
+.wall-giver-card__card-header {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  width: 100%;
+  flex-shrink: 0;
+  z-index: 1;
 }
 
 .wall-giver-card__title {
   margin: 0;
   color: var(--wall-text-primary);
   font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 32px;
+  font-size: 22px;
   font-weight: 900;
   line-height: 1;
   text-align: center;
 }
 
+.wall-giver-card__badge {
+  position: absolute;
+  right: 0;
+  top: -8px;
+  z-index: 3;
+  min-height: 36px;
+  padding: 0 14px;
+  border-radius: var(--radius-lg);
+  background: var(--wall-primary);
+  color: var(--wall-on-primary);
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 36px;
+  white-space: nowrap;
+}
+
 .wall-giver-card__photo-wrap {
   position: relative;
   width: 100%;
-  max-width: 420px;
   flex: 1;
-  min-height: 440px;
-  margin-top: 20px;
+  min-height: 0;
+  margin-top: 18px;
   overflow: hidden;
   border-radius: var(--radius-lg);
-  background: var(--wall-photo-bg);
+  background: transparent;
   flex-shrink: 0;
+  z-index: 1;
 }
 
 .wall-giver-card__photo {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   object-position: top center;
   display: block;
-}
-
-.wall-giver-card__photo--placeholder {
-  background: var(--wall-photo-bg);
 }
 
 .wall-giver-card__info {
@@ -75,31 +112,32 @@
   flex-direction: column;
   align-items: center;
   width: 100%;
-  max-width: 420px;
-  margin-top: 20px;
-  padding-top: 16px;
+  margin-top: 16px;
+  padding-top: 14px;
   border-top: 2px solid var(--wall-accent-border);
   flex-shrink: 0;
+  z-index: 1;
 }
 
 .wall-giver-card__amount {
   color: var(--wall-primary);
+  text-align: center;
   font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 48px;
-  font-weight: 900;
+  font-size: 34px;
+  font-weight: 700;
   line-height: 1;
   white-space: nowrap;
 }
 
 .wall-giver-card__name {
   width: 100%;
-  margin-top: 12px;
-  padding-bottom: 14px;
+  margin-top: 8px;
+  padding-bottom: 10px;
   border-bottom: 2px solid var(--wall-accent-border);
-  color: var(--wall-text-primary);
+  color: var(--wall-text-secondary);
   font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 32px;
-  font-weight: 800;
+  font-size: 22px;
+  font-weight: 700;
   line-height: 1;
   text-align: center;
   overflow: hidden;
@@ -108,10 +146,13 @@
 }
 
 .wall-giver-card__date {
-  margin-top: 14px;
+  display: block;
+  margin-top: 10px;
   color: var(--wall-text-secondary);
+  text-align: center;
   font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 24px;
-  font-weight: 500;
+  font-size: 16px;
+  font-weight: 400;
   line-height: 1;
+  word-break: keep-all;
 }
