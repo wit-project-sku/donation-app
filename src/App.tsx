@@ -1,4 +1,6 @@
-import { HashRouter, Navigate, Route, Routes } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
+import { HashRouter, Route, Routes } from "react-router-dom";
+import { LocationNavigate } from "./components/LocationNavigate";
 import { AppLayout } from "./components/layout/AppLayout";
 import { KioskShell } from "./components/layout/KioskShell";
 import { AmountPage } from "./pages/AmountPage";
@@ -12,10 +14,14 @@ import { MobileCertificatePage } from "./pages/MobileCertificatePage";
 import { OutfitSelectionPage } from "./pages/OutfitSelectionPage";
 import { PaymentPage } from "./pages/PaymentPage";
 import { WallPage } from "./pages/WallPage";
+import { ThemeProvider } from "./theme/ThemeContext";
 
-export default function App() {
+function LocationAwareApp() {
+  const [searchParams] = useSearchParams();
+  const location = searchParams.get("location") || "insadong";
+
   return (
-    <HashRouter>
+    <ThemeProvider location={location}>
       <Routes>
         <Route path="/mobile-certificate" element={<MobileCertificatePage />} />
         <Route
@@ -25,7 +31,6 @@ export default function App() {
               <Routes>
                 <Route element={<AppLayout />}>
                   <Route path="/" element={<CampaignsPage />} />
-                  <Route path="/campaigns" element={<Navigate to="/" replace />} />
                   <Route path="/campaign" element={<CampaignDetailPage />} />
                   <Route path="/amount" element={<AmountPage />} />
                   <Route path="/payment" element={<PaymentPage />} />
@@ -34,16 +39,24 @@ export default function App() {
                   <Route path="/outfit" element={<OutfitSelectionPage />} />
                   <Route path="/camera" element={<CameraCapturePage />} />
                   <Route path="/certificate" element={<DonationCertificatePage />} />
-                  <Route path="/complete" element={<Navigate to="/message" replace />} />
+                  <Route path="/complete" element={<LocationNavigate to="/message" replace />} />
                   <Route path="/wall" element={<WallPage />} />
-                  <Route path="/thank-you" element={<Navigate to="/message" replace />} />
-                  <Route path="*" element={<Navigate to="/" replace />} />
+                  <Route path="/thank-you" element={<LocationNavigate to="/message" replace />} />
+                  <Route path="*" element={<LocationNavigate to="/" replace />} />
                 </Route>
               </Routes>
             </KioskShell>
           }
         />
       </Routes>
+    </ThemeProvider>
+  );
+}
+
+export default function App() {
+  return (
+    <HashRouter>
+      <LocationAwareApp />
     </HashRouter>
   );
 }

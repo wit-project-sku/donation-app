@@ -1,21 +1,24 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useAppNavigate } from "../hooks/useAppNavigate";
 import { fetchOutfitsPage, type Outfit } from "../api/outfits";
-import { IconCamera, IconCheck } from "../components/Icon";
+import { IconBack, IconCamera } from "../components/Icon";
 import { PageBody } from "../components/layout/PageBody";
 import { useDonationStore } from "../store/donationStore";
+import { useTheme } from "../theme/ThemeContext";
 import "./OutfitSelectionPage.css";
 
 const PAGE_SIZE = 10;
 const CAROUSEL_PAGE_SIZE = 6;
-
 export function OutfitSelectionPage() {
-  const navigate = useNavigate();
+  const navigate = useAppNavigate();
+  const { theme } = useTheme();
   const gridWrapRef = useRef<HTMLDivElement>(null);
   const {
     selectedCampaign,
     paymentMethod,
+    donorName,
+    skipPhoto,
     setSelectedOutfit,
     setSkipPhoto,
     setCapturedPhotoUrl,
@@ -56,9 +59,17 @@ export function OutfitSelectionPage() {
 
   useEffect(() => {
     if (!selectedCampaign || !paymentMethod) {
-      navigate("/", { replace: true });
+      navigate("/payment", { replace: true });
+      return;
     }
-  }, [selectedCampaign, paymentMethod, navigate]);
+    if (skipPhoto) {
+      navigate("/certificate", { replace: true });
+      return;
+    }
+    if (!donorName.trim()) {
+      navigate("/message-review", { replace: true });
+    }
+  }, [selectedCampaign, paymentMethod, skipPhoto, donorName, navigate]);
 
   const handleGridScroll = () => {
     const element = gridWrapRef.current;
@@ -103,128 +114,218 @@ export function OutfitSelectionPage() {
     }
   };
 
-  const handlePhoto = (withGreeting = false) => {
-    setSelectedOutfit(selected);
-    setSkipPhoto(false);
-    setCapturedPhotoUrl(null);
-    navigate(withGreeting ? "/camera?ai=true&mode=greeting" : "/camera?ai=false");
-  };
+  const handlePhoto = useCallback(
+    (withGreeting = false) => {
+      if (!selected) return;
+      setSelectedOutfit(selected);
+      setSkipPhoto(false);
+      setCapturedPhotoUrl(null);
+      navigate(
+        withGreeting ? "/camera?ai=true&mode=greeting" : "/camera?ai=false",
+      );
+    },
+    [
+      navigate,
+      selected,
+      setCapturedPhotoUrl,
+      setSelectedOutfit,
+      setSkipPhoto,
+    ],
+  );
+
+  if (!selectedCampaign) return null;
+
+  const canTakePhoto = Boolean(selected) && !isLoading && !isError;
 
   return (
-    <PageBody className="outfit-page" scroll={false}>
-      <div className="outfit-page__banner">
-        <span className="outfit-page__banner-check">
-          <IconCheck size={42} strokeWidth={3.2} aria-hidden />
-        </span>
-        <span className="outfit-page__banner-text">
-          기부 참여자에게만 제공되는 특별 의상을 착용해보세요!
-        </span>
-      </div>
+    <PageBody
+      className="outfit-page"
+      scroll={false}
+      style={{
+        backgroundColor: theme.background,
+        ["--outfit-primary" as string]: theme.primary,
+      }}
+    >
+      <button
+        type="button"
+        className="outfit-page__back-btn"
+        onClick={() => navigate("/message-review")}
+        aria-label="정보 확인으로 돌아가기"
+        style={{
+          borderColor: theme.primary,
+          backgroundColor: theme.primary,
+          color: theme.text.onPrimary,
+        }}
+      >
+        <IconBack size={72} strokeWidth={2.5} />
+      </button>
 
-      <p className="outfit-page__instruction">
-        * 원하는 의상을 고르고 선택 완료 버튼을 누른 뒤 사진촬영 버튼을 눌러주세요
-      </p>
-
-      {isLoading && (
-        <p className="outfit-page__status">의상 불러오는 중...</p>
-      )}
-      {isError && (
-        <p className="outfit-page__status outfit-page__status--error">
-          의상 목록을 불러오지 못했습니다
-        </p>
-      )}
-
-      {!isLoading && !isError && outfits.length > 0 && (
-        <div className="outfit-page__carousel">
-          <div
-            className="outfit-page__grid-wrap"
-            ref={gridWrapRef}
-            onScroll={handleGridScroll}
+      <main className="outfit-page__main">
+        <header className="outfit-page__header">
+          <h1
+            className="outfit-page__title"
+            style={{ color: theme.text.primary }}
           >
-            <div className="outfit-page__grid">
-              {outfits.map((outfit) => {
-                const isSelected = selected?.id === outfit.id;
-                return (
-                  <button
-                    key={outfit.id}
-                    type="button"
-                    className={`outfit-card ${isSelected ? "outfit-card--selected" : ""}`}
-                    onClick={() => setSelected(isSelected ? null : outfit)}
+            의상을 선택해주세요
+          </h1>
+          <p
+            className="outfit-page__subtitle"
+            style={{ color: theme.text.secondary }}
+          >
+            기부 참여자만 이용할 수 있는 특별 의상이에요
+          </p>
+        </header>
+
+        {isLoading && (
+          <p
+            className="outfit-page__status"
+            style={{ color: theme.text.secondary }}
+          >
+            의상 불러오는 중...
+          </p>
+        )}
+        {isError && (
+          <p className="outfit-page__status outfit-page__status--error">
+            의상 목록을 불러오지 못했습니다
+          </p>
+        )}
+
+        {!isLoading && !isError && outfits.length > 0 && (
+          <div className="outfit-page__carousel">
+            <div
+              className="outfit-page__grid-wrap"
+              ref={gridWrapRef}
+              onScroll={handleGridScroll}
+            >
+              <div className="outfit-page__grid">
+                {outfits.map((outfit) => {
+                  const isSelected = selected?.id === outfit.id;
+                  return (
+                    <button
+                      key={outfit.id}
+                      type="button"
+                      className={`outfit-card ${isSelected ? "outfit-card--selected" : ""}`}
+                      onClick={() => setSelected(isSelected ? null : outfit)}
+                      style={{
+                        backgroundColor: theme.card.background,
+                      }}
+                    >
+                      <img
+                        className="outfit-card__image"
+                        src={outfit.imageUrl}
+                        alt={outfit.name}
+                        loading="lazy"
+                      />
+                    </button>
+                  );
+                })}
+                {isFetchingNextPage && (
+                  <div
+                    className="outfit-page__loading-card"
+                    style={{
+                      backgroundColor: theme.card.background,
+                      color: theme.text.secondary,
+                    }}
                   >
-                    <img
-                      className="outfit-card__image"
-                      src={outfit.imageUrl}
-                      alt={outfit.name}
-                      loading="lazy"
-                    />
-                  </button>
-                );
-              })}
-              {isFetchingNextPage && (
-                <div className="outfit-page__loading-card">더 불러오는 중...</div>
-              )}
-            </div>
-          </div>
-
-          <div className="outfit-page__controls">
-            <button
-              type="button"
-              className="outfit-page__nav outfit-page__nav--prev"
-              onClick={() => scrollOutfits("prev")}
-              disabled={carouselPage === 0}
-              aria-label="이전 의상 보기"
-            >
-              이전
-            </button>
-
-            <div className="outfit-page__pager" aria-label="의상 페이지">
-              {carouselPage + 1}/{carouselPageCount}
+                    더 불러오는 중...
+                  </div>
+                )}
+              </div>
             </div>
 
-            <button
-              type="button"
-              className="outfit-page__nav outfit-page__nav--next"
-              onClick={() => scrollOutfits("next")}
-              disabled={!hasNextPage && carouselPage >= carouselPageCount - 1}
-              aria-label="다음 의상 보기"
-            >
-              다음
-            </button>
+            <div className="outfit-page__controls">
+              <button
+                type="button"
+                className="outfit-page__nav-btn outfit-page__nav-btn--prev"
+                onClick={() => scrollOutfits("prev")}
+                disabled={carouselPage === 0}
+                aria-label="이전 의상 보기"
+                style={{
+                  borderColor: theme.primary,
+                  backgroundColor: theme.primary,
+                  color: theme.text.onPrimary,
+                }}
+              >
+                <span className="outfit-page__nav-icon" aria-hidden>
+                  ‹
+                </span>
+              </button>
+
+              <div
+                className="outfit-page__pager"
+                aria-label="의상 페이지"
+                style={{ color: theme.text.secondary }}
+              >
+                {carouselPage + 1}/{carouselPageCount}
+              </div>
+
+              <button
+                type="button"
+                className="outfit-page__nav-btn outfit-page__nav-btn--next"
+                onClick={() => scrollOutfits("next")}
+                disabled={!hasNextPage && carouselPage >= carouselPageCount - 1}
+                aria-label="다음 의상 보기"
+                style={{
+                  borderColor: theme.primary,
+                  backgroundColor: theme.primary,
+                  color: theme.text.onPrimary,
+                }}
+              >
+                <span className="outfit-page__nav-icon" aria-hidden>
+                  ›
+                </span>
+              </button>
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {!isLoading && !isError && outfits.length === 0 && (
-        <p className="outfit-page__empty">등록된 프리미엄 의상이 없습니다</p>
-      )}
+        {!isLoading && !isError && outfits.length === 0 && (
+          <p
+            className="outfit-page__empty"
+            style={{ color: theme.text.secondary }}
+          >
+            등록된 프리미엄 의상이 없습니다
+          </p>
+        )}
 
-      <p className="outfit-page__camera-tip">
-        <span className="outfit-page__camera-tip-line">
-          * 사진 촬영 버튼을 누르고 좌측 카메라에 얼굴을 바라봐주세요.
-        </span>
-        <span className="outfit-page__camera-tip-line">
-          카메라 화면에서 직접 촬영을 시작합니다.
-        </span>
-      </p>
+        <p
+          className="outfit-page__helper"
+          style={{ color: theme.text.secondary }}
+        >
+          의상을 선택한 뒤 사진 촬영을 시작해주세요
+        </p>
+      </main>
 
       <div className="outfit-page__photo-btns">
         <button
           type="button"
           className="outfit-page__photo-btn outfit-page__photo-btn--primary"
           onClick={() => handlePhoto(false)}
-          disabled={isLoading || isError}
+          disabled={!canTakePhoto}
+          aria-label="사진 촬영 혼자 찍기"
+          style={{
+            backgroundColor: theme.primary,
+            borderColor: theme.primary,
+            color: theme.text.onPrimary,
+          }}
         >
-          <IconCamera aria-hidden />
+          <IconCamera size={80} strokeWidth={2.2} aria-hidden />
           <span>사진촬영 (혼자 찍기)</span>
         </button>
         <button
           type="button"
-          className="outfit-page__photo-btn outfit-page__photo-btn--dark"
+          className="outfit-page__photo-btn outfit-page__photo-btn--greeting"
           onClick={() => handlePhoto(true)}
-          disabled={isLoading || isError}
+          disabled={!canTakePhoto}
+          aria-label="사진 촬영 인사 모드"
+          style={{
+            backgroundColor: theme.text.primary,
+            borderColor: theme.text.primary,
+            color: theme.text.onPrimary,
+          }}
         >
-          <IconCamera aria-hidden />
-          <span>사진촬영(with '인사')</span>
+          <IconCamera size={80} strokeWidth={2.2} aria-hidden />
+          <span>사진촬영 (인사)</span>
         </button>
       </div>
     </PageBody>

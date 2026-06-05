@@ -81,6 +81,17 @@ function replaceLast(value: string, replacement: string) {
   return `${value.slice(0, -1)}${replacement}`;
 }
 
+/** Latin letters, digits, and common punctuation from the English keyboard */
+export function isDirectAppendKey(key: string) {
+  return /^[a-zA-Z0-9.,\-]$/.test(key);
+}
+
+export function appendKeyboardInput(value: string, key: string) {
+  if (key.length !== 1) return value + key;
+  if (isDirectAppendKey(key)) return value + key;
+  return appendHangul(value, key);
+}
+
 export function appendHangul(value: string, key: string) {
   if (key.length !== 1) return value + key;
 

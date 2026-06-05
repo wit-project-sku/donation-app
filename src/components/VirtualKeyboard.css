@@ -38,7 +38,7 @@
   min-width: 126px;
   height: 88px;
   border: 0;
-  border-radius: 10px;
+  border-radius: var(--radius-lg);
   background: #fff;
   box-shadow: 0 4px 0 rgba(0, 0, 0, 0.28);
   color: #000;
@@ -58,13 +58,37 @@
 }
 
 .virtual-keyboard__key--special,
-.virtual-keyboard__key--return,
+.virtual-keyboard__key--return {
+  background: #fff;
+  flex: 1.35;
+}
+
 .virtual-keyboard__key--globe {
   background: #fff;
   flex: 1.35;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
 }
 
 .virtual-keyboard__key--spacebar {
   flex: 6;
   font-size: 30px;
+}
+
+.virtual-keyboard__key--active {
+  background: color-mix(in srgb, var(--keyboard-active-color, #1a4d7e) 12%, #ffffff);
+}
+
+.virtual-keyboard__key--globe {
+  gap: 8px;
+}
+
+.virtual-keyboard__layout-label {
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1;
 }

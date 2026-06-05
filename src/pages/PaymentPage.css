@@ -2,161 +2,254 @@
   position: relative;
   width: 1820px;
   height: 2290px;
-  box-sizing: border-box;
-  gap: 0;
-  padding: 24px 24px 0;
+  padding: 0;
   overflow: hidden;
-  background: #fff;
+  color: #111;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-.payment-page__content {
+.payment-page__main {
+  width: 100%;
   flex: 1;
   display: flex;
   flex-direction: column;
-  min-height: 0;
-  overflow-y: auto;
-  transition: opacity 0.3s;
+  align-items: center;
+  gap: 48px;
+  padding: 200px 65px 260px;
+  box-sizing: border-box;
+  overflow: hidden;
+  transition: opacity 0.3s ease;
 }
 
-.payment-page__content--dimmed {
+.payment-page__main--dimmed {
   opacity: 0.35;
   pointer-events: none;
 }
 
-.payment-page .receipt-card__desc {
-  -webkit-line-clamp: 2;
+/* Page title */
+.payment-page__header {
+  width: 100%;
+  max-width: 1690px;
+  text-align: center;
 }
 
-.payment-page__error {
-  margin: 34px 0 0;
-  padding: 24px 32px;
-  border-radius: 28px;
-  background: #fff;
-  border: 3px solid #e8a0a0;
-  font-size: 30px;
-  font-weight: 700;
-  color: #b42318;
-  line-height: 1.4;
+.payment-page__title {
+  margin: 0;
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
+  font-size: 56px;
+  font-weight: 900;
+  line-height: 1.15;
+  word-break: keep-all;
 }
 
-.payment-page__section {
+/* Campaign context */
+.payment-page__campaign-strip {
+  width: 100%;
+  max-width: 1690px;
+  min-height: 280px;
+  padding: 40px 52px;
+  box-sizing: border-box;
+  border: none;
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  gap: 44px;
+  flex-shrink: 0;
+}
+
+.payment-page__campaign-thumb {
+  width: 200px;
+  height: 200px;
+  border-radius: var(--radius-lg);
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.payment-page__campaign-text {
+  min-width: 0;
+  flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 18px;
-  margin-top: 64px;
+  gap: 16px;
 }
 
-.payment-page__section--easy {
-  margin-top: 96px;
-}
-
-.payment-page__section-title {
+.payment-page__campaign-name {
   margin: 0;
-  color: #656262;
   font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 68px;
-  font-style: normal;
-  font-weight: 700;
-  line-height: normal;
+  font-size: 48px;
+  font-weight: 800;
+  line-height: 1.2;
+  word-break: keep-all;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.payment-page__section-desc {
+.payment-page__campaign-desc {
   margin: 0;
-  color: #656262;
   font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 32px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: normal;
+  font-size: 36px;
+  font-weight: 500;
+  line-height: 1.35;
+  word-break: keep-all;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.payment-page__pay-tile {
-  width: 400px;
-  height: 400px;
+/* Amount summary */
+.payment-page__display {
+  width: 100%;
+  max-width: 1690px;
+  padding: 72px 82px;
+  box-sizing: border-box;
+  border: 5px solid;
+  border-radius: var(--radius-lg);
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 34px;
-  background: #fff;
-  border: 3px solid #E8E8E8;
-  border-radius: 28px;
-  color: #999;
-  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 24px;
-  font-weight: 800;
-  cursor: pointer;
-  transition: border-color 0.15s, transform 0.1s, opacity 0.15s;
+  flex-shrink: 0;
 }
 
-.payment-page__pay-tile:active:not(:disabled) {
-  border-color: #FF7BB7;
-}
-
-.payment-page__pay-tile--card:active:not(:disabled) {
-  opacity: 0.92;
-}
-
-.payment-page__pay-tile:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.payment-page__pay-tile--card {
-  border-radius: 42.9px;
-  border: 5px solid #FF7BB7;
-  background: #FFF;
-  width: 400px;
-  height: 400px;
-  box-sizing: border-box;
+.payment-page__display-content {
+  display: flex;
+  flex-direction: column;
   gap: 24px;
-  overflow: visible;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
 }
 
-.payment-page__pay-card-icon-wrap {
-  display: block;
-  width: 296px;
-  height: 296px;
-  flex: 0 0 296px;
-  transform: rotate(90deg);
-  transform-origin: center center;
+.payment-page__display-label {
+  margin: 0;
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
+  font-size: 44px;
+  font-weight: 700;
+  line-height: 1;
 }
 
-.payment-page__pay-card-icon {
+.payment-page__display-amount {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  justify-content: center;
+}
+
+.payment-page__amount-currency {
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
+  font-size: 72px;
+  font-weight: 700;
+}
+
+.payment-page__amount-number {
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
+  font-size: 140px;
+  font-weight: 900;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Helper text */
+.payment-page__helper {
+  width: 100%;
+  max-width: 1690px;
+  margin: -12px 0 0;
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
+  font-size: 32px;
+  font-weight: 500;
+  line-height: 1.4;
+  text-align: center;
+  word-break: keep-all;
+}
+
+/* Error */
+.payment-page__error {
+  width: 100%;
+  max-width: 1690px;
+  margin: 0;
+  padding: 24px 32px;
+  border-radius: var(--radius-lg);
+  border: 3px solid;
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1.4;
+  box-sizing: border-box;
+}
+
+/* Bottom pay button */
+.payment-page__pay-btn {
+  position: absolute;
+  bottom: 50px;
+  left: 50px;
+  right: 50px;
+  height: 178px;
+  padding: 0 48px;
+  border: 5px solid;
+  border-radius: var(--radius-lg);
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
+  cursor: pointer;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 36px;
+  z-index: 10;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.payment-page__pay-btn:active {
+  transform: scale(0.98);
+  opacity: 0.88;
+}
+
+.payment-page__pay-icon-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 120px;
+  height: 120px;
+  flex-shrink: 0;
+}
+
+.payment-page__pay-icon {
   width: 100%;
   height: 100%;
   display: block;
   object-fit: contain;
   pointer-events: none;
+  transform: rotate(90deg);
+  filter: brightness(0) invert(1);
 }
 
-.payment-page__pay-card-label {
-  color: #FF64C1;
-  -webkit-text-stroke-width: 1px;
-  -webkit-text-stroke-color: #FF7BB7;
-  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 40px;
-  font-style: normal;
-  font-weight: 700;
-  line-height: normal;
+.payment-page__pay-label {
+  font-size: 54px;
+  font-weight: 900;
+  line-height: 1;
 }
 
-.payment-page__easy-pay {
+/* Back button */
+.payment-page__back-btn {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  width: 140px;
+  height: 140px;
+  border: 5px solid;
+  border-radius: var(--radius-lg);
   display: flex;
-  gap: 64px;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-sizing: border-box;
+  z-index: 10;
+  padding: 0;
 }
 
-.payment-page__pay-logo {
-  display: block;
-  object-fit: contain;
-}
-
-.payment-page__pay-logo--kakao {
-  width: 280px;
-  height: 110px;
-}
-
-.payment-page__pay-logo--naver {
-  width: 284px;
-  height: 148px;
+.payment-page__back-btn:active {
+  transform: scale(0.95);
+  opacity: 0.85;
 }

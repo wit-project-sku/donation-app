@@ -8,6 +8,8 @@ export interface Campaign {
   description: string;
   imageUrl: string;
   amountOptions: number[];
+  accumulatedAmount: number;
+  targetAmount: number;
   status?: string;
   createdAt?: string;
 }

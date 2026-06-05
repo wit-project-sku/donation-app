@@ -1,13 +1,15 @@
 import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useAppNavigate } from "../hooks/useAppNavigate";
 import { IconCheck } from "../components/Icon";
 import { ReceiptCard } from "../components/ReceiptCard";
 import { PageBody } from "../components/layout/PageBody";
 import { useDonationStore } from "../store/donationStore";
+import { useTheme } from "../theme/ThemeContext";
 import "./CompletePage.css";
 
 export function CompletePage() {
-  const navigate = useNavigate();
+  const navigate = useAppNavigate();
+  const { theme } = useTheme();
   const { selectedCampaign, amount, donationType, paymentMethod } =
     useDonationStore();
 
@@ -55,7 +57,11 @@ export function CompletePage() {
   };
 
   return (
-    <PageBody className="complete-page" scroll={false}>
+    <PageBody
+      className="complete-page"
+      scroll={false}
+      style={{ backgroundColor: theme.background }}
+    >
       <div className="complete-page__bg">
         <ReceiptCard
           amount={amount}

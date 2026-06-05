@@ -1,3 +1,4 @@
+import { resolveDonationPhotoUrl } from "../utils/defaultDonationImage";
 import { formatCurrency } from "../utils/format";
 import "./WallGiverCard.css";
 
@@ -20,18 +21,18 @@ export function WallGiverCard({
   timeAgo,
   isNew,
 }: WallGiverCardProps) {
-  const imageUrl = photoUrl ?? campaignImageUrl;
+  const imageUrl = resolveDonationPhotoUrl(photoUrl, campaignImageUrl);
 
   return (
     <article className={`wall-giver-card${isNew ? " wall-giver-card--new" : ""}`}>
+      {isNew ? (
+        <span className="wall-giver-card__badge">방금 참여</span>
+      ) : null}
+
       <h3 className="wall-giver-card__title">기부증서</h3>
 
       <div className="wall-giver-card__photo-wrap">
-        {imageUrl ? (
-          <img className="wall-giver-card__photo" src={imageUrl} alt="" />
-        ) : (
-          <div className="wall-giver-card__photo wall-giver-card__photo--placeholder" />
-        )}
+        <img className="wall-giver-card__photo" src={imageUrl} alt="" />
       </div>
 
       <div className="wall-giver-card__info">

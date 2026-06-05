@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useTheme } from "../theme/ThemeContext";
 import { IconCheck } from "./Icon";
 import "./CardPaymentOverlay.css";
 
@@ -19,6 +20,7 @@ export function CardPaymentOverlay({
   onCancel,
   onPaymentFailed,
 }: CardPaymentOverlayProps) {
+  const { theme } = useTheme();
   const [step, setStep] = useState<PaymentStep>("insert");
   const cancelledRef = useRef(false);
   const onCompleteRef = useRef(onComplete);
@@ -64,9 +66,19 @@ export function CardPaymentOverlay({
 
   const isLoading = step === "insert" || step === "processing";
 
+  const dialogStyle = {
+    borderColor: theme.primary,
+    backgroundColor: theme.card.background,
+    "--overlay-primary": theme.primary,
+    "--overlay-text": theme.text.primary,
+    "--overlay-text-secondary": theme.text.secondary,
+    "--overlay-on-primary": theme.text.onPrimary,
+    "--overlay-muted-border": theme.background,
+  } as React.CSSProperties;
+
   return (
     <div className="card-overlay" role="dialog" aria-modal>
-      <div className="card-overlay__dialog">
+      <div className="card-overlay__dialog" style={dialogStyle}>
         {isLoading ? (
           <>
             <p className="card-overlay__desc">
@@ -80,13 +92,24 @@ export function CardPaymentOverlay({
               type="button"
               className="card-overlay__cancel"
               onClick={onCancelRef.current}
+              style={{
+                backgroundColor: theme.text.secondary,
+                color: theme.text.onPrimary,
+              }}
             >
               결제 취소
             </button>
           </>
         ) : (
           <>
-            <div className="card-overlay__check" aria-hidden>
+            <div
+              className="card-overlay__check"
+              aria-hidden
+              style={{
+                backgroundColor: theme.primary,
+                color: theme.text.onPrimary,
+              }}
+            >
               <IconCheck size={72} strokeWidth={3.2} />
             </div>
             <p className="card-overlay__success-copy">
@@ -94,7 +117,14 @@ export function CardPaymentOverlay({
               <br />
               당신의 마음이 필요한 곳에 전해집니다
             </p>
-            <div className="card-overlay__countdown">
+            <div
+              className="card-overlay__countdown"
+              style={{
+                borderColor: theme.background,
+                backgroundColor: theme.primary,
+                color: theme.text.onPrimary,
+              }}
+            >
               3초 후 다음 단계로 자동 전환됩니다
             </div>
           </>

@@ -2,7 +2,6 @@
   min-height: 100vh;
   box-sizing: border-box;
   padding: 24px 18px 32px;
-  background: #fff;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -15,7 +14,7 @@
   width: min(100%, 360px);
   box-sizing: border-box;
   border: 14px solid #ffd3e9;
-  border-radius: 18px;
+  border-radius: var(--radius-lg);
   background: #fff;
   padding: 42px 24px 28px;
   overflow: hidden;
@@ -57,7 +56,7 @@
   width: 220px;
   height: 330px;
   margin-top: 28px;
-  border-radius: 10px;
+  border-radius: var(--radius-lg);
   overflow: hidden;
   background: #e8e8e8;
 }
@@ -134,7 +133,7 @@
   width: min(100%, 360px);
   height: 58px;
   border: 0;
-  border-radius: 999px;
+  border-radius: var(--radius-lg);
   background: #FF7BB7;
   color: #fff;
   font-family: "Noto Sans", "Noto Sans KR", -apple-system, BlinkMacSystemFont, sans-serif;

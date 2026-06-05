@@ -11,6 +11,8 @@ function mapCampaignDto(dto: CampaignDto): Campaign {
     description: dto.description,
     imageUrl: dto.imageUrl,
     amountOptions: dto.amountOptions ?? [],
+    accumulatedAmount: dto.accumulatedAmount ?? 0,
+    targetAmount: dto.targetAmount ?? 0,
     status: dto.status,
     createdAt: dto.createdAt,
   };

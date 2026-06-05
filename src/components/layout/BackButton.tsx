@@ -1,5 +1,6 @@
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { getBackRoute } from "../../config/navigation";
+import { useAppNavigate } from "../../hooks/useAppNavigate";
 import "./BackButton.css";
 
 interface BackButtonProps {
@@ -9,7 +10,7 @@ interface BackButtonProps {
 }
 
 export function BackButton({ to, className = "" }: BackButtonProps) {
-  const navigate = useNavigate();
+  const navigate = useAppNavigate();
   const { pathname } = useLocation();
 
   const handleBack = () => {

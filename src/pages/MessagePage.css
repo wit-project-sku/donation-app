@@ -1,136 +1,219 @@
 .message-page {
+  position: relative;
   width: 1820px;
   height: 2290px;
   box-sizing: border-box;
-  gap: 0;
-  padding: 0 36px;
+  padding: 0;
   overflow: hidden;
-  background: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.message-page__main {
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 36px;
+  padding: 80px 65px 260px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.message-page__header {
+  width: 100%;
+  max-width: 1690px;
+  text-align: center;
+  flex-shrink: 0;
 }
 
 .message-page__title {
-  margin: 12px 0 0;
-  color: #656262;
+  margin: 0;
   font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 60px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: normal;
-  flex-shrink: 0;
+  font-size: 56px;
+  font-weight: 900;
+  line-height: 1.15;
+  word-break: keep-all;
 }
 
 .message-page__subtitle {
   margin: 16px 0 0;
-  color: #656262;
   font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 48px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: normal;
-  flex-shrink: 0;
+  font-size: 34px;
+  font-weight: 500;
+  line-height: 1.35;
+  word-break: keep-all;
 }
 
 .message-page__form-card {
-  width: 1820px;
-  max-width: 100%;
-  height: 529px;
-  margin-top: 54px;
+  width: 100%;
+  max-width: 1690px;
+  padding: 36px 44px;
   box-sizing: border-box;
-  border-radius: 42.9px;
-  border: 5px solid #FF7BB7;
-  background: #FFF;
-  padding: 72px 108px;
+  border: none;
+  border-radius: var(--radius-lg);
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 0;
+  gap: 20px;
   flex-shrink: 0;
 }
 
 .message-page__field {
-  position: relative;
   display: flex;
-  align-items: center;
-  gap: 30px;
-  min-height: 0;
-  flex: 1;
-  padding: 0;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+  padding: 28px 36px;
   border: 0;
   background: transparent;
   text-align: left;
   cursor: pointer;
-  border-radius: 18px;
-  transition: background 0.15s;
+  border-radius: var(--radius-lg);
+  box-sizing: border-box;
+  transition: background-color 0.15s ease;
 }
 
 .message-page__field-label {
-  color: var(--main, #999);
   font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 68px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: normal;
+  font-size: 34px;
+  font-weight: 600;
+  line-height: 1.2;
   white-space: nowrap;
   flex-shrink: 0;
+  width: 100%;
+}
+
+.message-page__field-input {
+  width: 100%;
+  padding: 20px 24px;
+  box-sizing: border-box;
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
 }
 
 .message-page__field-value {
-  flex: 1;
-  min-width: 0;
+  width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: #656262;
   font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 68px;
-  font-style: normal;
-  font-weight: 700;
-  line-height: normal;
+  font-size: 48px;
+  font-weight: 800;
+  line-height: 1.2;
+  text-align: left;
+}
+
+.message-page__field-placeholder {
+  width: 100%;
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
+  font-size: 48px;
+  font-weight: 400;
+  line-height: 1.2;
+  color: #b0b0b0;
+  opacity: 0.55;
+  text-align: left;
 }
 
 .message-page__field--active {
-  background: rgba(255, 123, 183, 0.1);
-  box-shadow: none;
-  border: 0;
-  outline: none;
+  padding: 32px 40px;
+  background: var(--message-active-bg);
 }
 
-.message-page__divider {
-  display: block;
+.message-page__keyboard-wrap {
   width: 100%;
-  height: 2px;
-  margin: 0;
-  background: #E8E8E8;
-  flex-shrink: 0;
+  max-width: 1690px;
+  flex: 1;
+  min-height: 0;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .message-page .virtual-keyboard {
-  margin-top: 80px;
-  flex-shrink: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  margin: 0;
+  padding: 36px 40px 28px;
+  gap: 24px;
+  background: transparent;
+  border-radius: 0;
 }
 
-.message-page__photo-btn {
-  align-self: flex-end;
-  width: 457px;
-  height: 148px;
-  margin-top: 114px;
-  margin-right: 0;
-  border-radius: 74px;
-  border: 5px solid var(---5, #E8E8E8);
-  background: #FF7BB7;
-  color: #FFF;
+.message-page .virtual-keyboard__row {
+  height: 72px;
+}
+
+.message-page .virtual-keyboard__row--narrow {
+  padding: 0 80px;
+}
+
+.message-page .virtual-keyboard__row--middle {
+  padding: 0 36px;
+}
+
+.message-page .virtual-keyboard__row--bottom {
+  padding: 0 130px;
+}
+
+.message-page .virtual-keyboard__row--space {
+  padding: 0 140px;
+}
+
+.message-page .virtual-keyboard__key {
+  min-width: 96px;
+  height: 72px;
+  font-size: 30px;
+  border-radius: var(--radius-lg);
+  background: var(--message-key-bg);
+  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.2);
+}
+
+.message-page .virtual-keyboard__key--special,
+.message-page .virtual-keyboard__key--return,
+.message-page .virtual-keyboard__key--globe {
+  background: var(--message-key-bg);
+}
+
+.message-page .virtual-keyboard {
+  --keyboard-active-color: var(--message-active-color);
+}
+
+/* Bottom next button */
+.message-page__next-btn {
+  position: absolute;
+  bottom: 50px;
+  left: 50px;
+  right: 50px;
+  height: 178px;
+  border: 5px solid;
+  border-radius: var(--radius-lg);
   font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 51px;
-  font-style: normal;
-  font-weight: 700;
-  line-height: normal;
-  box-sizing: border-box;
+  font-size: 54px;
+  font-weight: 900;
   cursor: pointer;
-  flex-shrink: 0;
-  transition: opacity 0.15s, transform 0.1s;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
-.message-page__photo-btn:active {
+.message-page__next-btn:active:not(:disabled) {
   transform: scale(0.98);
-  opacity: 0.9;
+  opacity: 0.88;
+}
+
+.message-page__next-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
 }

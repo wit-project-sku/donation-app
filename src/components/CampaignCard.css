@@ -9,22 +9,25 @@
   text-align: left;
   padding: 0;
   background: #111;
+
 }
 
 .campaign-card__bg {
   position: absolute;
   inset: 0;
-  background-size: cover;
-  background-position: center;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
   transform: scale(1.02);
 }
 
 .campaign-card__overlay {
   position: absolute;
   inset: 0;
-  background:
+  /* background:
     linear-gradient(180deg, rgba(0, 0, 0, 0.24) 0%, rgba(0, 0, 0, 0.1) 38%, rgba(0, 0, 0, 0.76) 100%),
-    linear-gradient(90deg, rgba(0, 0, 0, 0.58) 0%, rgba(0, 0, 0, 0.14) 46%, rgba(0, 0, 0, 0.32) 100%);
+    linear-gradient(90deg, rgba(0, 0, 0, 0.58) 0%, rgba(0, 0, 0, 0.14) 46%, rgba(0, 0, 0, 0.32) 100%); */
 }
 
 .campaign-card__content {
@@ -44,23 +47,23 @@
 
 .campaign-card__title {
   margin: 0 0 38px;
-  color: #fff;
+  color: #FE6C50;
   font-family: "Noto Sans", "Noto Sans KR", sans-serif;
   font-size: 118px;
   font-weight: 900;
   line-height: 1.05;
-  text-shadow: 0 16px 50px rgba(0, 0, 0, 0.42);
+  /* text-shadow: 0 16px 50px rgba(0, 0, 0, 0.42); */
   word-break: keep-all;
 }
 
 .campaign-card__desc {
   max-width: 1080px;
   margin: 0;
-  color: #FFD4E8;
+  color: #eb6d54;
   font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 42px;
+  font-size: 40px;
   font-weight: 800;
   line-height: 1.35;
   word-break: keep-all;
-  text-shadow: 0 10px 36px rgba(0, 0, 0, 0.38);
+  /* text-shadow: 0 10px 36px rgba(0, 0, 0, 0.38); */
 }

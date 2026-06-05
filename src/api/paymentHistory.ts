@@ -4,8 +4,8 @@ import type {
   PaymentHistoryDto,
   PaymentHistoryParams,
   PaymentMethodDto,
+  WallEntry,
 } from "./types";
-import type { WallEntry } from "./wall";
 
 const PAYMENT_HISTORY_PATH = "/api/donations/payment/history";
 

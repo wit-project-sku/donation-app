@@ -29,6 +29,8 @@ export interface CampaignDto {
   imageUrl: string;
   status: CampaignStatus;
   amountOptions: number[];
+  accumulatedAmount?: number;
+  targetAmount?: number;
   createdAt: string;
 }
 
@@ -62,6 +64,17 @@ export interface DonationDetailsResponse {
 
 export interface PaymentHistoryParams extends PageParams {
   keyword?: string;
+}
+
+export interface WallEntry {
+  id: string;
+  donorName: string;
+  amount: number;
+  campaignName: string;
+  paymentMethod: string;
+  timeAgo: string;
+  photoUrl?: string;
+  isNew?: boolean;
 }
 
 export interface OutfitParams extends PageParams {

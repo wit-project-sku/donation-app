@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useAppNavigate } from "../hooks/useAppNavigate";
 import { ApiError } from "../api/client";
 import {
   buildPaymentRequest,
@@ -9,21 +9,25 @@ import {
 } from "../api/payments";
 import { CardPaymentOverlay } from "../components/CardPaymentOverlay";
 import creditCardIcon from "../assets/credit-card.png";
-import { ReceiptCard } from "../components/ReceiptCard";
+import { IconBack } from "../components/Icon";
 import { PageBody } from "../components/layout/PageBody";
-import { PageFooter } from "../components/layout/PageFooter";
 import { useDonationStore } from "../store/donationStore";
+import { useTheme } from "../theme/ThemeContext";
 import type { PaymentMethod } from "../types";
+import { formatCurrency } from "../utils/format";
 import "./PaymentPage.css";
 
 type PaymentOverlay = "card" | null;
 
+/** Neutral border for unselected controls (not location primary) */
+const DEFAULT_BORDER = "#D0D0D0";
+
 export function PaymentPage() {
-  const navigate = useNavigate();
+  const navigate = useAppNavigate();
+  const { theme } = useTheme();
   const {
     selectedCampaign,
     amount,
-    donationType,
     setPaymentMethod,
     setMerchantUid,
   } = useDonationStore();
@@ -111,51 +115,142 @@ export function PaymentPage() {
   if (!selectedCampaign) return null;
 
   return (
-    <PageBody className="payment-page" scroll={false}>
-      <div
-        className={`payment-page__content ${overlay ? "payment-page__content--dimmed" : ""}`}
+    <PageBody
+      className="payment-page"
+      scroll={false}
+      style={{ backgroundColor: theme.background }}
+    >
+      {!overlay && (
+        <button
+          type="button"
+          className="payment-page__back-btn"
+          onClick={() => navigate("/amount")}
+          aria-label="금액 선택으로 돌아가기"
+          style={{
+            borderColor: theme.primary,
+            backgroundColor: theme.primary,
+            color: theme.text.onPrimary,
+          }}
+        >
+          <IconBack size={72} strokeWidth={2.5} />
+        </button>
+      )}
+
+      <main
+        className={`payment-page__main ${overlay ? "payment-page__main--dimmed" : ""}`}
       >
-        <ReceiptCard
-          amount={amount}
-          donationType={donationType}
-          campaign={selectedCampaign}
-        />
+        <header className="payment-page__header">
+          <h1
+            className="payment-page__title"
+            style={{ color: theme.text.primary }}
+          >
+            결제 방법을 선택해주세요
+          </h1>
+        </header>
+
+        <section
+          className="payment-page__campaign-strip"
+          style={{ backgroundColor: theme.card.background }}
+        >
+          <img
+            className="payment-page__campaign-thumb"
+            src={selectedCampaign.imageUrl}
+            alt=""
+            decoding="async"
+          />
+          <div className="payment-page__campaign-text">
+            <p
+              className="payment-page__campaign-name"
+              style={{ color: theme.text.primary }}
+            >
+              {selectedCampaign.title}
+            </p>
+            {selectedCampaign.description?.trim() && (
+              <p
+                className="payment-page__campaign-desc"
+                style={{ color: theme.text.secondary }}
+              >
+                {selectedCampaign.description}
+              </p>
+            )}
+          </div>
+        </section>
+
+        <section
+          className="payment-page__display"
+          style={{
+            borderColor: DEFAULT_BORDER,
+            backgroundColor: theme.background,
+          }}
+        >
+          <div className="payment-page__display-content">
+            <p
+              className="payment-page__display-label"
+              style={{ color: theme.text.secondary }}
+            >
+              기부 금액
+            </p>
+            <div className="payment-page__display-amount">
+              <span
+                className="payment-page__amount-currency"
+                style={{ color: theme.text.secondary }}
+              >
+                ₩
+              </span>
+              <span
+                className="payment-page__amount-number"
+                style={{ color: theme.primary }}
+              >
+                {formatCurrency(amount)}
+              </span>
+            </div>
+          </div>
+        </section>
+
+        <p
+          className="payment-page__helper"
+          style={{ color: theme.text.secondary }}
+        >
+          카드를 투입구 끝까지 넣어주시고, 결제 완료 후 카드를 빼주세요
+        </p>
 
         {error && (
-          <p className="payment-page__error" role="alert">
+          <p
+            className="payment-page__error"
+            role="alert"
+            style={{
+              backgroundColor: theme.card.background,
+              borderColor: "#e8a0a0",
+              color: "#b42318",
+            }}
+          >
             {error}
           </p>
         )}
+      </main>
 
-        <section className="payment-page__section">
-          <h2 className="payment-page__section-title">카드</h2>
-          <p className="payment-page__section-desc">
-            카드를 투입구 끝까지 넣어주시고 결제 완료 후 카드를 빼주세요
-          </p>
-          <button
-            type="button"
-            className="payment-page__pay-tile payment-page__pay-tile--card"
-            onClick={() => startPayment("card")}
-            disabled={overlay != null}
-            style={{marginTop: "1.5rem"}}
-          >
-            <span
-              className="payment-page__pay-card-icon-wrap"
-              aria-hidden
-              style={{ transform: "rotate(90deg)" }}
-            >
-              <img
-                className="payment-page__pay-card-icon"
-                src={creditCardIcon}
-                alt=""
-                style={{ transform: "rotate(90deg)" }}
-              />
-            </span>
-            <span className="payment-page__pay-card-label">신용/체크카드</span>
-          </button>
-        </section>
-
-      </div>
+      {!overlay && (
+        <button
+          type="button"
+          className="payment-page__pay-btn"
+          onClick={() => startPayment("card")}
+          aria-label="신용/체크카드로 결제"
+          style={{
+            backgroundColor: theme.primary,
+            borderColor: theme.primary,
+            color: theme.text.onPrimary,
+          }}
+        >
+          <span className="payment-page__pay-icon-wrap" aria-hidden>
+            <img
+              className="payment-page__pay-icon"
+              src={creditCardIcon}
+              alt=""
+            />
+          </span>
+          <span className="payment-page__pay-label">신용/체크카드</span>
+        </button>
+      )}
 
       {overlay === "card" && (
         <CardPaymentOverlay
@@ -166,9 +261,6 @@ export function PaymentPage() {
           onPaymentFailed={handlePaymentError}
         />
       )}
-
-
-      {!overlay && <PageFooter onBack={() => navigate("/amount")} />}
     </PageBody>
   );
 }

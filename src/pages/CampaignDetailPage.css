@@ -2,146 +2,275 @@
   position: relative;
   width: 1820px;
   height: 2290px;
-  gap: 18px;
+  gap: 0;
   padding: 0;
   overflow: hidden;
   color: #111;
-}
-
-.campaign-detail__card {
-  width: 1820px;
-  height: 1987px;
-  padding: 70px 82px 46px;
-  border: none;
-  border-radius: 0;
-  background: #fff;
-  box-sizing: border-box;
-  flex-shrink: 0;
-  overflow: hidden;
   display: flex;
   flex-direction: column;
-}
-
-.campaign-detail__back-btn {
-  width: 520px;
-  height: 192px;
-  padding: 0 48px;
-  border: 5px solid var(---5, #E8E8E8);
-  border-radius: 42.9px;
-  background: #fff;
-  color: #333;
-  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 44px;
-  font-weight: 900;
-  line-height: 1;
-  cursor: pointer;
-  box-shadow: none;
-  transition: opacity 0.15s, transform 0.1s;
-  flex-shrink: 0;
-  box-sizing: border-box;
+  justify-content: space-between;
 }
 
-.campaign-detail__back-btn:active {
-  transform: scale(0.97);
-  opacity: 0.85;
+/* Main Content */
+.campaign-detail__main {
+  width: 1690px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 70px 0px;
+  
 }
 
+/* Hero Section */
 .campaign-detail__hero {
   position: relative;
-  width: 1604px;
-  max-width: 100%;
-  height: 637px;
-  overflow: hidden;
-  border-radius: 42.9px 42.9px 0 0;
-  background:
-    linear-gradient(0deg, rgba(0, 0, 0, 0.50) 0%, rgba(0, 0, 0, 0.50) 100%),
-    var(--campaign-hero-image, none) lightgray -152.155px -444px / 125.972% 185.557% no-repeat;
-  flex-shrink: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
   box-sizing: border-box;
+  flex-shrink: 0;
 }
 
 .campaign-detail__hero-img {
+  width: 100%;
+  max-width: 1690px;
+  height: 1200px;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  border-radius: var(--radius-lg);
+}
+
+.campaign-detail__hero-overlay {
   position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
+  inset: 0;
+  background: linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.5) 0%,
+    transparent 100%
+  );
+  pointer-events: none;
 }
 
+/* Content Section - Single Column Flex */
 .campaign-detail__content {
-  padding-top: 58px;
-  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 70px 0;
+  box-sizing: border-box;
+  flex: 1;
+  overflow-y: auto;
+  width: 100%;
 }
 
-.campaign-detail__copy {
-  min-width: 0;
+/* Campaign Info - Full Width Column */
+.campaign-detail__info {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  box-sizing: border-box;
 }
 
-.campaign-detail__copy h2 {
-  margin: 0 0 40px;
-  color: #4f4f4f;
+.campaign-detail__info::-webkit-scrollbar {
+  width: 8px;
+}
+
+.campaign-detail__info::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.campaign-detail__info::-webkit-scrollbar-thumb {
+  background: #ddd;
+  border-radius: 4px;
+}
+
+.campaign-detail__info::-webkit-scrollbar-thumb:hover {
+  background: #bbb;
+}
+
+.campaign-detail__title {
+  margin: 0;
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
   font-size: 82px;
   font-weight: 900;
   line-height: 1.06;
   word-break: keep-all;
 }
 
-.campaign-detail__copy p {
-  margin: 0 0 30px;
-  color: #656262;
+.campaign-detail__description {
+  margin: 0;
   font-family: "Noto Sans", "Noto Sans KR", sans-serif;
   font-size: 36px;
-  font-style: normal;
   font-weight: 500;
-  line-height: normal;
+  line-height: 1.5;
   word-break: keep-all;
 }
 
+/* Impact */
+.campaign-detail__impact {
+  display: none;
+  margin: 0;
+  padding: 28px 36px;
+  border-radius: var(--radius-lg);
+}
+
+.campaign-detail__impact-content {
+  display: none;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.campaign-detail__impact-text {
+  display: none;
+  margin: 0;
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
+  font-size: 32px;
+  font-weight: 600;
+  line-height: 1.4;
+  word-break: keep-all;
+  flex: 1;
+}
+
+/* Donor Count */
+.campaign-detail__donor-count {
+  display: none;
+  align-items: center;
+  gap: 16px;
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
+  font-size: 36px;
+  font-weight: 800;
+  margin: 0;
+}
+
+/* Organization Info */
+.campaign-detail__org-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.campaign-detail__org-badge {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.2;
+  word-break: keep-all;
+}
+
+/* Progress Bar */
+.campaign-detail__progress {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 0;
+}
+
+.campaign-detail__progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.campaign-detail__progress-amount {
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
+  font-size: 44px;
+  font-weight: 800;
+  margin: 0;
+}
+
+.campaign-detail__progress-percent {
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
+  font-size: 40px;
+  font-weight: 900;
+  margin: 0;
+}
+
+.campaign-detail__progress-bar {
+  width: 100%;
+  height: 24px;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.campaign-detail__progress-fill {
+  height: 100%;
+  border-radius: var(--radius-lg);
+}
+
+/* Categories */
 .campaign-detail__categories-img {
-  display: block;
-  margin-top: 36px;
-  width: 1328px;
-  max-width: 100%;
+  display: none;
+  margin: 0;
+  width: 100%;
+  max-width: 800px;
   height: auto;
   aspect-ratio: 1328 / 211;
   object-fit: contain;
   object-position: left center;
 }
 
-.campaign-detail__actions {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  width: 1820px;
-  height: 192px;
-  padding: 0 36px;
-  margin-bottom: 40px;
-  flex-shrink: 0;
-  box-sizing: border-box;
+/* Hidden Badge Styles */
+.campaign-detail__badges {
+  display: none;
 }
 
+.campaign-detail__badge {
+  display: none;
+}
+
+.campaign-detail__stats {
+  display: none;
+}
+
+/* Back Button - Top Left Icon */
+.campaign-detail__back-btn-icon {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  width: 140px;
+  height: 140px;
+  border: 5px solid;
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-sizing: border-box;
+  z-index: 10;
+  padding: 0;
+}
+
+.campaign-detail__back-btn-icon:active {
+  transform: scale(0.95);
+  opacity: 0.85;
+}
+
+/* Donate Button - Bottom Full Width */
 .campaign-detail__donate-btn {
-  flex: 1;
-  min-width: 0;
-  height: 192px;
-  border: 5px solid var(---5, #E8E8E8);
-  border-radius: 42.9px;
-  background: #FF7BB7;
-  color: #fff;
+  position: absolute;
+  bottom: 50px;
+  left: 50px;
+  right: 50px;
+  height: 178px;
+  border: 5px solid;
+  border-radius: var(--radius-lg);
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
   font-size: 54px;
   font-weight: 900;
   cursor: pointer;
-  box-shadow: none;
-  transition: opacity 0.15s, transform 0.1s;
-  flex-shrink: 0;
   box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
 }
 
 .campaign-detail__donate-btn:active {

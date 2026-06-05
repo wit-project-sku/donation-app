@@ -2,7 +2,6 @@ import type { LucideProps } from "lucide-react";
 import {
   Camera,
   Check,
-  ChevronLeft,
   CreditCard,
   Delete,
   Globe,
@@ -14,12 +13,13 @@ import {
   User,
   Users,
   Wifi,
+  ArrowLeft,
 } from "lucide-react";
 
 type IconProps = LucideProps;
 
 export function IconBack(props: IconProps) {
-  return <ChevronLeft strokeWidth={2.5} {...props} />;
+  return <ArrowLeft strokeWidth={2.5} {...props} />;
 }
 
 export function IconCheck(props: IconProps) {

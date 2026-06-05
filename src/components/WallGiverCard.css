@@ -1,27 +1,45 @@
 .wall-giver-card {
-  width: 484px;
-  height: 520px;
+  position: relative;
+  width: 780px;
+  height: 800px;
   box-sizing: border-box;
-  border-radius: 12px;
-  border: 1px solid #FFB6D8;
-  background: #FAE6F2;
+  border-radius: var(--radius-lg);
+  border: none;
+  background: var(--wall-card-bg);
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 22px 28px 18px;
+  padding: 28px 36px 24px;
   overflow: hidden;
   flex-shrink: 0;
 }
 
 .wall-giver-card--new {
-  border-color: #FF7BB7;
+  background: color-mix(in srgb, var(--wall-primary) 8%, var(--wall-card-bg));
+}
+
+.wall-giver-card__badge {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  z-index: 2;
+  min-height: 52px;
+  padding: 0 22px;
+  border-radius: var(--radius-lg);
+  background: var(--wall-primary);
+  color: var(--wall-on-primary);
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
+  font-size: 24px;
+  font-weight: 800;
+  line-height: 52px;
+  white-space: nowrap;
 }
 
 .wall-giver-card__title {
   margin: 0;
-  color: #111;
+  color: var(--wall-text-primary);
   font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 22px;
+  font-size: 32px;
   font-weight: 900;
   line-height: 1;
   text-align: center;
@@ -29,12 +47,14 @@
 
 .wall-giver-card__photo-wrap {
   position: relative;
-  width: 240px;
-  height: 270px;
-  margin-top: 16px;
+  width: 100%;
+  max-width: 420px;
+  flex: 1;
+  min-height: 440px;
+  margin-top: 20px;
   overflow: hidden;
-  border-radius: 8px;
-  background: #e8e8e8;
+  border-radius: var(--radius-lg);
+  background: var(--wall-photo-bg);
   flex-shrink: 0;
 }
 
@@ -47,35 +67,25 @@
 }
 
 .wall-giver-card__photo--placeholder {
-  background: #e8e8e8;
-}
-
-.wall-giver-card__photo-brand {
-  position: absolute;
-  left: 50%;
-  bottom: 10px;
-  transform: translateX(-50%);
-  color: #00a4e4;
-  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 20px;
-  font-weight: 900;
-  line-height: 1;
+  background: var(--wall-photo-bg);
 }
 
 .wall-giver-card__info {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 240px;
-  margin-top: 14px;
-  padding-top: 10px;
-  border-top: 1px solid #FF9BC9;
+  width: 100%;
+  max-width: 420px;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 2px solid var(--wall-accent-border);
+  flex-shrink: 0;
 }
 
 .wall-giver-card__amount {
-  color: #FF7BB7;
+  color: var(--wall-primary);
   font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 26px;
+  font-size: 48px;
   font-weight: 900;
   line-height: 1;
   white-space: nowrap;
@@ -83,13 +93,13 @@
 
 .wall-giver-card__name {
   width: 100%;
-  margin-top: 8px;
+  margin-top: 12px;
   padding-bottom: 14px;
-  border-bottom: 1px solid #FF9BC9;
-  color: #333;
+  border-bottom: 2px solid var(--wall-accent-border);
+  color: var(--wall-text-primary);
   font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 18px;
-  font-weight: 900;
+  font-size: 32px;
+  font-weight: 800;
   line-height: 1;
   text-align: center;
   overflow: hidden;
@@ -99,9 +109,9 @@
 
 .wall-giver-card__date {
   margin-top: 14px;
-  color: #999;
+  color: var(--wall-text-secondary);
   font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 10px;
+  font-size: 24px;
   font-weight: 500;
   line-height: 1;
 }

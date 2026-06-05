@@ -1,6 +1,8 @@
 import { useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Download } from "lucide-react";
+import { getLocationTheme } from "../theme/locations";
+import { resolveDonationPhotoUrl } from "../utils/defaultDonationImage";
 import { formatCurrency } from "../utils/format";
 import "./MobileCertificatePage.css";
 
@@ -18,16 +20,21 @@ function escapeXml(value: string) {
 
 export function MobileCertificatePage() {
   const [params] = useSearchParams();
+  const theme = getLocationTheme(params.get("location") || "insadong");
   const name = getParam(params, "n") || getParam(params, "name", "후원자");
   const message = getParam(params, "message");
   const date = getParam(params, "d") || getParam(params, "date");
   const photo = getParam(params, "p") || getParam(params, "photo");
   const amount = Number(getParam(params, "a") || getParam(params, "amount", "0"));
   const amountLabel = `${formatCurrency(amount)}원`;
+  const hasDonorInfo = Boolean(name.trim() || message.trim());
+  const photoSrc = hasDonorInfo
+    ? resolveDonationPhotoUrl(photo || null)
+    : photo || null;
 
   const svgSource = useMemo(() => {
-    const imageNode = photo
-      ? `<image href="${escapeXml(photo)}" x="150" y="190" width="420" height="640" preserveAspectRatio="xMidYMin slice" clip-path="url(#photoClip)" />`
+    const imageNode = photoSrc
+      ? `<image href="${escapeXml(photoSrc)}" x="150" y="190" width="420" height="640" preserveAspectRatio="xMidYMin slice" clip-path="url(#photoClip)" />`
       : `<rect x="150" y="190" width="420" height="640" rx="18" fill="#e8e8e8" />`;
 
     return `<?xml version="1.0" encoding="UTF-8"?>
@@ -48,7 +55,7 @@ export function MobileCertificatePage() {
   <text x="360" y="1032" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" fill="#555555">${escapeXml(message)}</text>
   <text x="360" y="1058" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#999999">${escapeXml(date)}</text>
 </svg>`;
-  }, [amountLabel, date, message, name, photo]);
+  }, [amountLabel, date, message, name, photoSrc]);
 
   const [downloading, setDownloading] = useState(false);
 
@@ -56,9 +63,9 @@ export function MobileCertificatePage() {
     if (downloading) return;
     setDownloading(true);
     try {
-      if (photo) {
+      if (photoSrc) {
         // fetch the S3 image as a blob so the browser saves it as a file
-        const res = await fetch(photo);
+        const res = await fetch(photoSrc);
         const blob = await res.blob();
         const ext = blob.type.includes("png") ? "png" : "jpg";
         const url = URL.createObjectURL(blob);
@@ -79,20 +86,23 @@ export function MobileCertificatePage() {
       }
     } catch {
       // CORS blocked — open in new tab so the user can long-press → save
-      if (photo) window.open(photo, "_blank");
+      if (photoSrc) window.open(photoSrc, "_blank");
     } finally {
       setDownloading(false);
     }
   };
 
   return (
-    <main className="mobile-cert">
+    <main
+      className="mobile-cert"
+      style={{ backgroundColor: theme.background }}
+    >
       <article className="mobile-cert__card" aria-label="기부 증서">
         <h1 className="mobile-cert__title">기부증서</h1>
 
         <div className="mobile-cert__photo-wrap">
-          {photo ? (
-            <img className="mobile-cert__photo" src={photo} alt="" />
+          {photoSrc ? (
+            <img className="mobile-cert__photo" src={photoSrc} alt="" />
           ) : (
             <div className="mobile-cert__photo mobile-cert__photo--empty" />
           )}

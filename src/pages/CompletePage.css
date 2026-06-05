@@ -1,4 +1,4 @@
-﻿.complete-page {
+.complete-page {
   position: relative;
   align-items: stretch;
   gap: 0;
@@ -6,7 +6,7 @@
   overflow: hidden;
 }
 
-/* ── Dimmed background ── */
+/* -- Dimmed background -- */
 .complete-page__bg {
   position: absolute;
   inset: 0;
@@ -16,7 +16,7 @@
   pointer-events: none;
 }
 
-/* ── Dialog overlay ── */
+/* -- Dialog overlay -- */
 .complete-page__overlay {
   position: relative;
   z-index: 10;
@@ -29,7 +29,7 @@
   padding: 80px 120px;
   margin: 120px 80px;
   background: #fff;
-  border-radius: 42.9px;
+  border-radius: var(--radius-lg);
   box-shadow: 0 24px 80px rgba(0, 0, 0, 0.18);
   text-align: center;
 }
@@ -71,7 +71,7 @@
   width: 100%;
   max-width: 800px;
   height: 148px;
-  border-radius: 42.9px;
+  border-radius: var(--radius-lg);
   border: 5px solid #E8E8E8;
   background: #999;
   font-family: "Noto Sans", "Noto Sans KR", sans-serif;
@@ -129,7 +129,7 @@
   width: 100%;
   max-width: 900px;
   height: 148px;
-  border-radius: 42.9px;
+  border-radius: var(--radius-lg);
   border: none;
   background: #FF7BB7;
   font-family: "Noto Sans", "Noto Sans KR", sans-serif;

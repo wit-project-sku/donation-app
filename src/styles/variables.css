@@ -1,9 +1,9 @@
-ï»¿:root {
-  /* Design base: 1820 Ã— 2290 (native kiosk Unity webview size) */
+:root {
+  /* Design base: 1820 × 2290 (native kiosk Unity webview size) */
   --kiosk-width: 1820;
   --kiosk-height: 2290;
 
-  /* Semantic â€” use these for UI */
+  /* Semantic — use these for UI */
   --color-primary: #FF7BB7;
   --color-primary-dark: #CC5090;
   --color-primary-light: #FFB3D1;
@@ -39,14 +39,15 @@
   --color-purple-bg: var(--color-primary);
   --color-blue: var(--color-accent-blue);
 
-  /* Border radii â€” scaled for 1820Ã—2290 canvas */
+  /* Border radii — scaled for 1820×2290 canvas */
   --radius-sm: 18px;
   --radius-md: 28px;
   --radius-lg: 42.9px;
   --radius-xl: 52px;
   --radius-pill: 999px;
+  --radius-default: var(--radius-lg);
 
-  /* Shadows â€” scaled for 1820Ã—2290 canvas */
+  /* Shadows — scaled for 1820×2290 canvas */
   --shadow-card: 0 6px 36px rgba(180, 80, 140, 0.08);
   --shadow-primary: 0 12px 42px rgba(255, 123, 183, 0.45);
 

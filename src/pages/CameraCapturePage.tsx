@@ -1,12 +1,16 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
+import { useAppNavigate } from "../hooks/useAppNavigate";
 import { useQueryClient } from "@tanstack/react-query";
 import { processArPhoto } from "../api/arPhoto";
-import { IconCamera, IconCheck, IconReset } from "../components/Icon";
+import { IconBack, IconCamera, IconCheck, IconReset } from "../components/Icon";
 import { PageBody } from "../components/layout/PageBody";
 import { useDonationStore } from "../store/donationStore";
+import { useTheme } from "../theme/ThemeContext";
 import { submitCurrentDonation } from "../utils/buildSubmitPayload";
 import "./CameraCapturePage.css";
+
+const DEFAULT_BORDER = "#D0D0D0";
 
 type CameraStatus =
   | "idle"
@@ -85,9 +89,11 @@ function getCameraErrorMessage(error: unknown): string {
 }
 
 export function CameraCapturePage() {
-  const navigate = useNavigate();
+  const navigate = useAppNavigate();
+  const { theme } = useTheme();
   const [searchParams] = useSearchParams();
   const { selectedOutfit, merchantUid, setCapturedPhotoUrl, setSubmittedRecordId } = useDonationStore();
+  const isGreetingMode = searchParams.get("mode") === "greeting";
   const queryClient = useQueryClient();
 
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -345,16 +351,35 @@ export function CameraCapturePage() {
   const isLive = status === "streaming" || status === "requesting";
 
   return (
-    <PageBody className="camera-page" scroll={false}>
+    <PageBody
+      className="camera-page"
+      scroll={false}
+      style={{
+        backgroundColor: theme.background,
+        ["--camera-primary" as string]: theme.primary,
+        ["--camera-on-primary" as string]: theme.text.onPrimary,
+        ["--camera-text-primary" as string]: theme.text.primary,
+        ["--camera-text-secondary" as string]: theme.text.secondary,
+        ["--camera-card-bg" as string]: theme.card.background,
+        ["--camera-page-bg" as string]: theme.background,
+      }}
+    >
       <div className="camera-page__surface">
-        {/* Back button — top left, always visible */}
         <button
           type="button"
           className="camera-page__back-btn"
-          onClick={() => { stopStream(); navigate("/outfit"); }}
+          onClick={() => {
+            stopStream();
+            navigate("/outfit");
+          }}
           aria-label="의상 선택으로 돌아가기"
+          style={{
+            borderColor: theme.primary,
+            backgroundColor: theme.primary,
+            color: theme.text.onPrimary,
+          }}
         >
-          뒤로
+          <IconBack size={72} strokeWidth={2.5} />
         </button>
 
         <video
@@ -371,22 +396,55 @@ export function CameraCapturePage() {
           <img className="camera-page__preview" src={previewSrc} alt="촬영 결과" />
         )}
 
+        {status === "streaming" && (
+          <p
+            className="camera-page__stream-hint"
+            style={{ color: theme.text.primary }}
+          >
+            {isGreetingMode
+              ? "인사 모드 · 화면 중앙에 맞춰 주세요"
+              : "화면 중앙에 맞춰 주세요"}
+          </p>
+        )}
+
         {(status === "idle" || status === "requesting") && (
-          <div className="camera-page__center-state">
-            <IconCamera size={136} strokeWidth={1.8} aria-hidden />
-            <h1>
+          <div
+            className="camera-page__center-state"
+            style={{ backgroundColor: theme.background, color: theme.text.primary }}
+          >
+            <div
+              className="camera-page__center-icon"
+              style={{
+                borderColor: theme.primary,
+                color: theme.primary,
+                backgroundColor: theme.card.background,
+              }}
+            >
+              <IconCamera size={108} strokeWidth={2} aria-hidden />
+            </div>
+            <h1 style={{ color: theme.text.primary }}>
               {status === "requesting"
                 ? "카메라를 연결하는 중입니다"
                 : "카메라를 시작해 주세요"}
             </h1>
+            <p style={{ color: theme.text.secondary }}>
+              {isGreetingMode
+                ? "인사 모드로 촬영합니다. 준비되면 아래 버튼을 눌러주세요."
+                : "준비되면 아래 버튼을 눌러 촬영을 시작해주세요."}
+            </p>
           </div>
         )}
 
         {status === "error" && (
-          <div className="camera-page__center-state camera-page__center-state--error">
-            <IconCamera size={126} strokeWidth={1.8} aria-hidden />
-            <h1>카메라 연결 실패</h1>
-            <p>{errorMsg}</p>
+          <div
+            className="camera-page__center-state camera-page__center-state--error"
+            style={{ backgroundColor: theme.background, color: theme.text.primary }}
+          >
+            <div className="camera-page__center-icon" aria-hidden>
+              <IconCamera size={96} strokeWidth={2} />
+            </div>
+            <h1 style={{ color: theme.text.primary }}>카메라 연결 실패</h1>
+            <p style={{ color: theme.text.secondary }}>{errorMsg}</p>
           </div>
         )}
 
@@ -398,10 +456,21 @@ export function CameraCapturePage() {
         )}
 
         {status === "done" && (
-          <div className="camera-page__result-badge">
-            <IconCheck size={38} aria-hidden />
+          <div
+            className="camera-page__result-badge"
+            style={{
+              backgroundColor: theme.primary,
+              borderColor: theme.primary,
+              color: theme.text.onPrimary,
+            }}
+          >
+            <IconCheck size={40} strokeWidth={2.5} aria-hidden />
             <span>완료되었습니다</span>
           </div>
+        )}
+
+        {status === "captured" && errorMsg && (
+          <p className="camera-page__inline-error">{errorMsg}</p>
         )}
 
         <div className="camera-page__controls">
@@ -411,6 +480,11 @@ export function CameraCapturePage() {
                 type="button"
                 className="camera-page__control camera-page__control--secondary"
                 onClick={refreshDevices}
+                style={{
+                  backgroundColor: theme.card.background,
+                  borderColor: DEFAULT_BORDER,
+                  color: theme.text.primary,
+                }}
               >
                 카메라 다시 찾기
               </button>
@@ -418,8 +492,13 @@ export function CameraCapturePage() {
                 type="button"
                 className="camera-page__control camera-page__control--primary"
                 onClick={startCamera}
+                style={{
+                  backgroundColor: theme.primary,
+                  borderColor: theme.primary,
+                  color: theme.text.onPrimary,
+                }}
               >
-                <IconCamera size={44} aria-hidden />
+                <IconCamera size={72} strokeWidth={2.2} aria-hidden />
                 카메라 시작
               </button>
             </>
@@ -431,6 +510,11 @@ export function CameraCapturePage() {
                 type="button"
                 className="camera-page__control camera-page__control--secondary"
                 onClick={startCamera}
+                style={{
+                  backgroundColor: theme.card.background,
+                  borderColor: DEFAULT_BORDER,
+                  color: theme.text.primary,
+                }}
               >
                 카메라 새로고침
               </button>
@@ -438,8 +522,13 @@ export function CameraCapturePage() {
                 type="button"
                 className="camera-page__control camera-page__control--primary"
                 onClick={capturePhoto}
+                style={{
+                  backgroundColor: theme.primary,
+                  borderColor: theme.primary,
+                  color: theme.text.onPrimary,
+                }}
               >
-                <IconCamera size={44} aria-hidden />
+                <IconCamera size={72} strokeWidth={2.2} aria-hidden />
                 사진 촬영
               </button>
             </>
@@ -447,13 +536,17 @@ export function CameraCapturePage() {
 
           {status === "captured" && (
             <>
-              {errorMsg && <p className="camera-page__inline-error">{errorMsg}</p>}
               <button
                 type="button"
                 className="camera-page__control camera-page__control--secondary"
                 onClick={retake}
+                style={{
+                  backgroundColor: theme.card.background,
+                  borderColor: DEFAULT_BORDER,
+                  color: theme.text.primary,
+                }}
               >
-                <IconReset size={42} aria-hidden />
+                <IconReset size={64} strokeWidth={2.2} aria-hidden />
                 다시 촬영
               </button>
               <button
@@ -461,8 +554,13 @@ export function CameraCapturePage() {
                 className="camera-page__control camera-page__control--primary"
                 onClick={usePhoto}
                 disabled={!capturedBlob}
+                style={{
+                  backgroundColor: theme.primary,
+                  borderColor: theme.primary,
+                  color: theme.text.onPrimary,
+                }}
               >
-                <IconCheck size={42} aria-hidden />
+                <IconCheck size={64} strokeWidth={2.5} aria-hidden />
                 이 사진 사용
               </button>
             </>
@@ -475,8 +573,13 @@ export function CameraCapturePage() {
                 className="camera-page__control camera-page__control--secondary"
                 onClick={retake}
                 disabled={isSubmitting}
+                style={{
+                  backgroundColor: theme.card.background,
+                  borderColor: DEFAULT_BORDER,
+                  color: theme.text.primary,
+                }}
               >
-                <IconReset size={42} aria-hidden />
+                <IconReset size={64} strokeWidth={2.2} aria-hidden />
                 다시 촬영
               </button>
               <button
@@ -484,8 +587,13 @@ export function CameraCapturePage() {
                 className="camera-page__control camera-page__control--primary"
                 onClick={confirm}
                 disabled={isSubmitting}
+                style={{
+                  backgroundColor: theme.primary,
+                  borderColor: theme.primary,
+                  color: theme.text.onPrimary,
+                }}
               >
-                <IconCheck size={42} aria-hidden />
+                <IconCheck size={64} strokeWidth={2.5} aria-hidden />
                 {isSubmitting ? "저장 중..." : "다음으로"}
               </button>
             </>

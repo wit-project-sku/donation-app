@@ -13,9 +13,8 @@
   width: 1586px;
   height: 1209px;
   box-sizing: border-box;
-  border-radius: 45px;
-  border: 5px solid #FF7BB7;
-  background: #FFF;
+  border-radius: var(--radius-lg);
+  border: 5px solid;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -25,7 +24,7 @@
 
 .card-overlay__desc {
   margin: 0;
-  color: #656262;
+  color: var(--overlay-text-secondary, #636e72);
   text-align: center;
   font-family: "Noto Sans", "Noto Sans KR", sans-serif;
   font-size: 51px;
@@ -39,8 +38,8 @@
   height: 142px;
   margin-top: 182px;
   border-radius: 50%;
-  border: 6px solid #E8E8E8;
-  border-top-color: #FF7BB7;
+  border: 6px solid var(--overlay-muted-border, #e8e8e8);
+  border-top-color: var(--overlay-primary, #fe6c50);
   animation: card-overlay-spin 1s linear infinite;
   flex-shrink: 0;
 }
@@ -53,7 +52,7 @@
 
 .card-overlay__status {
   margin: 88px 0 0;
-  color: #656262;
+  color: var(--overlay-text-secondary, #636e72);
   text-align: center;
   font-family: "Noto Sans", "Noto Sans KR", sans-serif;
   font-size: 51px;
@@ -68,9 +67,7 @@
   height: 148px;
   margin-top: auto;
   border: 0;
-  border-radius: 54px;
-  background: #999;
-  color: #FFF;
+  border-radius: var(--radius-lg);
   font-family: "Noto Sans", "Noto Sans KR", sans-serif;
   font-size: 68px;
   font-style: normal;
@@ -94,8 +91,6 @@
   height: 144px;
   margin-top: 150px;
   border-radius: 50%;
-  background: #FF7BB7;
-  color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -117,7 +112,7 @@
 .card-overlay__success-copy {
   margin: 74px 0 0;
   padding: 0;
-  color: #656262;
+  color: var(--overlay-text-secondary, #636e72);
   text-align: center;
   font-family: "Noto Sans", "Noto Sans KR", sans-serif;
   font-size: 51px;
@@ -132,10 +127,8 @@
   height: 148px;
   margin-top: auto;
   box-sizing: border-box;
-  border-radius: 74px;
-  border: 5px solid var(---5, #E8E8E8);
-  background: #FF7BB7;
-  color: #FFF;
+  border-radius: var(--radius-lg);
+  border: 5px solid;
   font-family: "Noto Sans", "Noto Sans KR", sans-serif;
   font-size: 51px;
   font-style: normal;

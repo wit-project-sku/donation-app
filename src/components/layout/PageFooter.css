@@ -1,4 +1,4 @@
-﻿.page-footer {
+.page-footer {
   flex-shrink: 0;
   padding-top: 24px;
   padding-bottom: 40px;
@@ -30,11 +30,11 @@
   width: 100%;
 }
 
-/* Back button — fixed width, does not grow */
+/* Back button � fixed width, does not grow */
 .page-footer__back-btn {
   flex: none !important;
   width: 240px;
-  border-radius: 42.9px;
+  border-radius: var(--radius-lg);
   border: 5px solid var(---5, #E8E8E8);
   background: #FFF;
   color: #999;

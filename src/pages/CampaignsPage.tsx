@@ -1,158 +1,233 @@
 import { useQuery } from "@tanstack/react-query";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { fetchCampaigns } from "../api/campaigns";
-import { CampaignCard } from "../components/CampaignCard";
+import { useCallback, useMemo } from "react";
+import { useAppNavigate } from "../hooks/useAppNavigate";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { EffectCards, Navigation } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/effect-cards";
+import { fetchCampaignsPage } from "../api/campaigns";
 import { IconHeart } from "../components/Icon";
 import { PageBody } from "../components/layout/PageBody";
 import { useDonationStore } from "../store/donationStore";
+import { useTheme } from "../theme/ThemeContext";
+import type { Campaign } from "../types";
+import { formatCampaignProgressAmounts } from "../utils/campaignProgress";
 import "./CampaignsPage.css";
 
-const CARD_WIDTH = 1820;
+const CAMPAIGNS_CONFIG = {
+  featuredCount: 4,
+  pageSize: 4,
+} as const;
 
 export function CampaignsPage() {
-  const navigate = useNavigate();
+  const navigate = useAppNavigate();
   const { setSelectedCampaign } = useDonationStore();
-  const trackRef = useRef<HTMLDivElement>(null);
-  const [activeIndex, setActiveIndex] = useState(0);
-  const scrollTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const { theme } = useTheme();
 
-  const { data: campaigns = [], isLoading, isError } = useQuery({
-    queryKey: ["campaigns"],
-    queryFn: () => fetchCampaigns(20),
+  const { data: pageData, isLoading, isError } = useQuery({
+    queryKey: ["campaigns", "featured"],
+    queryFn: () =>
+      fetchCampaignsPage({ pageNum: 1, pageSize: CAMPAIGNS_CONFIG.pageSize }),
+    staleTime: 5 * 60 * 1000,
   });
 
-  const scrollToIndex = useCallback((index: number, behavior: ScrollBehavior = "smooth") => {
-    const track = trackRef.current;
-    if (!track) return;
-    const slides = track.querySelectorAll<HTMLElement>(".campaigns-page__slide");
-    const slide = slides[index];
-    if (!slide) return;
-    const offset = slide.offsetLeft - (track.offsetWidth - CARD_WIDTH) / 2;
-    track.scrollTo({ left: Math.max(0, offset), behavior });
-  }, []);
+  const campaigns = useMemo(() => pageData?.content ?? [], [pageData?.content]);
 
-  useEffect(() => {
-    if (campaigns.length === 0) return;
-    const mid = Math.floor(campaigns.length / 2);
-    setActiveIndex(mid);
-    requestAnimationFrame(() =>
-      requestAnimationFrame(() => scrollToIndex(mid, "instant"))
+  const featuredCampaigns = useMemo(
+    () => campaigns.slice(0, CAMPAIGNS_CONFIG.featuredCount),
+    [campaigns],
+  );
+
+  const handleSelect = useCallback(
+    (campaign: Campaign) => {
+      setSelectedCampaign(campaign);
+      navigate("/campaign");
+    },
+    [setSelectedCampaign, navigate],
+  );
+
+  if (isLoading) {
+    return (
+      <PageBody
+        className="campaigns-page"
+        scroll={false}
+        style={{ backgroundColor: theme.background }}
+      >
+        <p className="campaigns-page__loading">불러오는 중...</p>
+      </PageBody>
     );
-  }, [campaigns.length, scrollToIndex]);
+  }
 
-  const handleScroll = useCallback(() => {
-    clearTimeout(scrollTimerRef.current);
-    scrollTimerRef.current = setTimeout(() => {
-      const track = trackRef.current;
-      if (!track) return;
-      const slides = Array.from(track.querySelectorAll<HTMLElement>(".campaigns-page__slide"));
-      const viewCenter = track.scrollLeft + track.offsetWidth / 2;
-      let closest = 0;
-      let minDist = Infinity;
-      slides.forEach((slide, i) => {
-        const dist = Math.abs(slide.offsetLeft + CARD_WIDTH / 2 - viewCenter);
-        if (dist < minDist) { minDist = dist; closest = i; }
-      });
-      setActiveIndex(closest);
-    }, 60);
-  }, []);
-
-  const handleSelect = (campaign: (typeof campaigns)[0], index: number) => {
-    if (index !== activeIndex) {
-      scrollToIndex(index);
-      setActiveIndex(index);
-      return;
-    }
-    setSelectedCampaign(campaign);
-    navigate("/campaign");
-  };
-
-  const goPrev = () => {
-    const next = Math.max(0, activeIndex - 1);
-    setActiveIndex(next);
-    scrollToIndex(next);
-  };
-
-  const goNext = () => {
-    const next = Math.min(campaigns.length - 1, activeIndex + 1);
-    setActiveIndex(next);
-    scrollToIndex(next);
-  };
+  if (isError || campaigns.length === 0) {
+    return (
+      <PageBody
+        className="campaigns-page"
+        scroll={false}
+        style={{ backgroundColor: theme.background }}
+      >
+        <p
+          className="campaigns-page__loading campaigns-page__loading--error"
+          style={{ color: "#b42318" }}
+        >
+          캠페인을 불러오지 못했습니다
+        </p>
+      </PageBody>
+    );
+  }
 
   return (
-    <PageBody className="campaigns-page" scroll={false}>
-      <button
-        type="button"
-        className="campaigns-page__wall-link"
-        onClick={() => navigate("/wall")}
-      >
-        <IconHeart size={42} aria-hidden />
-        <span>기부내역 보기</span>
-      </button>
+    <PageBody
+      className="campaigns-page"
+      scroll={false}
+      style={{ backgroundColor: theme.background }}
+    >
+      <div className="campaigns-page__header">
+        <div className="campaigns-page__header-content">
+          <h3
+            className="campaigns-page__subtitle"
+            style={{ color: theme.primary }}
+          >
+            이 마음을 전해볼까요?
+          </h3>
+          <p
+            className="campaigns-page__header-desc"
+            style={{ color: theme.text.secondary }}
+          >
+            기부금 전액이 현장 지원에 사용되며, 법정 기부금으로서 세액공제 혜택이 적용됩니다
+          </p>
+        </div>
 
-      <div className="campaigns-page__intro">
-        <span className="campaigns-page__label">후원 분야 선택</span>
-        <h2 className="campaigns-page__headline">
-          당신의 도움이 필요한 곳에 전해집니다
-        </h2>
-        <p className="campaigns-page__desc">
-          기부금 전액이 현장 지원에 사용됩니다.
-          후원금은 법정 기부금으로서 세액공제 혜택이 적용됩니다.
-        </p>
+        <button
+          type="button"
+          className="campaigns-page__wall-link"
+          onClick={() => navigate("/wall")}
+          style={{
+            borderColor: theme.primary,
+            backgroundColor: theme.primary,
+            color: theme.text.onPrimary,
+          }}
+          aria-label="기부내역 보기"
+        >
+          <IconHeart size={42} aria-hidden />
+          <span>기부내역 보기</span>
+        </button>
       </div>
 
       <div className="campaigns-page__swiper-wrap">
-        <div
-          className="campaigns-page__track"
-          ref={trackRef}
-          onScroll={handleScroll}
+        <Swiper
+          modules={[EffectCards, Navigation]}
+          effect="cards"
+          initialSlide={Math.min(1, Math.max(featuredCampaigns.length - 1, 0))}
+          grabCursor
+          cardsEffect={{
+            slideShadows: true,
+            rotate: true,
+            perSlideRotate: 2,
+            perSlideOffset: 8,
+          }}
+          navigation={{
+            prevEl: ".campaigns-page__nav-btn--prev",
+            nextEl: ".campaigns-page__nav-btn--next",
+          }}
+          className="campaigns-page__swiper"
         >
-          {isLoading && (
-            <p className="campaigns-page__loading">불러오는 중...</p>
-          )}
-          {isError && (
-            <p className="campaigns-page__loading campaigns-page__loading--error">
-              캠페인을 불러오지 못했습니다
-            </p>
-          )}
-          {!isLoading && !isError &&
-            campaigns.map((campaign, index) => (
-              <div
+          {featuredCampaigns.map((campaign) => {
+            const progress = formatCampaignProgressAmounts(campaign);
+
+            return (
+              <SwiperSlide
                 key={campaign.id}
-                className={`campaigns-page__slide ${index === activeIndex ? "campaigns-page__slide--active" : ""}`}
+                className="campaigns-page__swiper-slide"
               >
-                <CampaignCard
-                  campaign={campaign}
-                  isSelected={index === activeIndex}
-                  onSelect={() => handleSelect(campaign, index)}
-                />
-              </div>
-            ))
-          }
-        </div>
+                <button
+                  type="button"
+                  className="campaigns-page__main-card"
+                  onClick={() => handleSelect(campaign)}
+                  style={{
+                    backgroundImage: `url(${campaign.imageUrl})`,
+                    cursor: "pointer",
+                  }}
+                >
+                  <div className="campaigns-page__card-bg-overlay" />
+
+                  <div className="campaigns-page__card-content">
+                    <div className="campaigns-page__title-line">
+                      <h2
+                        className="campaigns-page__card-title"
+                        style={{ color: theme.primary }}
+                      >
+                        {campaign.title}
+                      </h2>
+                    </div>
+
+                    <p
+                      className="campaigns-page__card-desc"
+                      style={{ color: "#FFFFFF" }}
+                    >
+                      {campaign.description}
+                    </p>
+
+                    <div className="campaigns-page__progress">
+                      <div className="campaigns-page__progress-info">
+                        <span className="campaigns-page__progress-amount">
+                          {progress.label}
+                        </span>
+                        <span className="campaigns-page__progress-percent">
+                          {progress.percent}%
+                        </span>
+                      </div>
+                      <div
+                        className="campaigns-page__progress-bar"
+                        style={{
+                          backgroundColor: theme.secondary + "40",
+                        }}
+                      >
+                        <div
+                          className="campaigns-page__progress-fill"
+                          style={{
+                            width: `${progress.percent}%`,
+                            backgroundColor: theme.primary,
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              </SwiperSlide>
+            );
+          })}
+        </Swiper>
       </div>
 
-      {/* Swiper navigation buttons — far left / far right below swiper */}
-      {!isLoading && !isError && campaigns.length > 1 && (
+      {featuredCampaigns.length > 1 && (
         <div className="campaigns-page__nav">
           <button
             type="button"
             className="campaigns-page__nav-btn campaigns-page__nav-btn--prev"
-            onClick={goPrev}
-            disabled={activeIndex === 0}
             aria-label="이전"
+            style={{
+              borderColor: theme.primary,
+              backgroundColor: theme.primary,
+              color: theme.text.onPrimary,
+            }}
           >
-            <span className="campaigns-page__nav-icon" aria-hidden>‹</span>
+            <span className="campaigns-page__nav-icon" aria-hidden>
+              ‹
+            </span>
           </button>
           <button
             type="button"
             className="campaigns-page__nav-btn campaigns-page__nav-btn--next"
-            onClick={goNext}
-            disabled={activeIndex === campaigns.length - 1}
             aria-label="다음"
+            style={{
+              borderColor: theme.primary,
+              backgroundColor: theme.primary,
+              color: theme.text.onPrimary,
+            }}
           >
-            <span className="campaigns-page__nav-icon" aria-hidden>›</span>
+            <span className="campaigns-page__nav-icon" aria-hidden>
+              ›
+            </span>
           </button>
         </div>
       )}

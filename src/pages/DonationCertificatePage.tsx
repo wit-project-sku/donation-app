@@ -1,11 +1,13 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useAppNavigate } from "../hooks/useAppNavigate";
 import { QRCodeSVG } from "qrcode.react";
 import { ApiError } from "../api/client";
 import { PageBody } from "../components/layout/PageBody";
 import { submitCurrentDonation } from "../utils/buildSubmitPayload";
 import { useDonationStore } from "../store/donationStore";
+import { useTheme } from "../theme/ThemeContext";
+import { resolveDonationPhotoUrl } from "../utils/defaultDonationImage";
 import { formatCurrency } from "../utils/format";
 import "./DonationCertificatePage.css";
 
@@ -46,13 +48,16 @@ function buildMobileCertificateUrl(params: {
 }
 
 export function DonationCertificatePage() {
-  const navigate = useNavigate();
+  const navigate = useAppNavigate();
+  const { theme } = useTheme();
   const queryClient = useQueryClient();
   const {
     selectedCampaign,
     paymentMethod,
     amount,
     donorName,
+    donorPhone,
+    message,
     selectedOutfit,
     capturedPhotoUrl,
     submittedRecordId,
@@ -105,15 +110,26 @@ export function DonationCertificatePage() {
   if (!selectedCampaign) return null;
 
   const displayName = donorName.trim();
-  const photoSrc = capturedPhotoUrl ?? selectedOutfit?.imageUrl ?? null;
+  const hasDonorInfo = Boolean(
+    displayName || donorPhone.trim() || message.trim(),
+  );
+  const photoSrc = hasDonorInfo
+    ? resolveDonationPhotoUrl(
+        capturedPhotoUrl ?? selectedOutfit?.imageUrl,
+        selectedCampaign.imageUrl,
+      )
+    : capturedPhotoUrl ?? selectedOutfit?.imageUrl ?? null;
   const canSharePhotoUrl =
     photoSrc &&
     !photoSrc.startsWith("data:") &&
     !photoSrc.startsWith("blob:") &&
     photoSrc.length <= 1000;
   const mobilePhotoUrl = canSharePhotoUrl
-    ? photoSrc
-    : selectedOutfit?.imageUrl ?? selectedCampaign.imageUrl;
+    ? photoSrc!
+    : resolveDonationPhotoUrl(
+        selectedOutfit?.imageUrl,
+        selectedCampaign.imageUrl,
+      );
 
   const today = new Date();
   const dateLabel = `${today.getFullYear()}년 ${today.getMonth() + 1}월 ${today.getDate()}일`;
@@ -125,7 +141,23 @@ export function DonationCertificatePage() {
   });
 
   return (
-    <PageBody className="cert-page" scroll={false}>
+    <PageBody
+      className="cert-page"
+      scroll={false}
+      style={{
+        backgroundColor: theme.background,
+        ["--cert-primary" as string]: theme.primary,
+        ["--cert-secondary" as string]: theme.secondary,
+        ["--cert-on-primary" as string]: theme.text.onPrimary,
+        ["--cert-text-primary" as string]: theme.text.primary,
+        ["--cert-text-secondary" as string]: theme.text.secondary,
+        ["--cert-card-bg" as string]: theme.card.background,
+        ["--cert-page-bg" as string]: theme.background,
+        ["--cert-photo-bg" as string]: theme.background,
+        ["--cert-soft-border" as string]: `color-mix(in srgb, ${theme.secondary} 55%, ${theme.card.background})`,
+        ["--cert-accent-border" as string]: `color-mix(in srgb, ${theme.primary} 65%, ${theme.card.background})`,
+      }}
+    >
       <article className="cert-page__card" aria-label="기부 증서">
         <div className="cert-page__notches" aria-hidden>
           <span className="cert-page__notch cert-page__notch--tl" />
@@ -140,8 +172,8 @@ export function DonationCertificatePage() {
             <QRCodeSVG
               value={qrValue}
               size={168}
-              bgColor="#fff"
-              fgColor="#1a1a1a"
+              bgColor={theme.card.background}
+              fgColor={theme.text.primary}
               level="L"
               marginSize={1}
             />
@@ -149,16 +181,12 @@ export function DonationCertificatePage() {
         </div>
 
         <div className="cert-page__photo-wrap">
-          {photoSrc ? (
-            <img
-              className="cert-page__photo"
-              src={photoSrc}
-              alt=""
-              loading="lazy"
-            />
-          ) : (
-            <div className="cert-page__photo cert-page__photo--placeholder" />
-          )}
+          <img
+            className="cert-page__photo"
+            src={photoSrc ?? resolveDonationPhotoUrl(null, selectedCampaign.imageUrl)}
+            alt=""
+            loading="lazy"
+          />
         </div>
 
         <div className="cert-page__info">

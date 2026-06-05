@@ -1,16 +1,7 @@
 import { fetchPaymentHistory, fetchPaymentHistoryPage } from "./paymentHistory";
-import type { PaginatedData, PaymentHistoryParams } from "./types";
+import type { PaginatedData, PaymentHistoryParams, WallEntry } from "./types";
 
-export interface WallEntry {
-  id: string;
-  donorName: string;
-  amount: number;
-  campaignName: string;
-  paymentMethod: string;
-  timeAgo: string;
-  photoUrl?: string;
-  isNew?: boolean;
-}
+export type { WallEntry };
 
 export async function fetchWallEntries(
   params: PaymentHistoryParams = {},
