@@ -38,10 +38,7 @@ export function CardPaymentOverlay({
 
     const run = async () => {
       setStep("insert");
-      await delay(1800);
-      if (cancelledRef.current) return;
 
-      setStep("processing");
       try {
         await onProcessPaymentRef.current();
       } catch (err) {
@@ -51,9 +48,6 @@ export function CardPaymentOverlay({
       if (cancelledRef.current) return;
 
       setStep("success");
-      await delay(2800);
-      if (cancelledRef.current) return;
-
       onCompleteRef.current();
     };
 
@@ -125,15 +119,11 @@ export function CardPaymentOverlay({
                 color: theme.text.onPrimary,
               }}
             >
-              3초 후 다음 단계로 자동 전환됩니다
+              다음 단계로 이동합니다
             </div>
           </>
         )}
       </div>
     </div>
   );
-}
-
-function delay(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
 }

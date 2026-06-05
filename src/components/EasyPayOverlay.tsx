@@ -47,8 +47,6 @@ export function EasyPayOverlay({
       }
       if (cancelled) return;
       setStep("success");
-      await new Promise((r) => setTimeout(r, 1600));
-      if (cancelled) return;
       onCompleteRef.current();
     };
 

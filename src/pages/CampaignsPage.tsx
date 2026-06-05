@@ -117,6 +117,7 @@ export function CampaignsPage() {
         <Swiper
           modules={[EffectCards, Navigation]}
           effect="cards"
+          speed={0}
           initialSlide={Math.min(1, Math.max(featuredCampaigns.length - 1, 0))}
           grabCursor
           cardsEffect={{

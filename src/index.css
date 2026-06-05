@@ -41,3 +41,11 @@ textarea:focus-visible {
   outline: 3px solid var(--color-primary);
   outline-offset: 2px;
 }
+
+/* Kiosk: no motion — instant state changes only */
+*,
+*::before,
+*::after {
+  animation: none !important;
+  transition: none !important;
+}

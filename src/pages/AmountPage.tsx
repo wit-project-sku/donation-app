@@ -58,23 +58,7 @@ export function AmountPage() {
   }, [defaultAmount]);
 
   useEffect(() => {
-    if (selectedAmount == null) {
-      setDisplayedAmount(0);
-      return;
-    }
-
-    const target = selectedAmount;
-    const interval = setInterval(() => {
-      setDisplayedAmount((prev) => {
-        if (prev === target) return prev;
-        if (prev < target) {
-          return Math.min(prev + Math.ceil((target - prev) / 5), target);
-        }
-        return Math.max(prev - Math.ceil((prev - target) / 5), target);
-      });
-    }, 40);
-
-    return () => clearInterval(interval);
+    setDisplayedAmount(selectedAmount ?? 0);
   }, [selectedAmount]);
 
   const handleSelectAmount = useCallback((amount: number) => {

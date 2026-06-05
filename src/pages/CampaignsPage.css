@@ -111,8 +111,11 @@
   perspective: 1400px;
 }
 
-.campaigns-page__swiper.swiper-cards .swiper-wrapper {
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+/* Keep stacked card layout; slide changes stay instant (no motion) */
+.campaigns-page__swiper.swiper-cards .swiper-wrapper,
+.campaigns-page__swiper.swiper-cards .swiper-slide {
+  transition-duration: 0ms !important;
+  transition-delay: 0ms !important;
 }
 
 .campaigns-page__swiper-slide {
@@ -142,7 +145,6 @@
   background-size: cover;
   background-position: right center;
   display: flex;
-  transition: opacity 0.2s ease;
 }
 
 .campaigns-page__main-card:active {
@@ -187,33 +189,6 @@
   font-weight: 900;
   line-height: 1;
   display: inline-block;
-  animation: pulse 1.5s ease-in-out infinite;
-}
-
-.campaigns-page__badge--urgent {
-  animation: pulse-urgent 1s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.8;
-  }
-}
-
-@keyframes pulse-urgent {
-  0%,
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.85;
-    transform: scale(1.05);
-  }
 }
 
 /* Title & Date Line */
@@ -302,13 +277,6 @@
 .campaigns-page__progress-fill {
   height: 100%;
   border-radius: var(--radius-lg);
-  animation: fillBar 1s ease-out;
-}
-
-@keyframes fillBar {
-  from {
-    width: 0 !important;
-  }
 }
 
 /* Stats */
