@@ -1,89 +1,87 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Download } from "lucide-react";
 import { getLocationTheme } from "../theme/locations";
 import { resolveCertificatePhotoUrl } from "../utils/defaultDonationImage";
 import { formatCurrency } from "../utils/format";
+import {
+  downloadMobileCertificate,
+  formatMobilePhone,
+} from "../utils/mobileCertificateDownload";
 import "./MobileCertificatePage.css";
 
 function getParam(params: URLSearchParams, key: string, fallback = "") {
   return params.get(key)?.trim() || fallback;
 }
 
-function escapeXml(value: string) {
-  return value
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
+function formatDisplayDate(value: string) {
+  const isoMatch = value.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+  if (isoMatch) {
+    return `${isoMatch[1]}년 ${Number(isoMatch[2])}월 ${Number(isoMatch[3])}일`;
+  }
+  return value;
 }
 
 export function MobileCertificatePage() {
   const [params] = useSearchParams();
   const theme = getLocationTheme(params.get("location") || "insadong");
   const name = getParam(params, "n") || getParam(params, "name", "후원자");
+  const phone = getParam(params, "ph") || getParam(params, "phone");
   const message = getParam(params, "message");
-  const date = getParam(params, "d") || getParam(params, "date");
+  const rawDate = getParam(params, "d") || getParam(params, "date");
   const photo = getParam(params, "p") || getParam(params, "photo");
   const amount = Number(getParam(params, "a") || getParam(params, "amount", "0"));
   const amountLabel = `${formatCurrency(amount)}원`;
   const photoSrc = resolveCertificatePhotoUrl(photo || null);
-
-  const svgSource = useMemo(() => {
-    const imageNode = photoSrc
-      ? `<image href="${escapeXml(photoSrc)}" x="150" y="190" width="420" height="640" preserveAspectRatio="xMidYMin slice" clip-path="url(#photoClip)" />`
-      : `<rect x="150" y="190" width="420" height="640" rx="18" fill="#e8e8e8" />`;
-
-    return `<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="720" height="1080" viewBox="0 0 720 1080">
-  <defs>
-    <clipPath id="photoClip"><rect x="150" y="190" width="420" height="640" rx="18"/></clipPath>
-  </defs>
-  <rect width="720" height="1080" fill="#ffffff"/>
-  <rect x="70" y="40" width="580" height="1000" rx="32" fill="#ffffff" stroke="#ffd3e9" stroke-width="28"/>
-  <circle cx="70" cy="40" r="42" fill="#ffd3e9"/>
-  <circle cx="70" cy="1040" r="42" fill="#ffd3e9"/>
-  <text x="360" y="132" text-anchor="middle" font-family="Arial, sans-serif" font-size="34" font-weight="700" fill="#333333">기부증서</text>
-  ${imageNode}
-  <line x1="150" y1="870" x2="570" y2="870" stroke="#ff9bc9" stroke-width="2"/>
-  <text x="360" y="925" text-anchor="middle" font-family="Arial, sans-serif" font-size="46" font-weight="700" fill="#FF7BB7">${escapeXml(amountLabel)}</text>
-  <text x="360" y="975" text-anchor="middle" font-family="Arial, sans-serif" font-size="30" font-weight="700" fill="#333333">${escapeXml(name)}</text>
-  <line x1="150" y1="1000" x2="570" y2="1000" stroke="#ff9bc9" stroke-width="2"/>
-  <text x="360" y="1032" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" fill="#555555">${escapeXml(message)}</text>
-  <text x="360" y="1058" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#999999">${escapeXml(date)}</text>
-</svg>`;
-  }, [amountLabel, date, message, name, photoSrc]);
+  const date = useMemo(
+    () => (rawDate ? formatDisplayDate(rawDate) : ""),
+    [rawDate],
+  );
+  const phoneLabel = useMemo(
+    () => (phone ? formatMobilePhone(phone) : ""),
+    [phone],
+  );
 
   const [downloading, setDownloading] = useState(false);
+  const [downloadError, setDownloadError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const html = document.documentElement;
+    const body = document.body;
+    const root = document.getElementById("root");
+    const previous = {
+      htmlOverflow: html.style.overflow,
+      bodyOverflow: body.style.overflow,
+      rootOverflow: root?.style.overflow ?? "",
+    };
+
+    html.style.overflow = "auto";
+    body.style.overflow = "auto";
+    if (root) root.style.overflow = "auto";
+
+    return () => {
+      html.style.overflow = previous.htmlOverflow;
+      body.style.overflow = previous.bodyOverflow;
+      if (root) root.style.overflow = previous.rootOverflow;
+    };
+  }, []);
 
   const downloadImage = async () => {
     if (downloading) return;
     setDownloading(true);
+    setDownloadError(null);
+
     try {
-      if (photoSrc) {
-        // fetch the S3 image as a blob so the browser saves it as a file
-        const res = await fetch(photoSrc);
-        const blob = await res.blob();
-        const ext = blob.type.includes("png") ? "png" : "jpg";
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.href = url;
-        link.download = `donation.${ext}`;
-        link.click();
-        URL.revokeObjectURL(url);
-      } else {
-        // no photo — fall back to downloading the SVG certificate
-        const blob = new Blob([svgSource], { type: "image/svg+xml;charset=utf-8" });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.href = url;
-        link.download = "donation-certificate.svg";
-        link.click();
-        URL.revokeObjectURL(url);
-      }
+      await downloadMobileCertificate({
+        photoSrc,
+        name,
+        phone,
+        amountLabel,
+        date,
+        message,
+      });
     } catch {
-      // CORS blocked — open in new tab so the user can long-press → save
-      if (photoSrc) window.open(photoSrc, "_blank");
+      setDownloadError("저장에 실패했습니다. 다시 시도해 주세요.");
     } finally {
       setDownloading(false);
     }
@@ -94,34 +92,50 @@ export function MobileCertificatePage() {
       className="mobile-cert"
       style={{ backgroundColor: theme.background }}
     >
-      <article className="mobile-cert__card" aria-label="기부 증서">
-        <h1 className="mobile-cert__title">기부증서</h1>
+      <div className="mobile-cert__scroll">
+        <article className="mobile-cert__card" aria-label="기부 증서">
+          <h1 className="mobile-cert__title">기부증서</h1>
 
-        <div className="mobile-cert__photo-wrap">
-          {photoSrc ? (
-            <img className="mobile-cert__photo" src={photoSrc} alt="" />
-          ) : (
-            <div className="mobile-cert__photo mobile-cert__photo--empty" />
-          )}
-        </div>
+          <div className="mobile-cert__photo-wrap">
+            {photoSrc ? (
+              <img
+                className="mobile-cert__photo"
+                src={photoSrc}
+                alt=""
+                crossOrigin="anonymous"
+              />
+            ) : (
+              <div className="mobile-cert__photo mobile-cert__photo--empty" />
+            )}
+          </div>
 
-        <div className="mobile-cert__info">
-          <strong className="mobile-cert__amount">{amountLabel}</strong>
-          {name ? <span className="mobile-cert__name">{name}</span> : null}
-          {message ? <p className="mobile-cert__message">{message}</p> : null}
-          {date ? <span className="mobile-cert__date">{date}</span> : null}
-        </div>
-      </article>
+          <div className="mobile-cert__info">
+            <strong className="mobile-cert__amount">{amountLabel}</strong>
+            {name ? <span className="mobile-cert__name">{name}</span> : null}
+            {phoneLabel ? (
+              <span className="mobile-cert__phone">{phoneLabel}</span>
+            ) : null}
+            {message ? <p className="mobile-cert__message">{message}</p> : null}
+            {date ? <span className="mobile-cert__date">{date}</span> : null}
+          </div>
+        </article>
 
-      <button
-        type="button"
-        className="mobile-cert__download"
-        onClick={downloadImage}
-        disabled={downloading}
-      >
-        <Download size={20} strokeWidth={2.5} aria-hidden />
-        {downloading ? "저장 중..." : "사진 저장하기"}
-      </button>
+        {downloadError ? (
+          <p className="mobile-cert__error" role="alert">
+            {downloadError}
+          </p>
+        ) : null}
+
+        <button
+          type="button"
+          className="mobile-cert__download"
+          onClick={downloadImage}
+          disabled={downloading}
+        >
+          <Download size={20} strokeWidth={2.5} aria-hidden />
+          {downloading ? "저장 중..." : "사진 저장하기"}
+        </button>
+      </div>
     </main>
   );
 }

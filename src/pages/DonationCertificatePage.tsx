@@ -33,6 +33,7 @@ function buildMobileCertificateUrl(params: {
   amount: number;
   date: string;
   name: string;
+  phone?: string;
   photoUrl?: string | null;
 }) {
   const publicAppUrl = import.meta.env.VITE_PUBLIC_APP_URL?.replace(/\/$/, "");
@@ -43,6 +44,11 @@ function buildMobileCertificateUrl(params: {
     d: params.date,
     n: params.name,
   });
+
+  const phoneDigits = params.phone?.replace(/\D/g, "") ?? "";
+  if (phoneDigits) {
+    search.set("ph", phoneDigits);
+  }
 
   const photoUrl = params.photoUrl?.trim();
   if (
@@ -66,6 +72,7 @@ export function DonationCertificatePage() {
     paymentMethod,
     amount,
     donorName,
+    donorPhone,
     capturedPhotoUrl,
     submittedRecordId,
     setSubmittedRecordId,
@@ -132,6 +139,7 @@ export function DonationCertificatePage() {
     amount,
     date: qrDateLabel,
     name: displayName,
+    phone: donorPhone,
     photoUrl: capturedPhotoUrl,
   });
 
