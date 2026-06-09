@@ -10,9 +10,26 @@ function mapCampaignDto(dto: CampaignDto): Campaign {
     title: dto.name,
     description: dto.description,
     imageUrl: dto.imageUrl,
-    amountOptions: dto.amountOptions ?? [],
+    amountOptions: (dto.amountOptions ?? []).map((option) => ({
+      label: option.label,
+      amount: option.amount,
+    })),
     accumulatedAmount: dto.accumulatedAmount ?? 0,
     targetAmount: dto.targetAmount ?? 0,
+    sections: (dto.sections ?? []).map((section) => ({
+      title: section.title,
+      titleRuns: section.titleRuns?.map((run) => ({
+        text: run.text,
+        bold: run.bold,
+        color: run.color,
+      })),
+      desc: section.desc,
+      img: section.img,
+    })),
+    programs: (dto.programs ?? []).map((program) => ({
+      title: program.title,
+      desc: program.desc,
+    })),
     status: dto.status,
     createdAt: dto.createdAt,
   };
@@ -29,28 +46,7 @@ export async function fetchCampaignsPage(
   return {
     ...data,
     content: data.content
-      .filter((c) => c.status === "ACTIVE")
+      .filter((campaign) => campaign.status === "ACTIVE")
       .map(mapCampaignDto),
   };
-}
-
-/** Loads all campaign pages until `last` is true */
-export async function fetchCampaigns(
-  pageSize = 20,
-): Promise<Campaign[]> {
-  const campaigns: Campaign[] = [];
-  let pageNum = 1;
-  let last = false;
-
-  while (!last) {
-    const page = await fetchCampaignsPage({ pageNum, pageSize });
-    campaigns.push(...page.content);
-    last = page.last;
-    pageNum += 1;
-
-    if (pageNum > page.totalPages && page.totalPages > 0) break;
-    if (page.content.length === 0) break;
-  }
-
-  return campaigns;
 }

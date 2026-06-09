@@ -1,8 +1,8 @@
-import { Search } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
-import { useDeferredValue, useEffect, useRef, useState } from "react";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { useCallback, useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
 import { useAppNavigate } from "../hooks/useAppNavigate";
 import { fetchWallEntriesPage, type WallEntry } from "../api/wall";
+import { IconSearch } from "../components/Icon";
 import { VirtualKeyboard } from "../components/VirtualKeyboard";
 import { WallGiverCard } from "../components/WallGiverCard";
 import { PageBody } from "../components/layout/PageBody";
@@ -16,27 +16,18 @@ import {
 } from "../utils/hangulInput";
 import "./WallPage.css";
 
-const WALL_PAGE_SIZE = 6;
-
-function donationTypeLabel(
-  entry: WallEntry,
-  sessionType: "one-time" | "regular",
-): string {
-  if (entry.id === "current") {
-    return sessionType === "regular" ? "정기 후원" : "일시 후원";
-  }
-  return entry.paymentMethod;
-}
+const WALL_PAGE_SIZE = 9;
+const SCROLL_LOAD_THRESHOLD = 240;
 
 export function WallPage() {
   const navigate = useAppNavigate();
   const { theme } = useTheme();
   const [search, setSearch] = useState("");
-  const [pageNum, setPageNum] = useState(1);
   const [keyboardOpen, setKeyboardOpen] = useState(false);
   const deferredSearch = useDeferredValue(search.trim());
   const searchRef = useRef<HTMLDivElement>(null);
   const keyboardRef = useRef<HTMLDivElement>(null);
+  const gridPanelRef = useRef<HTMLElement>(null);
 
   const {
     donorName,
@@ -48,19 +39,28 @@ export function WallPage() {
     resetSession,
   } = useDonationStore();
 
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ["wallEntries", { pageNum, pageSize: WALL_PAGE_SIZE, keyword: deferredSearch }],
-    queryFn: () =>
+  const {
+    data,
+    isLoading,
+    isError,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
+    queryKey: [
+      "wallEntries",
+      { pageSize: WALL_PAGE_SIZE, keyword: deferredSearch },
+    ],
+    initialPageParam: 1,
+    queryFn: ({ pageParam }) =>
       fetchWallEntriesPage({
-        pageNum,
+        pageNum: pageParam,
         pageSize: WALL_PAGE_SIZE,
         keyword: deferredSearch,
       }),
+    getNextPageParam: (lastPage) =>
+      lastPage.last ? undefined : lastPage.pageNum + 1,
   });
-
-  useEffect(() => {
-    setPageNum(1);
-  }, [deferredSearch]);
 
   useEffect(() => {
     if (!keyboardOpen) return;
@@ -89,18 +89,34 @@ export function WallPage() {
           campaignName: selectedCampaign.title,
           paymentMethod:
             donationType === "regular" ? "정기 후원" : "일시 후원",
+          donatedAt: new Date().toISOString(),
           timeAgo: "NOW",
           photoUrl: capturedPhotoUrl ?? undefined,
           isNew: true,
         }
       : null;
 
-  const entries = data?.content ?? [];
-  const visibleEntries =
-    pageNum === 1 && userEntry
-      ? [userEntry, ...entries].slice(0, WALL_PAGE_SIZE)
-      : entries;
-  const totalPages = Math.max(1, data?.totalPages ?? 1);
+  const entries = useMemo(
+    () => data?.pages.flatMap((page) => page.content) ?? [],
+    [data],
+  );
+
+  const visibleEntries = useMemo(() => {
+    if (!userEntry) return entries;
+    const withoutDuplicate = entries.filter((entry) => entry.id !== "current");
+    return [userEntry, ...withoutDuplicate];
+  }, [entries, userEntry]);
+
+  const handleGridScroll = useCallback(() => {
+    const panel = gridPanelRef.current;
+    if (!panel || !hasNextPage || isFetchingNextPage) return;
+
+    const distanceFromEnd =
+      panel.scrollHeight - panel.scrollTop - panel.clientHeight;
+    if (distanceFromEnd < SCROLL_LOAD_THRESHOLD) {
+      fetchNextPage();
+    }
+  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
   const handleKeyPress = (key: string) => {
     if (key === "\n") {
@@ -143,66 +159,44 @@ export function WallPage() {
 
       <main className="wall-page__main">
         <header className="wall-page__header">
-          <h1
-            className="wall-page__title"
-            style={{ color: theme.primary }}
-          >
-            기억되는 나눔
-          </h1>
-          <p
-            className="wall-page__subtitle"
-            style={{ color: theme.text.secondary }}
-          >
-            후원자님들의 따뜻한 마음에 감사드립니다.
-          </p>
+          <h1 className="wall-page__title">함께해주셔서 감사합니다</h1>
         </header>
 
         <div
           className={`wall-page__search-card${keyboardOpen ? " wall-page__search-card--active" : ""}`}
           ref={searchRef}
-          style={{ backgroundColor: theme.card.background }}
         >
-          <span
-            className="wall-page__search-label"
-            style={{ color: theme.text.secondary }}
-          >
-            이름 검색
-          </span>
-          <div className="wall-page__search-row">
-            <input
-              className="wall-page__search"
-              type="text"
-              placeholder="이름으로 검색해보세요"
-              value={search}
-              onChange={(event) => setSearch(event.target.value)}
-              onFocus={() => setKeyboardOpen(true)}
-              onClick={() => setKeyboardOpen(true)}
-              style={{ color: theme.text.primary }}
-            />
-            {search.length > 0 && (
-              <button
-                type="button"
-                className="wall-page__search-clear"
-                onClick={(event) => {
-                  event.stopPropagation();
-                  setSearch("");
-                }}
-                aria-label="검색어 지우기"
-                style={{ color: theme.text.secondary }}
-              >
-                지우기
-              </button>
-            )}
-            <Search
-              className="wall-page__search-icon"
-              size={44}
-              strokeWidth={2.5}
-              style={{ color: theme.primary }}
-            />
-          </div>
+          <input
+            className="wall-page__search"
+            type="text"
+            placeholder="이름 또는 캠페인으로 검색해보세요"
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+            onFocus={() => setKeyboardOpen(true)}
+            onClick={() => setKeyboardOpen(true)}
+          />
+          {search.length > 0 && (
+            <button
+              type="button"
+              className="wall-page__search-clear"
+              onClick={(event) => {
+                event.stopPropagation();
+                setSearch("");
+              }}
+              aria-label="검색어 지우기"
+            >
+              지우기
+            </button>
+          )}
+          <IconSearch className="wall-page__search-icon" aria-hidden />
         </div>
 
-        <section className="wall-page__grid-panel" aria-label="기부자의 벽">
+        <section
+          ref={gridPanelRef}
+          className="wall-page__grid-panel"
+          aria-label="기부자의 벽"
+          onScroll={handleGridScroll}
+        >
           {isLoading && (
             <p
               className="wall-page__status"
@@ -225,68 +219,38 @@ export function WallPage() {
             </p>
           )}
           {!isLoading && !isError && visibleEntries.length > 0 && (
-            <div className="wall-page__grid">
-              {visibleEntries.map((entry) => (
-                <WallGiverCard
-                  key={entry.id}
-                  donorName={entry.donorName}
-                  amount={entry.amount}
-                  campaignName={entry.campaignName}
-                  campaignImageUrl={
-                    entry.id === "current"
-                      ? selectedCampaign?.imageUrl ?? defaultDonationImage
-                      : defaultDonationImage
-                  }
-                  donationType={donationTypeLabel(entry, donationType)}
-                  photoUrl={entry.photoUrl}
-                  timeAgo={entry.timeAgo}
-                  isNew={entry.isNew}
-                />
-              ))}
-            </div>
+            <>
+              <div className="wall-page__grid">
+                {visibleEntries.map((entry) => (
+                  <WallGiverCard
+                    key={entry.id}
+                    donorName={entry.donorName}
+                    amount={entry.amount}
+                    campaignName={entry.campaignName}
+                    campaignImageUrl={
+                      entry.id === "current"
+                        ? selectedCampaign?.imageUrl ?? defaultDonationImage
+                        : defaultDonationImage
+                    }
+                    photoUrl={entry.photoUrl}
+                    donatedAt={entry.donatedAt}
+                    isNew={entry.isNew}
+                  />
+                ))}
+              </div>
+              {hasNextPage && (
+                <button
+                  type="button"
+                  className="wall-page__load-more"
+                  onClick={() => fetchNextPage()}
+                  disabled={isFetchingNextPage}
+                >
+                  {isFetchingNextPage ? "불러오는 중..." : "더 보기"}
+                </button>
+              )}
+            </>
           )}
         </section>
-
-        <div className="wall-page__pager" aria-label="기부자 목록 페이지">
-          <button
-            type="button"
-            className="wall-page__pager-btn wall-page__pager-btn--prev"
-            onClick={() => setPageNum((page) => Math.max(1, page - 1))}
-            disabled={pageNum <= 1}
-            aria-label="이전 페이지"
-            style={{
-              borderColor: theme.primary,
-              backgroundColor: theme.primary,
-              color: theme.text.onPrimary,
-            }}
-          >
-            <span className="wall-page__pager-icon" aria-hidden>
-              ‹
-            </span>
-          </button>
-          <span
-            className="wall-page__pager-text"
-            style={{ color: theme.text.secondary }}
-          >
-            {pageNum}/{totalPages}
-          </span>
-          <button
-            type="button"
-            className="wall-page__pager-btn wall-page__pager-btn--next"
-            onClick={() => setPageNum((page) => Math.min(totalPages, page + 1))}
-            disabled={pageNum >= totalPages}
-            aria-label="다음 페이지"
-            style={{
-              borderColor: theme.primary,
-              backgroundColor: theme.primary,
-              color: theme.text.onPrimary,
-            }}
-          >
-            <span className="wall-page__pager-icon" aria-hidden>
-              ›
-            </span>
-          </button>
-        </div>
       </main>
 
       {keyboardOpen && (

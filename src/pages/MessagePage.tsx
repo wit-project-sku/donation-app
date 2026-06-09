@@ -1,6 +1,7 @@
 import { useCallback, useEffect } from "react";
 import { useAppNavigate } from "../hooks/useAppNavigate";
 import { VirtualKeyboard } from "../components/VirtualKeyboard";
+import { IconCamera } from "../components/Icon";
 import { PageBody } from "../components/layout/PageBody";
 import { useDonationStore } from "../store/donationStore";
 import { useTheme } from "../theme/ThemeContext";
@@ -10,12 +11,11 @@ import {
 } from "../utils/hangulInput";
 import "./MessagePage.css";
 
-/** Max characters for donor name / nickname */
 const MAX_DONOR_NAME_LENGTH = 20;
 
 export function MessagePage() {
   const navigate = useAppNavigate();
-  const { theme, location } = useTheme();
+  const { theme } = useTheme();
   const {
     selectedCampaign,
     amount,
@@ -26,6 +26,9 @@ export function MessagePage() {
     setDonorName,
     setDonorPhone,
     setActiveField,
+    setSkipPhoto,
+    setCapturedPhotoUrl,
+    setSelectedOutfit,
   } = useDonationStore();
 
   useEffect(() => {
@@ -76,10 +79,26 @@ export function MessagePage() {
     setDonorName(donorName + " ");
   }, [activeField, donorName, setDonorName]);
 
-  const handleNext = useCallback(() => {
-    if (!donorName.trim()) return;
-    navigate("/message-review");
-  }, [donorName, navigate]);
+  const goNext = useCallback(
+    (skipPhoto: boolean) => {
+      if (!donorName.trim()) return;
+      setSkipPhoto(skipPhoto);
+      if (skipPhoto) {
+        setSelectedOutfit(null);
+        setCapturedPhotoUrl(null);
+        navigate("/certificate");
+        return;
+      }
+      navigate("/outfit");
+    },
+    [
+      donorName,
+      navigate,
+      setCapturedPhotoUrl,
+      setSelectedOutfit,
+      setSkipPhoto,
+    ],
+  );
 
   if (!selectedCampaign) return null;
 
@@ -87,103 +106,59 @@ export function MessagePage() {
   const isPhoneActive = activeField === "phone";
   const canProceed = donorName.trim().length > 0;
 
-  const messageKeyBackground =
-    location.toLowerCase() === "insadong"
-      ? `color-mix(in srgb, ${theme.secondary} 14%, #FFFFFF)`
-      : theme.background.toUpperCase() === "#FFFFFF"
-        ? theme.card.background
-        : theme.background;
-
   return (
-    <PageBody
-      className="message-page"
-      scroll={false}
-      style={{
-        backgroundColor: theme.background,
-        ["--message-active-color" as string]: theme.primary,
-        ["--message-active-bg" as string]: "#FFFFFF",
-        ["--message-key-bg" as string]: messageKeyBackground,
-      }}
-    >
+    <PageBody className="message-page" scroll={false}>
       <main className="message-page__main">
-        <header className="message-page__header">
-          <h1
-            className="message-page__title"
-            style={{ color: theme.text.primary }}
-          >
-            후원자 정보를 입력해주세요
-          </h1>
-          <p
-            className="message-page__subtitle"
-            style={{ color: theme.text.secondary }}
-          >
-            *모바일로 기부증서를 보내드립니다
-          </p>
-        </header>
-
-        <div
-          className="message-page__form-card"
-          style={{ backgroundColor: theme.card.background }}
-        >
+        <div className="message-page__fields">
           <button
             type="button"
-            className={`message-page__field ${isNameActive ? "message-page__field--active" : ""}`}
+            className={`message-page__field${isNameActive ? " message-page__field--active" : ""}`}
             onClick={() => setActiveField("name")}
           >
-            <span
-              className="message-page__field-label"
-              style={{ color: isNameActive ? theme.primary : theme.text.secondary }}
-            >
-              이름/닉네임
-            </span>
-            <span className="message-page__field-input">
-              {donorName ? (
-                <span
-                  className="message-page__field-value"
-                  style={{ color: theme.text.primary }}
-                >
-                  {donorName}
-                </span>
-              ) : (
-                <span className="message-page__field-placeholder">
-                  입력해주세요
-                </span>
-              )}
-            </span>
+            <span className="message-page__field-label">이름/닉네임 :</span>
+            {donorName ? (
+              <span className="message-page__field-value">{donorName}</span>
+            ) : null}
           </button>
 
           <button
             type="button"
-            className={`message-page__field ${isPhoneActive ? "message-page__field--active" : ""}`}
+            className={`message-page__field${isPhoneActive ? " message-page__field--active" : ""}`}
             onClick={() => setActiveField("phone")}
           >
-            <span
-              className="message-page__field-label"
-              style={{ color: isPhoneActive ? theme.primary : theme.text.secondary }}
-            >
-              전화번호
-            </span>
-            <span className="message-page__field-input">
-              {donorPhone ? (
-                <span
-                  className="message-page__field-value"
-                  style={{ color: theme.text.primary }}
-                >
-                  {donorPhone}
-                </span>
-              ) : (
-                <span className="message-page__field-placeholder">
-                  입력해주세요
-                </span>
-              )}
-            </span>
+            <span className="message-page__field-label">전화번호 :</span>
+            {donorPhone ? (
+              <span className="message-page__field-value">{donorPhone}</span>
+            ) : (
+              <span className="message-page__field-hint">
+                모바일 기부증서를 발송해드려요
+              </span>
+            )}
           </button>
         </div>
 
-        <div
-          className="message-page__keyboard-wrap"
-          style={{ backgroundColor: theme.background }}
-        >
+        <div className="message-page__actions">
+          <button
+            type="button"
+            className="message-page__action-btn message-page__action-btn--secondary"
+            onClick={() => goNext(true)}
+            disabled={!canProceed}
+          >
+            기부증서 바로 발급
+          </button>
+          <button
+            type="button"
+            className="message-page__action-btn message-page__action-btn--primary"
+            onClick={() => goNext(false)}
+            disabled={!canProceed}
+            style={{ backgroundColor: theme.primary }}
+          >
+            <IconCamera className="message-page__action-icon" aria-hidden />
+            <span>사진 촬영</span>
+          </button>
+        </div>
+
+        <div className="message-page__keyboard-wrap">
           <VirtualKeyboard
             onKeyPress={handleKeyPress}
             onBackspace={handleBackspace}
@@ -191,20 +166,6 @@ export function MessagePage() {
           />
         </div>
       </main>
-
-      <button
-        type="button"
-        className="message-page__next-btn"
-        onClick={handleNext}
-        disabled={!canProceed}
-        style={{
-          backgroundColor: theme.primary,
-          borderColor: theme.primary,
-          color: theme.text.onPrimary,
-        }}
-      >
-        다음
-      </button>
     </PageBody>
   );
 }

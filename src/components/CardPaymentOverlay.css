@@ -9,37 +9,38 @@
   pointer-events: auto;
 }
 
+.card-overlay--inline {
+  position: relative;
+  inset: auto;
+  z-index: 1;
+  width: 1846px;
+  max-width: 100%;
+  flex-shrink: 0;
+}
+
 .card-overlay__dialog {
-  width: 1586px;
-  height: 1209px;
+  width: 1846px;
+  max-width: 100%;
+  height: 1407px;
   box-sizing: border-box;
-  border-radius: var(--radius-lg);
-  border: 5px solid;
+  border-radius: 80px;
+  border: 5px solid var(--main-01, #fe6c50);
+  background: #fff;
+  box-shadow: 0 4px 4px 7px rgba(0, 0, 0, 0.25);
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: 180px 70px 52px;
-}
-
-.card-overlay__desc {
-  margin: 0;
-  color: var(--overlay-text-secondary, #636e72);
-  text-align: center;
-  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 51px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: normal;
+  padding: 80px 64px 64px;
 }
 
 .card-overlay__spinner {
   width: 142px;
   height: 142px;
-  margin-top: 182px;
+  margin-top: 48px;
   border-radius: 50%;
-  border: 6px solid var(--overlay-muted-border, #e8e8e8);
-  border-top-color: var(--overlay-primary, #fe6c50);
+  border: 6px solid #f0f0f0;
+  border-top-color: var(--main-01, #fe6c50);
   animation: card-overlay-spin 1s linear infinite;
   flex-shrink: 0;
 }
@@ -51,89 +52,91 @@
 }
 
 .card-overlay__status {
-  margin: 88px 0 0;
-  color: var(--overlay-text-secondary, #636e72);
+  margin: 56px 0 0;
+  color: var(--main, #999);
   text-align: center;
-  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 51px;
+  font-family: var(--font-paperlogy);
+  font-size: 48px;
   font-style: normal;
   font-weight: 400;
   line-height: normal;
 }
 
+.card-overlay__desc {
+  margin: 48px 0 0;
+  color: var(--main, #999);
+  text-align: center;
+  font-family: var(--font-paperlogy);
+  font-size: 48px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  word-break: keep-all;
+}
+
 .card-overlay__cancel {
-  width: 1464px;
-  max-width: 100%;
-  height: 148px;
+  width: 100%;
+  max-width: 1701px;
+  height: 210px;
   margin-top: auto;
   border: 0;
-  border-radius: var(--radius-lg);
-  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
+  border-radius: 45px;
+  background: #c4c4c4;
+  color: #fff;
+  font-family: var(--font-paperlogy);
   font-size: 68px;
   font-style: normal;
-  font-weight: 500;
-  line-height: normal;
+  font-weight: 700;
+  line-height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
   cursor: pointer;
-  transition: opacity 0.15s, transform 0.1s;
 }
 
 .card-overlay__cancel:active {
-  opacity: 0.85;
-  transform: scale(0.98);
+  opacity: 0.94;
 }
 
 .card-overlay__check {
   width: 144px;
   height: 144px;
-  margin-top: 150px;
+  margin-top: 80px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  animation: card-overlay-pop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-@keyframes card-overlay-pop {
-  0% {
-    transform: scale(0);
-    opacity: 0;
-  }
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
+  color: #fff;
 }
 
 .card-overlay__success-copy {
-  margin: 74px 0 0;
+  margin: 56px 0 0;
   padding: 0;
-  color: var(--overlay-text-secondary, #636e72);
+  color: var(--main, #999);
   text-align: center;
-  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 51px;
+  font-family: var(--font-paperlogy);
+  font-size: 48px;
   font-style: normal;
   font-weight: 400;
   line-height: normal;
 }
 
 .card-overlay__countdown {
-  width: 1464px;
-  max-width: 100%;
-  height: 148px;
+  width: 100%;
+  max-width: 1701px;
+  height: 210px;
   margin-top: auto;
   box-sizing: border-box;
-  border-radius: var(--radius-lg);
-  border: 5px solid;
-  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 51px;
+  border-radius: 45px;
+  box-shadow: 0 4px 4px 7px rgba(0, 0, 0, 0.25);
+  color: #fff;
+  font-family: var(--font-paperlogy);
+  font-size: 68px;
   font-style: normal;
-  font-weight: 400;
-  line-height: normal;
+  font-weight: 700;
+  line-height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;

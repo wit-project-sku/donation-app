@@ -1,110 +1,119 @@
 .wall-giver-card {
   position: relative;
-  width: 100%;
-  height: 820px;
+  width: 455px;
+  height: 766px;
   box-sizing: border-box;
-  border-radius: var(--radius-lg);
-  border: 14px solid var(--wall-soft-border);
-  background: var(--wall-card-bg);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 40px 18px 22px;
-  overflow: hidden;
   flex-shrink: 0;
 }
 
-.wall-giver-card__notches {
+.wall-giver-card__frame-border {
   position: absolute;
   inset: 0;
-  pointer-events: none;
+  width: 100%;
+  height: 100%;
   z-index: 2;
+  pointer-events: none;
 }
 
-.wall-giver-card__notch {
-  position: absolute;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: var(--wall-soft-border);
+.wall-giver-card__body {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  background: #fff4f2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 30px 34px 22px;
+  overflow: hidden;
+  z-index: 1;
 }
 
-.wall-giver-card__notch--tl {
-  left: -20px;
-  top: -20px;
-}
-
-.wall-giver-card__notch--tr {
-  right: -20px;
-  top: -20px;
-}
-
-.wall-giver-card__notch--bl {
-  left: -20px;
-  bottom: -20px;
-}
-
-.wall-giver-card__notch--br {
-  right: -20px;
-  bottom: -20px;
-}
-
-.wall-giver-card__card-header {
+.wall-giver-card__header {
   position: relative;
   display: flex;
   align-items: flex-start;
   justify-content: center;
   width: 100%;
   flex-shrink: 0;
-  z-index: 1;
+}
+
+.wall-giver-card__title-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
 }
 
 .wall-giver-card__title {
   margin: 0;
-  color: var(--wall-text-primary);
-  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
+  color: var(--main-01, #fe6c50);
+  font-family: var(--font-paperlogy);
   font-size: 22px;
-  font-weight: 900;
-  line-height: 1;
+  font-style: normal;
+  font-weight: 800;
+  line-height: normal;
   text-align: center;
+}
+
+.wall-giver-card__subtitle {
+  margin: 0;
+  color: #f57ba0;
+  font-family: var(--font-paperlogy);
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  text-align: center;
+  word-break: keep-all;
 }
 
 .wall-giver-card__badge {
   position: absolute;
   right: 0;
-  top: -8px;
+  top: 0;
   z-index: 3;
-  min-height: 36px;
-  padding: 0 14px;
-  border-radius: var(--radius-lg);
-  background: var(--wall-primary);
-  color: var(--wall-on-primary);
-  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 16px;
-  font-weight: 800;
-  line-height: 36px;
+  min-height: 28px;
+  padding: 0 10px;
+  border-radius: 14px;
+  background: var(--main-01, #fe6c50);
+  color: #fff;
+  font-family: var(--font-paperlogy);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 28px;
   white-space: nowrap;
 }
 
 .wall-giver-card__photo-wrap {
   position: relative;
-  width: 100%;
-  flex: 1;
-  min-height: 0;
-  margin-top: 18px;
+  width: 290px;
+  height: 516px;
+  aspect-ratio: 68 / 121;
+  flex: 0 0 auto;
+  margin-top: 10px;
+  padding: 3px;
+  box-sizing: border-box;
+  border-radius: 18px;
+  border: 2px solid #d4738f;
+  background: #fff;
   overflow: hidden;
-  border-radius: var(--radius-lg);
-  background: transparent;
-  flex-shrink: 0;
-  z-index: 1;
 }
 
 .wall-giver-card__photo {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
+  width: 290px;
+  height: 516px;
+  aspect-ratio: 68 / 121;
+  border-radius: 14px;
+  object-fit: cover;
   object-position: top center;
   display: block;
+}
+
+.wall-giver-card__photo--default {
+  object-fit: contain;
+  object-position: center;
+  background: #fff4f2;
 }
 
 .wall-giver-card__info {
@@ -112,47 +121,75 @@
   flex-direction: column;
   align-items: center;
   width: 100%;
-  margin-top: 16px;
-  padding-top: 14px;
-  border-top: 2px solid var(--wall-accent-border);
+  margin-top: 12px;
   flex-shrink: 0;
-  z-index: 1;
+}
+
+.wall-giver-card__amount-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.wall-giver-card__heart {
+  width: 18px;
+  height: 16px;
+  aspect-ratio: 45 / 41;
+  color: var(--main-01, #fe6c50);
+  flex-shrink: 0;
 }
 
 .wall-giver-card__amount {
-  color: var(--wall-primary);
+  color: var(--main-01, #fe6c50);
   text-align: center;
-  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 34px;
-  font-weight: 700;
-  line-height: 1;
+  font-family: var(--font-paperlogy);
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
   white-space: nowrap;
 }
 
 .wall-giver-card__name {
   width: 100%;
-  margin-top: 8px;
-  padding-bottom: 10px;
-  border-bottom: 2px solid var(--wall-accent-border);
-  color: var(--wall-text-secondary);
-  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 22px;
-  font-weight: 700;
-  line-height: 1;
+  margin-top: 6px;
+  color: #000;
   text-align: center;
+  font-family: var(--font-paperlogy);
+  font-size: 22px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.wall-giver-card__date {
-  display: block;
-  margin-top: 10px;
-  color: var(--wall-text-secondary);
+.wall-giver-card__message {
+  margin: 10px 0 0;
+  width: 100%;
+  color: #636363;
   text-align: center;
-  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 16px;
+  font-family: var(--font-paperlogy);
+  font-size: 13px;
+  font-style: normal;
   font-weight: 400;
-  line-height: 1;
+  line-height: 1.35;
+  white-space: pre-line;
   word-break: keep-all;
 }
+
+.wall-giver-card__date {
+  display: block;
+  margin-top: 8px;
+  color: var(--main, #999);
+  text-align: center;
+  font-family: var(--font-paperlogy);
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  word-break: keep-all;
+}
+

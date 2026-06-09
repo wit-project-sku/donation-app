@@ -11,6 +11,8 @@ const PAYMENT_HISTORY_PATH = "/api/donations/payment/history";
 
 function formatTimeAgo(isoDate: string): string {
   const then = new Date(isoDate).getTime();
+  if (Number.isNaN(then)) return "";
+
   const now = Date.now();
   const diffMs = Math.max(0, now - then);
   const minutes = Math.floor(diffMs / 60_000);
@@ -42,57 +44,42 @@ function formatPaymentMethod(method: PaymentMethodDto): string {
 }
 
 function mapPaymentToWallEntry(item: PaymentHistoryDto): WallEntry {
+  const photoUrl = item.photoUrl?.trim();
+
   return {
     id: String(item.id),
     donorName: item.donatorName?.trim() ?? "",
     amount: item.totalAmount,
     campaignName: item.campaignName,
     paymentMethod: formatPaymentMethod(item.paymentMethod),
+    donatedAt: item.donatedAt,
     timeAgo: formatTimeAgo(item.donatedAt),
-    photoUrl: item.photoUrl ?? undefined,
+    photoUrl: photoUrl || undefined,
     isNew: formatTimeAgo(item.donatedAt) === "NOW",
   };
 }
 
+/** GET /api/donations/payment/history */
 export async function fetchPaymentHistoryPage(
   params: PaymentHistoryParams = {},
 ): Promise<PaginatedData<WallEntry>> {
+  const pageNum = params.pageNum ?? 1;
+  const pageSize = params.pageSize ?? 10;
+  const keyword = params.keyword?.trim();
+
   const data = await apiGet<PaginatedData<PaymentHistoryDto>>(
     PAYMENT_HISTORY_PATH,
     {
-      pageNum: params.pageNum ?? 1,
-      pageSize: params.pageSize ?? 30,
-      keyword: params.keyword ?? "",
+      pageNum,
+      pageSize,
+      ...(keyword ? { keyword } : {}),
     },
   );
 
   return {
     ...data,
-    content: data.content.map(mapPaymentToWallEntry),
+    content: (data.content ?? []).map(mapPaymentToWallEntry),
   };
 }
 
-export async function fetchPaymentHistory(
-  params: PaymentHistoryParams = {},
-): Promise<WallEntry[]> {
-  const entries: WallEntry[] = [];
-  let pageNum = params.pageNum ?? 1;
-  const pageSize = params.pageSize ?? 30;
-  let last = false;
-
-  while (!last) {
-    const page = await fetchPaymentHistoryPage({
-      ...params,
-      pageNum,
-      pageSize,
-    });
-    entries.push(...page.content);
-    last = page.last;
-    pageNum += 1;
-
-    if (pageNum > page.totalPages && page.totalPages > 0) break;
-    if (page.content.length === 0) break;
-  }
-
-  return entries;
-}
+export type { PaymentHistoryDto, PaymentHistoryParams };

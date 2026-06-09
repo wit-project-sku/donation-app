@@ -1,13 +1,14 @@
 .wall-page {
   position: relative;
-  width: 1820px;
-  height: 2290px;
+  width: 100%;
+  height: 100%;
   box-sizing: border-box;
   padding: 0;
   overflow: hidden;
   display: flex;
   flex-direction: column;
   align-items: center;
+  background: #fff;
 }
 
 .wall-page__home-btn {
@@ -49,66 +50,46 @@
 .wall-page__header {
   width: 100%;
   max-width: 1690px;
-  text-align: center;
+  align-self: flex-start;
+  text-align: left;
   flex-shrink: 0;
 }
 
 .wall-page__title {
   margin: 0;
-  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 56px;
-  font-weight: 900;
-  line-height: 1.15;
-  word-break: keep-all;
-}
-
-.wall-page__subtitle {
-  margin: 16px 0 0;
-  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 32px;
+  color: var(--main-01, #fe6c50);
+  font-family: var(--font-paperlogy);
+  font-size: 68px;
+  font-style: normal;
   font-weight: 500;
-  line-height: 1.35;
+  line-height: normal;
   word-break: keep-all;
 }
 
 .wall-page__search-card {
-  width: 100%;
-  max-width: 1690px;
-  padding: 28px 40px;
-  box-sizing: border-box;
-  border: 5px solid transparent;
-  border-radius: var(--radius-lg);
-  background: var(--wall-card-bg);
-  flex-shrink: 0;
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 14px;
-  transition:
-    background-color 0.15s ease,
-    border-color 0.15s ease,
-    box-shadow 0.15s ease;
+  width: 1820px;
+  max-width: 100%;
+  height: 182px;
+  padding: 55px 75px;
+  box-sizing: border-box;
+  justify-content: space-between;
+  align-items: center;
+  gap: 32px;
+  border-radius: 120px;
+  border: 4.29px solid var(--main-01, #fe6c50);
+  background: #fff;
+  box-shadow: 0 4px 7px 0 rgba(0, 0, 0, 0.25);
+  flex-shrink: 0;
+  transition: box-shadow 0.15s ease;
+  margin-bottom: 62px;
 }
 
 .wall-page__search-card:focus-within,
 .wall-page__search-card--active {
-  border-color: var(--wall-primary);
-  background: color-mix(in srgb, var(--wall-primary) 8%, var(--wall-card-bg));
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--wall-primary) 16%, transparent);
-}
-
-.wall-page__search-label {
-  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 30px;
-  font-weight: 600;
-  line-height: 1.2;
-}
-
-.wall-page__search-row {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  gap: 20px;
+  box-shadow:
+    0 4px 7px 0 rgba(0, 0, 0, 0.25),
+    0 0 0 3px color-mix(in srgb, var(--main-01, #fe6c50) 18%, transparent);
 }
 
 .wall-page__search {
@@ -118,10 +99,12 @@
   background: transparent;
   padding: 0;
   margin: 0;
-  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 44px;
-  font-weight: 700;
-  line-height: 1.2;
+  color: #636363;
+  font-family: var(--font-paperlogy);
+  font-size: 60.06px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 100%;
   outline: none;
   box-shadow: none;
   appearance: none;
@@ -137,12 +120,13 @@
 }
 
 .wall-page__search::placeholder {
-  color: var(--wall-text-secondary);
-  opacity: 0.4;
-  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 44px;
-  font-weight: 400;
-  line-height: 1.2;
+  color: var(--main, #999);
+  font-family: var(--font-paperlogy);
+  font-size: 60.06px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 100%;
+  opacity: 1;
 }
 
 .wall-page__search-clear {
@@ -150,9 +134,10 @@
   border: 0;
   background: transparent;
   padding: 8px 4px;
-  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 30px;
-  font-weight: 700;
+  color: var(--main, #999);
+  font-family: var(--font-paperlogy);
+  font-size: 32px;
+  font-weight: 500;
   line-height: 1;
   cursor: pointer;
 }
@@ -162,7 +147,11 @@
 }
 
 .wall-page__search-icon {
+  width: 71px;
+  height: 68px;
   flex-shrink: 0;
+  color: var(--main-01, #fe6c50);
+  stroke: var(--main-01, #fe6c50);
   pointer-events: none;
 }
 
@@ -171,19 +160,37 @@
   width: 100%;
   flex: 1;
   min-height: 0;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
   display: flex;
-  align-items: flex-start;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 32px;
+  scrollbar-width: auto;
+  scrollbar-color: var(--main-01, #fe6c50) transparent;
+}
+
+.wall-page__grid-panel::-webkit-scrollbar {
+  width: 34.32px;
+}
+
+.wall-page__grid-panel::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.wall-page__grid-panel::-webkit-scrollbar-thumb {
+  background: #fe6c50;
+  border-radius: 999px;
+  min-height: 120px;
 }
 
 .wall-page__grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(3, 455px);
   width: 100%;
   max-width: 1690px;
-  column-gap: 40px;
-  row-gap: 28px;
+  column-gap: 120px;
+  row-gap: 72px;
   align-items: start;
   justify-content: center;
   padding: 0;
@@ -207,58 +214,33 @@
   color: #b42318;
 }
 
-.wall-page__pager {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 48px;
-  min-height: 120px;
-  flex-shrink: 0;
-}
-
-.wall-page__pager-btn {
-  width: 120px;
+.wall-page__load-more {
+  width: 100%;
+  max-width: 1690px;
   height: 120px;
-  padding: 0;
-  border: 5px solid;
-  border-radius: var(--radius-lg);
-  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 88px;
-  font-weight: 300;
+  margin-top: 32px;
+  padding: 0 48px;
+  border: 0;
+  border-radius: 45px;
+  background: var(--main-01, #fe6c50);
+  color: #fff;
+  font-family: var(--font-paperlogy);
+  font-size: 48px;
+  font-weight: 700;
   line-height: 1;
-  display: grid;
-  place-items: center;
   cursor: pointer;
   flex-shrink: 0;
-  box-sizing: border-box;
   transition: transform 0.15s ease, opacity 0.15s ease;
 }
 
-.wall-page__pager-btn--prev .wall-page__pager-icon {
-  transform: translate(3px, -6px);
+.wall-page__load-more:active:not(:disabled) {
+  transform: scale(0.98);
+  opacity: 0.9;
 }
 
-.wall-page__pager-btn--next .wall-page__pager-icon {
-  transform: translate(6px, -6px);
-}
-
-.wall-page__pager-btn:active:not(:disabled) {
-  transform: scale(0.94);
-}
-
-.wall-page__pager-btn:disabled {
-  opacity: 0.3;
-  cursor: not-allowed;
-}
-
-.wall-page__pager-text {
-  min-width: 140px;
-  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 34px;
-  font-weight: 700;
-  line-height: 1;
-  text-align: center;
-  flex-shrink: 0;
+.wall-page__load-more:disabled {
+  opacity: 0.7;
+  cursor: wait;
 }
 
 .wall-page__keyboard {

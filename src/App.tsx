@@ -9,7 +9,6 @@ import { CampaignsPage } from "./pages/CampaignsPage";
 import { CameraCapturePage } from "./pages/CameraCapturePage";
 import { DonationCertificatePage } from "./pages/DonationCertificatePage";
 import { MessagePage } from "./pages/MessagePage";
-import { MessageReviewPage } from "./pages/MessageReviewPage";
 import { MobileCertificatePage } from "./pages/MobileCertificatePage";
 import { OutfitSelectionPage } from "./pages/OutfitSelectionPage";
 import { PaymentPage } from "./pages/PaymentPage";
@@ -35,13 +34,22 @@ function LocationAwareApp() {
                   <Route path="/amount" element={<AmountPage />} />
                   <Route path="/payment" element={<PaymentPage />} />
                   <Route path="/message" element={<MessagePage />} />
-                  <Route path="/message-review" element={<MessageReviewPage />} />
                   <Route path="/outfit" element={<OutfitSelectionPage />} />
                   <Route path="/camera" element={<CameraCapturePage />} />
                   <Route path="/certificate" element={<DonationCertificatePage />} />
-                  <Route path="/complete" element={<LocationNavigate to="/message" replace />} />
                   <Route path="/wall" element={<WallPage />} />
-                  <Route path="/thank-you" element={<LocationNavigate to="/message" replace />} />
+                  <Route
+                    path="/message-review"
+                    element={<LocationNavigate to="/message" replace />}
+                  />
+                  <Route
+                    path="/complete"
+                    element={<LocationNavigate to="/message" replace />}
+                  />
+                  <Route
+                    path="/thank-you"
+                    element={<LocationNavigate to="/message" replace />}
+                  />
                   <Route path="*" element={<LocationNavigate to="/" replace />} />
                 </Route>
               </Routes>

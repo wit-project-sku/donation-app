@@ -1,19 +1,23 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import type { Swiper as SwiperClass } from "swiper";
+import { FreeMode, Grid } from "swiper/modules";
+import { Swiper, SwiperSlide } from "swiper/react";
 import { useAppNavigate } from "../hooks/useAppNavigate";
 import { fetchOutfitsPage, type Outfit } from "../api/outfits";
-import { IconBack, IconCamera } from "../components/Icon";
+import { IconCamera } from "../components/Icon";
 import { PageBody } from "../components/layout/PageBody";
 import { useDonationStore } from "../store/donationStore";
-import { useTheme } from "../theme/ThemeContext";
+import "swiper/css";
+import "swiper/css/grid";
+import "swiper/css/free-mode";
 import "./OutfitSelectionPage.css";
 
-const PAGE_SIZE = 10;
-const CAROUSEL_PAGE_SIZE = 6;
+const PAGE_SIZE = 12;
+
 export function OutfitSelectionPage() {
   const navigate = useAppNavigate();
-  const { theme } = useTheme();
-  const gridWrapRef = useRef<HTMLDivElement>(null);
+  const swiperRef = useRef<SwiperClass | null>(null);
   const {
     selectedCampaign,
     paymentMethod,
@@ -25,7 +29,6 @@ export function OutfitSelectionPage() {
   } = useDonationStore();
 
   const [selected, setSelected] = useState<Outfit | null>(null);
-  const [carouselPage, setCarouselPage] = useState(0);
 
   const {
     data,
@@ -52,10 +55,6 @@ export function OutfitSelectionPage() {
     () => data?.pages.flatMap((page) => page.content) ?? [],
     [data],
   );
-  const carouselPageCount = Math.max(
-    1,
-    Math.ceil(outfits.length / CAROUSEL_PAGE_SIZE),
-  );
 
   useEffect(() => {
     if (!selectedCampaign || !paymentMethod) {
@@ -67,52 +66,23 @@ export function OutfitSelectionPage() {
       return;
     }
     if (!donorName.trim()) {
-      navigate("/message-review", { replace: true });
+      navigate("/message", { replace: true });
     }
   }, [selectedCampaign, paymentMethod, skipPhoto, donorName, navigate]);
 
-  const handleGridScroll = () => {
-    const element = gridWrapRef.current;
-    if (!element) return;
+  useEffect(() => {
+    swiperRef.current?.update();
+  }, [outfits.length, isFetchingNextPage]);
 
-    const pageWidth = Math.max(1, element.clientWidth);
-    setCarouselPage(
-      Math.min(carouselPageCount - 1, Math.round(element.scrollLeft / pageWidth)),
-    );
-
-    if (!hasNextPage || isFetchingNextPage) return;
-
-    const distanceFromEnd =
-      element.scrollWidth - element.scrollLeft - element.clientWidth;
-    if (distanceFromEnd < 420) {
-      fetchNextPage();
-    }
-  };
-
-  const scrollOutfits = (direction: "prev" | "next") => {
-    const element = gridWrapRef.current;
-    if (!element) return;
-
-    const nextPage =
-      direction === "next"
-        ? Math.min(carouselPage + 1, carouselPageCount - 1)
-        : Math.max(carouselPage - 1, 0);
-
-    element.scrollTo({
-      left: nextPage * element.clientWidth,
-      behavior: "smooth",
-    });
-    setCarouselPage(nextPage);
-
-    if (
-      direction === "next" &&
-      nextPage >= carouselPageCount - 2 &&
-      hasNextPage &&
-      !isFetchingNextPage
-    ) {
-      fetchNextPage();
-    }
-  };
+  const loadMoreIfNeeded = useCallback(
+    (swiper: SwiperClass) => {
+      if (!hasNextPage || isFetchingNextPage) return;
+      if (swiper.isEnd || swiper.progress > 0.82) {
+        fetchNextPage();
+      }
+    },
+    [fetchNextPage, hasNextPage, isFetchingNextPage],
+  );
 
   const handlePhoto = useCallback(
     (withGreeting = false) => {
@@ -138,51 +108,19 @@ export function OutfitSelectionPage() {
   const canTakePhoto = Boolean(selected) && !isLoading && !isError;
 
   return (
-    <PageBody
-      className="outfit-page"
-      scroll={false}
-      style={{
-        backgroundColor: theme.background,
-        ["--outfit-primary" as string]: theme.primary,
-      }}
-    >
-      <button
-        type="button"
-        className="outfit-page__back-btn"
-        onClick={() => navigate("/message-review")}
-        aria-label="정보 확인으로 돌아가기"
-        style={{
-          borderColor: theme.primary,
-          backgroundColor: theme.primary,
-          color: theme.text.onPrimary,
-        }}
-      >
-        <IconBack size={72} strokeWidth={2.5} />
-      </button>
-
+    <PageBody className="outfit-page" scroll={false}>
       <main className="outfit-page__main">
-        <header className="outfit-page__header">
-          <h1
-            className="outfit-page__title"
-            style={{ color: theme.text.primary }}
-          >
-            의상을 선택해주세요
+        <section className="outfit-page__intro" aria-label="의상 선택 안내">
+          <h1 className="outfit-page__intro-title">
+            기부 참여자만 이용 가능한 특별 의상을 입어보세요!
           </h1>
-          <p
-            className="outfit-page__subtitle"
-            style={{ color: theme.text.secondary }}
-          >
-            기부 참여자만 이용할 수 있는 특별 의상이에요
+          <p className="outfit-page__intro-desc">
+            *사진 촬영 버튼을 누르고 좌측 카메라를 바라보세요. 곧 촬영이 시작됩니다.
           </p>
-        </header>
+        </section>
 
         {isLoading && (
-          <p
-            className="outfit-page__status"
-            style={{ color: theme.text.secondary }}
-          >
-            의상 불러오는 중...
-          </p>
+          <p className="outfit-page__status">의상 불러오는 중...</p>
         )}
         {isError && (
           <p className="outfit-page__status outfit-page__status--error">
@@ -191,143 +129,93 @@ export function OutfitSelectionPage() {
         )}
 
         {!isLoading && !isError && outfits.length > 0 && (
-          <div className="outfit-page__carousel">
-            <div
-              className="outfit-page__grid-wrap"
-              ref={gridWrapRef}
-              onScroll={handleGridScroll}
+          <div className="outfit-page__swiper-wrap">
+            <Swiper
+              className="outfit-page__swiper"
+              modules={[Grid, FreeMode]}
+              onSwiper={(swiper) => {
+                swiperRef.current = swiper;
+              }}
+              onSlideChange={loadMoreIfNeeded}
+              onReachEnd={loadMoreIfNeeded}
+              onProgress={loadMoreIfNeeded}
+              slidesPerView="auto"
+              grid={{
+                rows: 2,
+                fill: "row",
+              }}
+              spaceBetween={40}
+              freeMode={{
+                enabled: true,
+                momentum: true,
+                momentumRatio: 0.85,
+              }}
+              simulateTouch
+              allowTouchMove
+              touchStartPreventDefault={false}
+              resistance
+              resistanceRatio={0.65}
+              watchOverflow={false}
+              role="list"
             >
-              <div className="outfit-page__grid">
-                {outfits.map((outfit) => {
-                  const isSelected = selected?.id === outfit.id;
-                  return (
+              {outfits.map((outfit) => {
+                const isSelected = selected?.id === outfit.id;
+                return (
+                  <SwiperSlide key={outfit.id} className="outfit-page__slide">
                     <button
-                      key={outfit.id}
                       type="button"
-                      className={`outfit-card ${isSelected ? "outfit-card--selected" : ""}`}
+                      className={`outfit-card${isSelected ? " outfit-card--selected" : ""}`}
+                      role="listitem"
                       onClick={() => setSelected(isSelected ? null : outfit)}
-                      style={{
-                        backgroundColor: theme.card.background,
-                      }}
+                      aria-pressed={isSelected}
                     >
                       <img
                         className="outfit-card__image"
                         src={outfit.imageUrl}
                         alt={outfit.name}
                         loading="lazy"
+                        draggable={false}
                       />
                     </button>
-                  );
-                })}
-                {isFetchingNextPage && (
-                  <div
-                    className="outfit-page__loading-card"
-                    style={{
-                      backgroundColor: theme.card.background,
-                      color: theme.text.secondary,
-                    }}
-                  >
-                    더 불러오는 중...
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <div className="outfit-page__controls">
-              <button
-                type="button"
-                className="outfit-page__nav-btn outfit-page__nav-btn--prev"
-                onClick={() => scrollOutfits("prev")}
-                disabled={carouselPage === 0}
-                aria-label="이전 의상 보기"
-                style={{
-                  borderColor: theme.primary,
-                  backgroundColor: theme.primary,
-                  color: theme.text.onPrimary,
-                }}
-              >
-                <span className="outfit-page__nav-icon" aria-hidden>
-                  ‹
-                </span>
-              </button>
-
-              <div
-                className="outfit-page__pager"
-                aria-label="의상 페이지"
-                style={{ color: theme.text.secondary }}
-              >
-                {carouselPage + 1}/{carouselPageCount}
-              </div>
-
-              <button
-                type="button"
-                className="outfit-page__nav-btn outfit-page__nav-btn--next"
-                onClick={() => scrollOutfits("next")}
-                disabled={!hasNextPage && carouselPage >= carouselPageCount - 1}
-                aria-label="다음 의상 보기"
-                style={{
-                  borderColor: theme.primary,
-                  backgroundColor: theme.primary,
-                  color: theme.text.onPrimary,
-                }}
-              >
-                <span className="outfit-page__nav-icon" aria-hidden>
-                  ›
-                </span>
-              </button>
-            </div>
+                  </SwiperSlide>
+                );
+              })}
+              {isFetchingNextPage && (
+                <SwiperSlide className="outfit-page__slide">
+                  <div className="outfit-page__loading-card">더 불러오는 중...</div>
+                </SwiperSlide>
+              )}
+            </Swiper>
           </div>
         )}
 
         {!isLoading && !isError && outfits.length === 0 && (
-          <p
-            className="outfit-page__empty"
-            style={{ color: theme.text.secondary }}
-          >
-            등록된 프리미엄 의상이 없습니다
-          </p>
+          <p className="outfit-page__empty">등록된 프리미엄 의상이 없습니다</p>
         )}
 
-        <p
-          className="outfit-page__helper"
-          style={{ color: theme.text.secondary }}
-        >
-          의상을 선택한 뒤 사진 촬영을 시작해주세요
-        </p>
+        <div className="outfit-page__photo-btns">
+          <button
+            type="button"
+            className="outfit-page__photo-btn"
+            onClick={() => handlePhoto(false)}
+            disabled={!canTakePhoto}
+            aria-label="혼자 찍기"
+          >
+            <IconCamera className="outfit-page__photo-icon" aria-hidden />
+            <span>혼자 찍기</span>
+          </button>
+          <button
+            type="button"
+            className="outfit-page__photo-btn"
+            onClick={() => handlePhoto(true)}
+            disabled={!canTakePhoto}
+            aria-label="WITH 인사"
+          >
+            <IconCamera className="outfit-page__photo-icon" aria-hidden />
+            <span>WITH &apos;인사&apos;</span>
+          </button>
+        </div>
       </main>
-
-      <div className="outfit-page__photo-btns">
-        <button
-          type="button"
-          className="outfit-page__photo-btn outfit-page__photo-btn--primary"
-          onClick={() => handlePhoto(false)}
-          disabled={!canTakePhoto}
-          aria-label="사진 촬영 혼자 찍기"
-          style={{
-            backgroundColor: theme.primary,
-            borderColor: theme.primary,
-            color: theme.text.onPrimary,
-          }}
-        >
-          <IconCamera size={80} strokeWidth={2.2} aria-hidden />
-          <span>사진촬영 (혼자 찍기)</span>
-        </button>
-        <button
-          type="button"
-          className="outfit-page__photo-btn outfit-page__photo-btn--greeting"
-          onClick={() => handlePhoto(true)}
-          disabled={!canTakePhoto}
-          aria-label="사진 촬영 인사 모드"
-          style={{
-            backgroundColor: theme.text.primary,
-            borderColor: theme.text.primary,
-            color: theme.text.onPrimary,
-          }}
-        >
-          <IconCamera size={80} strokeWidth={2.2} aria-hidden />
-          <span>사진촬영 (인사)</span>
-        </button>
-      </div>
     </PageBody>
   );
 }

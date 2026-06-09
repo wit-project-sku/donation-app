@@ -1,78 +1,64 @@
 .campaigns-page {
   position: relative;
-  width: 1820px;
-  height: 2290px;
+  width: 100%;
+  height: 100%;
   box-sizing: border-box;
-  padding: 0;
+  padding: 58px 0 0;
   overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  background: #fff;
 }
 
-/* Header Section */
+.campaigns-page.page-body {
+  display: grid;
+  flex: 1;
+  height: 100%;
+  padding: 58px 0 0;
+  gap: 0;
+  min-height: 0;
+}
+
+/* Header */
 .campaigns-page__header {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 180px;
-  padding: 58px 58px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  box-sizing: border-box;
-  z-index: 8;
-}
-
-.campaigns-page__header-content {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  max-width: 900px;
+  margin-bottom: 80px;
+  padding: 0 58px;
+  box-sizing: border-box;
 }
 
-.campaigns-page__subtitle {
+.campaigns-page__label {
   margin: 0;
-  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 44px;
-  font-weight: 900;
-  line-height: 1.2;
+  color: var(--main, #999);
+  font-family: var(--font-paperlogy);
+  font-size: 36px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+}
+
+.campaigns-page__title {
+  margin: 0;
+  color: #636363;
+  font-family: var(--font-paperlogy);
+  font-size: 68px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
   word-break: keep-all;
 }
 
 .campaigns-page__header-desc {
   margin: 0;
-  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 28px;
-  font-weight: 500;
-  line-height: 1.4;
+  color: var(--main-01, #fe6c50);
+  font-family: var(--font-paperlogy);
+  font-size: 36px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
   word-break: keep-all;
-  white-space: nowrap;
-}
-
-.campaigns-page__wall-link {
-  min-width: 318px;
-  height: 104px;
-  padding: 0 34px;
-  border: 5px solid;
-  border-radius: var(--radius-lg);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 18px;
-  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 34px;
-  font-weight: 900;
-  line-height: 1;
-  cursor: pointer;
-  flex-shrink: 0;
-}
-
-.campaigns-page__wall-link:active {
-  transform: scale(0.96);
-  opacity: 0.9;
 }
 
 .campaigns-page__loading {
@@ -80,6 +66,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  grid-row: 1 / -1;
   color: #999;
   font-family: "Noto Sans", "Noto Sans KR", sans-serif;
   font-size: 46px;
@@ -90,265 +77,176 @@
   color: #b42318;
 }
 
-/* Main Campaign Swiper — Effect Cards stack */
-.campaigns-page__swiper-wrap {
-  position: relative;
+/* Scrollable grid area — full body width, edge to edge */
+.campaigns-page__scroll {
+  min-height: 0;
   width: 100%;
-  height: 1740px;
-  margin-top: 240px;
-  display: flex;
-  align-items: center;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-bottom: 240px;
+  scrollbar-width: auto;
+  scrollbar-color: var(--main-01, #fe6c50) transparent;
+}
+
+.campaigns-page__scroll::-webkit-scrollbar {
+  width: 34.32px;
+}
+
+.campaigns-page__scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.campaigns-page__scroll::-webkit-scrollbar-thumb {
+  background: #fe6c50;
+  border-radius: 999px;
+  min-height: 120px;
+}
+
+/* Campaign grid */
+.campaigns-page__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 530px);
+  column-gap: 80px;
+  row-gap: 80px;
   justify-content: center;
-  overflow: visible;
-  z-index: 2;
-}
-
-.campaigns-page__swiper {
-  width: 1380px;
-  height: 1680px;
-  margin: 0;
-  overflow: visible;
-  perspective: 1400px;
-}
-
-/* Keep stacked card layout; slide changes stay instant (no motion) */
-.campaigns-page__swiper.swiper-cards .swiper-wrapper,
-.campaigns-page__swiper.swiper-cards .swiper-slide {
-  transition-duration: 0ms !important;
-  transition-delay: 0ms !important;
-}
-
-.campaigns-page__swiper-slide {
-  width: 1380px;
-  height: 1680px;
-  display: flex;
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.28);
-}
-
-.campaigns-page__swiper .swiper-slide-shadow-cards {
-  border-radius: var(--radius-lg);
-  background: rgba(0, 0, 0, 0.35);
-}
-
-.campaigns-page__main-card {
-  position: relative;
   width: 100%;
-  height: 100%;
+  box-sizing: border-box;
+}
+
+.campaigns-page__card {
+  width: 530px;
+  height: 630px;
+  display: flex;
+  flex-direction: column;
+  border-radius: 45px;
   overflow: hidden;
-  border-radius: var(--radius-lg);
-  flex-shrink: 0;
   border: none;
   padding: 0;
+  background: #fff;
+  box-shadow: 0 4px 4px 3px rgba(0, 0, 0, 0.1);
   cursor: pointer;
-  background-size: cover;
-  background-position: right center;
+  text-align: center;
+}
+
+.campaigns-page__card:active {
+  opacity: 0.96;
+}
+
+.campaigns-page__card-visual {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  width: 100%;
   display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  overflow: hidden;
 }
 
-.campaigns-page__main-card:active {
-  opacity: 0.95;
+.campaigns-page__card-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  pointer-events: none;
 }
 
-.campaigns-page__card-bg-overlay {
+.campaigns-page__card-overlay {
   position: absolute;
   inset: 0;
   background: linear-gradient(
-    90deg,
-    rgba(0, 0, 0, 0.85) 0%,
-    rgba(0, 0, 0, 0.7) 40%,
-    rgba(0, 0, 0, 0.3) 100%
+    180deg,
+    rgba(0, 0, 0, 0) 45%,
+    rgba(0, 0, 0, 0.55) 100%
   );
   pointer-events: none;
 }
 
-.campaigns-page__card-content {
-  position: relative;
-  z-index: 2;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  width: 100%;
-  padding: 70px 60px;
-  box-sizing: border-box;
-  gap: 20px;
-}
-
-/* Badges */
-.campaigns-page__badges {
-  display: flex;
-  gap: 12px;
-}
-
-.campaigns-page__badge {
-  padding: 10px 28px;
-  border-radius: var(--radius-lg);
-  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 28px;
-  font-weight: 900;
-  line-height: 1;
-  display: inline-block;
-}
-
-/* Title & Date Line */
-.campaigns-page__title-line {
-  display: flex;
-  text-align: left;
-  gap: 40px;
-}
-
-/* Card Title */
 .campaigns-page__card-title {
-  margin: 0;
-  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 82px;
-  font-weight: 900;
-  line-height: 1.06;
-  word-break: keep-all;
-  flex: 1;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* Card Date */
-.campaigns-page__card-date {
-  margin: 0;
-  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 28px;
-  font-weight: 600;
-  line-height: 1.2;
-  white-space: nowrap;
-  align-self: center;
-}
-
-/* Card Description */
-.campaigns-page__card-desc {
-  text-align: left;
-  margin: 0;
-  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 40px;
-  font-weight: 500;
-  line-height: 1.4;
-  word-break: keep-all;
+  position: relative;
+  z-index: 1;
+  margin: 0 24px 36px;
   color: #fff;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* Progress Section */
-.campaigns-page__progress {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  margin-top: 10px;
-}
-
-.campaigns-page__progress-info {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-}
-
-.campaigns-page__progress-amount {
-  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 32px;
-  font-weight: 800;
-  color: #ffffff;
-}
-
-.campaigns-page__progress-percent {
-  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 40px;
-  font-weight: 900;
-  color: #ffffff;
-}
-
-.campaigns-page__progress-bar {
-  width: 100%;
-  height: 24px;
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-}
-
-.campaigns-page__progress-fill {
-  height: 100%;
-  border-radius: var(--radius-lg);
-}
-
-/* Stats */
-.campaigns-page__stats {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-}
-
-.campaigns-page__donor-info {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.campaigns-page__donor-count {
-  margin: 0;
-  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 36px;
-  font-weight: 800;
-  line-height: 1.2;
+  font-family: var(--font-paperlogy);
+  font-size: 48px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+  text-align: center;
   word-break: keep-all;
 }
 
-/* Navigation Buttons */
-.campaigns-page__nav {
-  position: absolute;
-  bottom: 60px;
-  left: 54px;
-  right: 54px;
+.campaigns-page__card-action {
+  flex-shrink: 0;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  pointer-events: none;
-  z-index: 5;
+  justify-content: center;
+  width: 100%;
+  height: 96px;
+  border-top: 1px solid #ececec;
+  background: #ffffff;
+  color: var(--main, #999);
+  font-family: var(--font-paperlogy);
+  font-size: 48px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
 }
 
-.campaigns-page__nav-btn {
-  width: 156px;
-  height: 156px;
-  padding: 0;
-  border-radius: var(--radius-lg);
-  border: 5px solid;
-  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 108px;
-  font-weight: 300;
-  line-height: 1;
-  display: grid;
-  place-items: center;
+/* Bottom fade — sits under the floating button */
+.campaigns-page__cta-fade {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2160px;
+  height: 584px;
+  z-index: 5;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0) 0%,
+    #c4c4c4 100%
+  );
+  pointer-events: none;
+}
+
+.campaigns-page__cta-wrap {
+  position: absolute;
+  bottom: 52px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+  width: 1560px;
+  max-width: calc(100% - 116px);
+  pointer-events: none;
+}
+
+.campaigns-page__cta {
+  width: 1560px;
+  max-width: 100%;
+  height: 210px;
+  border: none;
+  border-radius: 45px;
+  box-shadow: 0 4px 4px 7px rgba(0, 0, 0, 0.25);
+  color: #fff;
+  font-family: var(--font-paperlogy);
+  font-size: 68px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
   cursor: pointer;
   pointer-events: auto;
-  box-sizing: border-box;
 }
 
-.campaigns-page__nav-icon {
-  display: block;
-  line-height: 1;
+.campaigns-page__cta:active:not(:disabled) {
+  opacity: 0.94;
 }
 
-.campaigns-page__nav-btn--prev .campaigns-page__nav-icon {
-  transform: translate(3px, -10px);
-}
-
-.campaigns-page__nav-btn--next .campaigns-page__nav-icon {
-  transform: translate(6px, -10px);
-}
-
-.campaigns-page__nav-btn:active:not(:disabled) {
-  transform: scale(0.94);
-}
-
-.campaigns-page__nav-btn:disabled {
-  opacity: 0.22;
+.campaigns-page__cta:disabled {
+  opacity: 0.45;
   cursor: not-allowed;
 }

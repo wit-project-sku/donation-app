@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Download } from "lucide-react";
 import { getLocationTheme } from "../theme/locations";
-import { resolveDonationPhotoUrl } from "../utils/defaultDonationImage";
+import { resolveCertificatePhotoUrl } from "../utils/defaultDonationImage";
 import { formatCurrency } from "../utils/format";
 import "./MobileCertificatePage.css";
 
@@ -27,10 +27,7 @@ export function MobileCertificatePage() {
   const photo = getParam(params, "p") || getParam(params, "photo");
   const amount = Number(getParam(params, "a") || getParam(params, "amount", "0"));
   const amountLabel = `${formatCurrency(amount)}원`;
-  const hasDonorInfo = Boolean(name.trim() || message.trim());
-  const photoSrc = hasDonorInfo
-    ? resolveDonationPhotoUrl(photo || null)
-    : photo || null;
+  const photoSrc = resolveCertificatePhotoUrl(photo || null);
 
   const svgSource = useMemo(() => {
     const imageNode = photoSrc

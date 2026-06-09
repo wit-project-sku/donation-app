@@ -22,27 +22,53 @@ export interface PaginatedData<T> {
 
 export type CampaignStatus = "ACTIVE" | "INACTIVE" | string;
 
+export interface CampaignAmountOptionDto {
+  label: string;
+  amount: number;
+}
+
+export interface CampaignTitleRunDto {
+  text: string;
+  bold?: boolean;
+  color?: string;
+}
+
+export interface CampaignSectionDto {
+  title: string;
+  titleRuns?: CampaignTitleRunDto[];
+  desc: string;
+  img: string;
+}
+
+export interface CampaignProgramDto {
+  title: string;
+  desc: string;
+}
+
 export interface CampaignDto {
   id: number;
   name: string;
   description: string;
   imageUrl: string;
   status: CampaignStatus;
-  amountOptions: number[];
-  accumulatedAmount?: number;
-  targetAmount?: number;
+  targetAmount: number;
+  accumulatedAmount: number;
+  amountOptions: CampaignAmountOptionDto[];
+  sections?: CampaignSectionDto[];
+  programs?: CampaignProgramDto[];
   createdAt: string;
 }
 
 export type PaymentMethodDto = "CARD" | "KAKAO" | "NAVER" | string;
 
+/** GET /api/donations/payment/history — item in `data.content` */
 export interface PaymentHistoryDto {
   id: number;
   campaignName: string;
   totalAmount: number;
   paymentMethod: PaymentMethodDto;
   donatorName: string;
-  photoUrl: string | null;
+  photoUrl?: string | null;
   donatedAt: string;
 }
 
@@ -63,6 +89,7 @@ export interface DonationDetailsResponse {
 }
 
 export interface PaymentHistoryParams extends PageParams {
+  /** Campaign name or donor name (case-insensitive) */
   keyword?: string;
 }
 
@@ -72,6 +99,7 @@ export interface WallEntry {
   amount: number;
   campaignName: string;
   paymentMethod: string;
+  donatedAt: string;
   timeAgo: string;
   photoUrl?: string;
   isNew?: boolean;
