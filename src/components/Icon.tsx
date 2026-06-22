@@ -15,6 +15,7 @@ import {
   Users,
   Wifi,
   ArrowLeft,
+  School,
 } from "lucide-react";
 
 type IconProps = LucideProps;
@@ -73,6 +74,10 @@ export function IconCamera(props: IconProps) {
 
 export function IconUsers(props: IconProps) {
   return <Users strokeWidth={2} {...props} />;
+}
+
+export function IconSchool(props: IconProps) {
+  return <School strokeWidth={2} {...props} />;
 }
 
 export function IconSearch(props: SVGProps<SVGSVGElement>) {

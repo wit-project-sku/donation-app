@@ -1,5 +1,8 @@
 export type DonationType = "one-time" | "regular";
 
+/** Which donation experience the donor picked on the entry screen — drives accent theming (NGO=blue, 학교=green). */
+export type DonationCategory = "none" | "ngo" | "school";
+
 export type PaymentMethod = "card" | "kakao" | "naver" | null;
 
 export interface CampaignAmountOption {

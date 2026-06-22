@@ -7,32 +7,27 @@ import {
   createMerchantUid,
   processPayment,
 } from "../api/payments";
-import { CardPaymentOverlay } from "../components/CardPaymentOverlay";
-import creditCardIcon from "../assets/credit-card.png";
+import { PaymentStatusOverlay } from "../components/PaymentStatusOverlay";
+import { AppHeader } from "../components/AppHeader";
+import { AppFooter } from "../components/AppFooter";
 import { IconHeart } from "../components/Icon";
 import { PageBody } from "../components/layout/PageBody";
 import { useDonationStore } from "../store/donationStore";
 import { useTheme } from "../theme/ThemeContext";
-import type { PaymentMethod } from "../types";
+import { formatCampaignProgressAmounts } from "../utils/campaignProgress";
 import { formatCurrency } from "../utils/format";
+import cardIcon from "../assets/icon-card.png";
+import unicefLogo from "../assets/logo-unicef.png";
+import type { PaymentMethod } from "../types";
 import "./PaymentPage.css";
-
-const SUMMARY_NOTE =
-  "기부금 전액이 현장 지원에 사용되며, 법정 기부금으로서 세액공제 혜택이 적용됩니다";
-
-type PaymentOverlay = "card" | null;
 
 export function PaymentPage() {
   const navigate = useAppNavigate();
   const { theme } = useTheme();
-  const {
-    selectedCampaign,
-    amount,
-    setPaymentMethod,
-    setMerchantUid,
-  } = useDonationStore();
+  const { selectedCampaign, amount, setPaymentMethod, setMerchantUid } =
+    useDonationStore();
 
-  const [overlay, setOverlay] = useState<PaymentOverlay>(null);
+  const [overlay, setOverlay] = useState<"card" | null>(null);
   const [cardSelected, setCardSelected] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const merchantUidRef = useRef<string | null>(null);
@@ -48,12 +43,10 @@ export function PaymentPage() {
       if (!selectedCampaign || !method) {
         throw new Error("Missing campaign or payment method");
       }
-
       if (!merchantUidRef.current) {
         merchantUidRef.current = createMerchantUid();
         setMerchantUid(merchantUidRef.current);
       }
-
       await processPayment(
         buildPaymentRequest(
           merchantUidRef.current,
@@ -83,8 +76,6 @@ export function PaymentPage() {
   const handlePaymentError = (err: unknown) => {
     merchantUidRef.current = null;
     setMerchantUid(null);
-    setOverlay(null);
-
     if (err instanceof ApiError) {
       const detail = err.errorCode ? ` (${err.errorCode})` : "";
       setError(`${err.message}${detail}`);
@@ -100,11 +91,8 @@ export function PaymentPage() {
 
   const cancelPayment = async () => {
     const merchantUid = merchantUidRef.current;
-
     try {
-      if (merchantUid) {
-        await cancelPendingPayment({ merchantUid });
-      }
+      if (merchantUid) await cancelPendingPayment({ merchantUid });
     } catch (err) {
       if (err instanceof ApiError) {
         const detail = err.errorCode ? ` (${err.errorCode})` : "";
@@ -121,91 +109,97 @@ export function PaymentPage() {
 
   if (!selectedCampaign) return null;
 
+  const progress = formatCampaignProgressAmounts(selectedCampaign);
+
   return (
-    <PageBody className="payment-page" scroll={false}>
-      <main className="payment-page__main">
-        <section className="payment-page__summary" aria-label="선택한 기부 정보">
-          <div className="payment-page__summary-top">
-            <img
-              className="payment-page__summary-image"
-              src={selectedCampaign.imageUrl}
-              alt=""
-              decoding="async"
+    <PageBody className="payment-page">
+      <AppHeader />
+
+      <div className="payment-page__body">
+        <button
+          type="button"
+          className="pay-chip"
+          onClick={() => navigate("/amount")}
+          style={{ backgroundColor: theme.primary }}
+        >
+          <IconHeart size={44} aria-hidden />
+          <span>{selectedCampaign.title}</span>
+        </button>
+
+        <div className="pay-amount-card">
+          <p className="pay-amount-card__label">기부 금액</p>
+          <p className="pay-amount-card__value">{formatCurrency(amount)}원</p>
+        </div>
+
+        <h2 className="pay-method-title">카드</h2>
+        <p className="pay-method-desc">
+          카드를 투입구 끝까지 넣어주시고 결제 완료 후 카드를 빼주세요
+        </p>
+        <button
+          type="button"
+          className={`pay-card${cardSelected ? " pay-card--on" : ""}`}
+          onClick={selectCard}
+          aria-pressed={cardSelected}
+          style={cardSelected ? { borderColor: theme.primary } : undefined}
+        >
+          <img className="pay-card__icon" src={cardIcon} alt="" />
+          <span
+            className="pay-card__label"
+            style={cardSelected ? { color: theme.primary } : undefined}
+          >
+            신용/체크카드
+          </span>
+        </button>
+
+        <div className="pay-progress">
+          <img className="pay-progress__logo" src={unicefLogo} alt="" />
+          <div className="pay-progress__bar">
+            <div
+              className="pay-progress__fill"
+              style={{
+                width: `${progress.percent}%`,
+                backgroundColor: theme.primary,
+              }}
             />
-            <div className="payment-page__summary-info">
-              <div
-                className="payment-page__summary-badge"
-                style={{ backgroundColor: theme.primary }}
-              >
-                <IconHeart className="payment-page__summary-badge-icon" aria-hidden />
-                <span>{selectedCampaign.title}</span>
-              </div>
-              <p className="payment-page__summary-amount">
-                <span className="payment-page__summary-amount-value">
-                  {formatCurrency(amount)}
-                </span>
-                <span className="payment-page__summary-amount-currency">원</span>
-              </p>
-            </div>
           </div>
-          <div className="payment-page__summary-divider" aria-hidden />
-          <p className="payment-page__summary-note">{SUMMARY_NOTE}</p>
-        </section>
+          <p className="pay-progress__label" style={{ color: theme.primary }}>
+            누적 기부금액 : {formatCurrency(progress.accumulated)}원
+          </p>
+        </div>
 
-        {!overlay && (
-          <section className="payment-page__method" aria-label="결제 수단 선택">
-            <h2 className="payment-page__method-title">카드</h2>
-            <p className="payment-page__method-desc">
-              카드를 투입구 끝까지 넣어주시고 결제 완료 후 카드를 뽑아주세요
-            </p>
-            <button
-              type="button"
-              className={`payment-page__card-btn${
-                cardSelected ? " payment-page__card-btn--selected" : ""
-              }`}
-              onClick={selectCard}
-              aria-pressed={cardSelected}
-            >
-              <img
-                className="payment-page__card-btn-icon"
-                src={creditCardIcon}
-                alt=""
-              />
-              <span className="payment-page__card-btn-label">신용/체크카드</span>
-            </button>
-          </section>
-        )}
-
-        {overlay === "card" && (
-          <CardPaymentOverlay
-            inline
-            amount={amount}
-            onProcessPayment={() => runPayment("card")}
-            onComplete={finishPayment}
-            onCancel={cancelPayment}
-            onPaymentFailed={handlePaymentError}
-          />
-        )}
+        <p className="pay-partner">
+          이 캠페인은
+          <img src={unicefLogo} alt="unicef" className="pay-partner__logo" />와
+          함께합니다.
+        </p>
 
         {error && (
-          <p className="payment-page__error" role="alert">
+          <p className="pay-error" role="alert">
             {error}
           </p>
         )}
-      </main>
 
-      {!overlay && (
-        <div className="payment-page__pay-wrap">
-          <button
-            type="button"
-            className="payment-page__pay-btn"
-            onClick={startPayment}
-            disabled={!cardSelected}
-            style={cardSelected ? { backgroundColor: theme.primary } : undefined}
-          >
-            결제하기
-          </button>
-        </div>
+        <button
+          type="button"
+          className="pay-cta"
+          onClick={startPayment}
+          disabled={!cardSelected}
+          style={cardSelected ? { backgroundColor: theme.primary } : undefined}
+        >
+          결제하기
+        </button>
+      </div>
+
+      <AppFooter />
+
+      {overlay === "card" && (
+        <PaymentStatusOverlay
+          amount={amount}
+          onProcessPayment={() => runPayment("card")}
+          onComplete={finishPayment}
+          onCancel={cancelPayment}
+          onPaymentFailed={handlePaymentError}
+        />
       )}
     </PageBody>
   );

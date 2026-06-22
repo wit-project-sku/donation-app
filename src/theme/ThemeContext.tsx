@@ -1,10 +1,14 @@
 import { createContext, useContext, useMemo } from "react";
 import type { LocationTheme } from "./locations";
 import { getLocationTheme } from "./locations";
+import { applyCategoryTheme } from "./categories";
+import { useDonationStore } from "../store/donationStore";
+import type { DonationCategory } from "../types";
 
 interface ThemeContextType {
   theme: LocationTheme;
   location: string;
+  category: DonationCategory;
 }
 
 const ThemeContext = createContext<ThemeContextType | null>(null);
@@ -15,14 +19,22 @@ interface ThemeProviderProps {
 }
 
 export function ThemeProvider({ location, children }: ThemeProviderProps) {
-  const theme = useMemo(() => getLocationTheme(location), [location]);
+  const baseTheme = useMemo(() => getLocationTheme(location), [location]);
+  const category = useDonationStore((state) => state.donationCategory);
 
-  const value = useMemo(() => ({ theme, location }), [theme, location]);
+  // Effective theme = location theme with the donation-category accent applied.
+  const theme = useMemo(
+    () => applyCategoryTheme(baseTheme, category),
+    [baseTheme, category],
+  );
+
+  const value = useMemo(
+    () => ({ theme, location, category }),
+    [theme, location, category],
+  );
 
   return (
-    <ThemeContext.Provider value={value}>
-      {children}
-    </ThemeContext.Provider>
+    <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
   );
 }
 

@@ -1,14 +1,13 @@
 import { useCallback, useEffect } from "react";
 import { useAppNavigate } from "../hooks/useAppNavigate";
 import { VirtualKeyboard } from "../components/VirtualKeyboard";
+import { AppHeader } from "../components/AppHeader";
+import { AppFooter } from "../components/AppFooter";
 import { IconCamera } from "../components/Icon";
 import { PageBody } from "../components/layout/PageBody";
 import { useDonationStore } from "../store/donationStore";
 import { useTheme } from "../theme/ThemeContext";
-import {
-  appendKeyboardInput,
-  removeLastHangul,
-} from "../utils/hangulInput";
+import { appendKeyboardInput, removeLastHangul } from "../utils/hangulInput";
 import "./MessagePage.css";
 
 const MAX_DONOR_NAME_LENGTH = 20;
@@ -42,9 +41,7 @@ export function MessagePage() {
   }, [selectedCampaign, amount, paymentMethod, navigate]);
 
   useEffect(() => {
-    if (activeField === null) {
-      setActiveField("name");
-    }
+    if (activeField === null) setActiveField("name");
   }, [activeField, setActiveField]);
 
   const handleKeyPress = useCallback(
@@ -91,13 +88,7 @@ export function MessagePage() {
       }
       navigate("/outfit");
     },
-    [
-      donorName,
-      navigate,
-      setCapturedPhotoUrl,
-      setSelectedOutfit,
-      setSkipPhoto,
-    ],
+    [donorName, navigate, setCapturedPhotoUrl, setSelectedOutfit, setSkipPhoto],
   );
 
   if (!selectedCampaign) return null;
@@ -108,39 +99,48 @@ export function MessagePage() {
 
   return (
     <PageBody className="message-page" scroll={false}>
-      <main className="message-page__main">
-        <div className="message-page__fields">
-          <button
-            type="button"
-            className={`message-page__field${isNameActive ? " message-page__field--active" : ""}`}
-            onClick={() => setActiveField("name")}
-          >
-            <span className="message-page__field-label">이름/닉네임 :</span>
-            {donorName ? (
-              <span className="message-page__field-value">{donorName}</span>
-            ) : null}
-          </button>
+      <AppHeader />
 
-          <button
-            type="button"
-            className={`message-page__field${isPhoneActive ? " message-page__field--active" : ""}`}
-            onClick={() => setActiveField("phone")}
-          >
-            <span className="message-page__field-label">전화번호 :</span>
-            {donorPhone ? (
-              <span className="message-page__field-value">{donorPhone}</span>
-            ) : (
-              <span className="message-page__field-hint">
-                모바일 기부증서를 발송해드려요
-              </span>
-            )}
-          </button>
+      <div className="msg-body">
+        <div className="msg-card" style={{ borderColor: theme.primary }}>
+          <h2 className="msg-card__title" style={{ color: theme.primary }}>
+            기부증서 발급
+          </h2>
+          <p className="msg-card__hint">모바일 기부증서를 발송해드려요</p>
+
+          <div className="msg-field-group">
+            <span className="msg-field-label">이름/닉네임 :</span>
+            <button
+              type="button"
+              className={`msg-field${isNameActive ? " msg-field--active" : ""}`}
+              onClick={() => setActiveField("name")}
+              style={isNameActive ? { borderColor: theme.primary } : undefined}
+            >
+              {donorName && (
+                <span className="msg-field__value">{donorName}</span>
+              )}
+            </button>
+          </div>
+
+          <div className="msg-field-group">
+            <span className="msg-field-label">전화번호 :</span>
+            <button
+              type="button"
+              className={`msg-field${isPhoneActive ? " msg-field--active" : ""}`}
+              onClick={() => setActiveField("phone")}
+              style={isPhoneActive ? { borderColor: theme.primary } : undefined}
+            >
+              {donorPhone && (
+                <span className="msg-field__value">{donorPhone}</span>
+              )}
+            </button>
+          </div>
         </div>
 
-        <div className="message-page__actions">
+        <div className="msg-actions">
           <button
             type="button"
-            className="message-page__action-btn message-page__action-btn--secondary"
+            className="msg-action msg-action--secondary"
             onClick={() => goNext(true)}
             disabled={!canProceed}
           >
@@ -148,24 +148,26 @@ export function MessagePage() {
           </button>
           <button
             type="button"
-            className="message-page__action-btn message-page__action-btn--primary"
+            className="msg-action msg-action--primary"
             onClick={() => goNext(false)}
             disabled={!canProceed}
-            style={{ backgroundColor: theme.primary }}
+            style={canProceed ? { backgroundColor: theme.primary } : undefined}
           >
-            <IconCamera className="message-page__action-icon" aria-hidden />
+            <IconCamera size={44} aria-hidden />
             <span>사진 촬영</span>
           </button>
         </div>
+      </div>
 
-        <div className="message-page__keyboard-wrap">
-          <VirtualKeyboard
-            onKeyPress={handleKeyPress}
-            onBackspace={handleBackspace}
-            onSpace={handleSpace}
-          />
-        </div>
-      </main>
+      <div className="msg-keyboard">
+        <VirtualKeyboard
+          onKeyPress={handleKeyPress}
+          onBackspace={handleBackspace}
+          onSpace={handleSpace}
+        />
+      </div>
+
+      <AppFooter />
     </PageBody>
   );
 }

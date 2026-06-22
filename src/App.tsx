@@ -7,6 +7,7 @@ import { AmountPage } from "./pages/AmountPage";
 import { CampaignDetailPage } from "./pages/CampaignDetailPage";
 import { CampaignsPage } from "./pages/CampaignsPage";
 import { CameraCapturePage } from "./pages/CameraCapturePage";
+import { EntryPage } from "./pages/EntryPage";
 import { DonationCertificatePage } from "./pages/DonationCertificatePage";
 import { MessagePage } from "./pages/MessagePage";
 import { MobileCertificatePage } from "./pages/MobileCertificatePage";
@@ -29,7 +30,8 @@ function LocationAwareApp() {
             <KioskShell>
               <Routes>
                 <Route element={<AppLayout />}>
-                  <Route path="/" element={<CampaignsPage />} />
+                  <Route path="/" element={<EntryPage />} />
+                  <Route path="/campaigns" element={<CampaignsPage />} />
                   <Route path="/campaign" element={<CampaignDetailPage />} />
                   <Route path="/amount" element={<AmountPage />} />
                   <Route path="/payment" element={<PaymentPage />} />

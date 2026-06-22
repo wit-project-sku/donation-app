@@ -3,8 +3,10 @@ import { useSearchParams } from "react-router-dom";
 import { useAppNavigate } from "../hooks/useAppNavigate";
 import { useQueryClient } from "@tanstack/react-query";
 import { processArPhoto } from "../api/arPhoto";
-import { IconBack, IconCamera, IconCheck, IconReset } from "../components/Icon";
+import { IconCamera, IconCheck, IconReset } from "../components/Icon";
+import { AppHeader } from "../components/AppHeader";
 import { PageBody } from "../components/layout/PageBody";
+import photoGuide from "../assets/photo-guide.png";
 import { useDonationStore } from "../store/donationStore";
 import { useTheme } from "../theme/ThemeContext";
 import { submitCurrentDonation } from "../utils/buildSubmitPayload";
@@ -364,24 +366,13 @@ export function CameraCapturePage() {
         ["--camera-page-bg" as string]: theme.background,
       }}
     >
+      <AppHeader
+        onBack={() => {
+          stopStream();
+          navigate("/outfit");
+        }}
+      />
       <div className="camera-page__surface">
-        <button
-          type="button"
-          className="camera-page__back-btn"
-          onClick={() => {
-            stopStream();
-            navigate("/outfit");
-          }}
-          aria-label="의상 선택으로 돌아가기"
-          style={{
-            borderColor: theme.primary,
-            backgroundColor: theme.primary,
-            color: theme.text.onPrimary,
-          }}
-        >
-          <IconBack size={72} strokeWidth={2.5} />
-        </button>
-
         <video
           ref={videoRef}
           className={`camera-page__video${isLive ? " camera-page__video--active" : ""}`}
@@ -412,16 +403,10 @@ export function CameraCapturePage() {
             className="camera-page__center-state"
             style={{ backgroundColor: theme.background, color: theme.text.primary }}
           >
-            <div
-              className="camera-page__center-icon"
-              style={{
-                borderColor: theme.primary,
-                color: theme.primary,
-                backgroundColor: theme.card.background,
-              }}
-            >
-              <IconCamera size={108} strokeWidth={2} aria-hidden />
-            </div>
+            <p className="camera-page__guide-tip">
+              “왼쪽 화면을 먼저 보시고 화면 사이 카메라를 봐주세요.”
+            </p>
+            <img className="camera-page__guide-img" src={photoGuide} alt="" />
             <h1 style={{ color: theme.text.primary }}>
               {status === "requesting"
                 ? "카메라를 연결하는 중입니다"

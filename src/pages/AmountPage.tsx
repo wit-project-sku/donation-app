@@ -1,14 +1,15 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { PageBody } from "../components/layout/PageBody";
+import { AppHeader } from "../components/AppHeader";
+import { AppFooter } from "../components/AppFooter";
 import { useAppNavigate } from "../hooks/useAppNavigate";
 import { useDonationStore } from "../store/donationStore";
 import { useTheme } from "../theme/ThemeContext";
 import { IconHeart } from "../components/Icon";
+import { formatCampaignProgressAmounts } from "../utils/campaignProgress";
+import { formatCurrency } from "../utils/format";
+import unicefLogo from "../assets/logo-unicef.png";
 import "./AmountPage.css";
-
-function formatKrwAmount(amount: number): string {
-  return amount.toLocaleString("ko-KR");
-}
 
 export function AmountPage() {
   const navigate = useAppNavigate();
@@ -19,110 +20,111 @@ export function AmountPage() {
     () => selectedCampaign?.amountOptions ?? [],
     [selectedCampaign?.amountOptions],
   );
-
-  const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 
   useEffect(() => {
-    if (!selectedCampaign) {
-      navigate("/campaign", { replace: true });
-    }
+    if (!selectedCampaign) navigate("/campaign", { replace: true });
   }, [selectedCampaign, navigate]);
 
-  const handleSelectAmount = useCallback((amount: number, index: number) => {
-    setSelectedAmount(amount);
-    setSelectedIndex(index);
-  }, []);
+  const progress = useMemo(
+    () =>
+      selectedCampaign ? formatCampaignProgressAmounts(selectedCampaign) : null,
+    [selectedCampaign],
+  );
 
   const handleDonate = useCallback(() => {
-    if (!selectedAmount || selectedAmount <= 0) return;
-    setAmount(selectedAmount);
+    if (selectedIndex == null) return;
+    const option = amountOptions[selectedIndex];
+    if (!option || option.amount <= 0) return;
+    setAmount(option.amount);
     navigate("/payment");
-  }, [selectedAmount, setAmount, navigate]);
+  }, [selectedIndex, amountOptions, setAmount, navigate]);
 
-  if (!selectedCampaign) return null;
+  if (!selectedCampaign || !progress) return null;
 
-  const hasSelection = selectedAmount != null && selectedAmount > 0;
-  const selectedOption =
-    selectedIndex != null ? amountOptions[selectedIndex] : null;
+  const hasSelection = selectedIndex != null;
 
   return (
-    <PageBody className="amount-page" scroll={false}>
-      <main className="amount-page__main">
-        <header className="amount-page__header">
-          <button
-            type="button"
-            className="amount-page__campaign-badge"
-            onClick={() => navigate("/campaign")}
-            style={{ backgroundColor: theme.primary }}
-          >
-            <IconHeart className="amount-page__campaign-badge-icon" aria-hidden />
-            <span>{selectedCampaign.title}</span>
-          </button>
+    <PageBody className="amount-page">
+      <AppHeader />
 
-          <h1 className="amount-page__title">
-            {hasSelection && selectedOption ? (
-              <>
-                <span className="amount-page__title-row">
-                  <span className="amount-page__title-amount">
-                    {formatKrwAmount(selectedAmount)}원
-                  </span>
-                  <span className="amount-page__title-particle">으로</span>
-                </span>
-                <span className="amount-page__title-row amount-page__title-row--suffix">
-                  {selectedOption.label}
-                </span>
-              </>
-            ) : (
-              <>
-                <span className="amount-page__title-row">기부하실 금액을</span>
-                <span className="amount-page__title-row">선택해 주세요</span>
-              </>
-            )}
-          </h1>
-        </header>
+      <div className="amount-page__body">
+        <button
+          type="button"
+          className="amount-chip"
+          onClick={() => navigate("/campaign")}
+          style={{ backgroundColor: theme.primary }}
+        >
+          <IconHeart size={44} aria-hidden />
+          <span>{selectedCampaign.title}</span>
+        </button>
 
-        <section className="amount-page__options" aria-label="기부 금액 선택">
-          {amountOptions.length === 0 ? (
-            <p className="amount-page__empty">선택 가능한 기부 금액이 없습니다.</p>
-          ) : (
-            amountOptions.map((option, index) => {
-              const isActive = selectedIndex === index;
+        <div className="amount-progress">
+          <img className="amount-progress__logo" src={unicefLogo} alt="" />
+          <div className="amount-progress__bar">
+            <div
+              className="amount-progress__fill"
+              style={{
+                width: `${progress.percent}%`,
+                backgroundColor: theme.primary,
+              }}
+            />
+          </div>
+          <p className="amount-progress__label" style={{ color: theme.primary }}>
+            누적 기부금액 : {formatCurrency(progress.accumulated)}원
+          </p>
+        </div>
 
+        <p className="amount-page__label">기부금을 선택해 주세요</p>
+
+        {amountOptions.length === 0 ? (
+          <p className="amount-empty">선택 가능한 기부 금액이 없습니다.</p>
+        ) : (
+          <div className="amount-grid">
+            {amountOptions.map((option, index) => {
+              const active = selectedIndex === index;
               return (
                 <button
                   key={`${option.amount}-${index}`}
                   type="button"
-                  className={`amount-page__option${
-                    isActive ? " amount-page__option--active" : ""
-                  }`}
-                  onClick={() => handleSelectAmount(option.amount, index)}
-                  aria-pressed={isActive}
+                  className={`amount-opt${active ? " amount-opt--active" : ""}`}
+                  onClick={() => setSelectedIndex(index)}
+                  aria-pressed={active}
+                  style={
+                    active
+                      ? { borderColor: theme.primary, color: theme.primary }
+                      : undefined
+                  }
                 >
-                  <span className="amount-page__option-label">{option.label}</span>
-                  <span className="amount-page__option-amount">
-                    +{formatKrwAmount(option.amount)}원
-                  </span>
+                  +{formatCurrency(option.amount)}원
                 </button>
               );
-            })
-          )}
-        </section>
-      </main>
+            })}
+          </div>
+        )}
 
-      <div className="amount-page__donate-wrap">
+        <p className="amount-note">
+          기부금 전액이 현장 지원에 사용되며, 법정 기부금으로서 세액공제 혜택이
+          적용됩니다
+        </p>
+        <p className="amount-partner">
+          이 캠페인은
+          <img src={unicefLogo} alt="unicef" className="amount-partner__logo" />
+          와 함께합니다.
+        </p>
+
         <button
           type="button"
-          className="amount-page__donate-btn"
+          className="amount-cta"
           onClick={handleDonate}
           disabled={!hasSelection}
-          style={
-            hasSelection ? { backgroundColor: theme.primary } : undefined
-          }
+          style={hasSelection ? { backgroundColor: theme.primary } : undefined}
         >
           기부하기
         </button>
       </div>
+
+      <AppFooter note />
     </PageBody>
   );
 }

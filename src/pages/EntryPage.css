@@ -1,0 +1,155 @@
+.entry-page {
+  display: flex;
+  flex-direction: column;
+}
+
+.entry-page__hero {
+  padding: 80px 170px 0;
+  text-align: center;
+}
+
+.entry-page__headline {
+  margin: 0;
+  font-size: 80px;
+  font-weight: 700;
+  line-height: 1.32;
+  color: #000000;
+}
+
+.entry-page__sub {
+  margin: 40px 0 0;
+  font-size: 55px;
+  font-weight: 500;
+  color: var(--color-text-secondary, #636363);
+}
+
+.entry-page__cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 162px;
+  padding: 96px 170px 0;
+}
+
+.entry-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 60px;
+  height: 1158px;
+  padding: 0 60px;
+  border: 5px solid var(--color-border, #e8e8e8);
+  border-radius: 80px;
+  cursor: pointer;
+  text-align: center;
+}
+
+.entry-card--ngo {
+  background: #f6faf2;
+}
+
+.entry-card--school {
+  background: #eff4f7;
+}
+
+.entry-card__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 540px;
+  height: 540px;
+  border-radius: 999px;
+  background: #ffffff;
+  overflow: hidden;
+}
+
+.entry-card__icon-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.entry-card__icon-img--school {
+  width: 53%;
+  height: 53%;
+}
+
+.entry-card__label {
+  font-family: "Paperlogy", "Noto Sans KR", sans-serif;
+  font-size: 63px;
+  font-weight: 800;
+  color: var(--color-text-secondary, #636363);
+}
+
+.entry-card__desc {
+  font-size: 50px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--color-text-secondary, #636363);
+}
+
+.entry-page__history {
+  align-self: center;
+  margin: 80px 0 0;
+  padding: 26px 60px;
+  background: #e8e8e8;
+  border: none;
+  border-radius: 999px;
+  font-size: 60px;
+  font-weight: 500;
+  color: #000000;
+  cursor: pointer;
+}
+
+.entry-page__featured {
+  position: relative;
+  margin: 80px 170px 0;
+  height: 833px;
+  border-radius: 45px;
+  overflow: hidden;
+}
+
+.entry-page__featured-bg {
+  position: absolute;
+  inset: 0;
+}
+
+.entry-page__featured-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 28px;
+  padding: 88px;
+  background: rgba(0, 0, 0, 0.32);
+  color: #fff;
+}
+
+.entry-page__featured-eyebrow {
+  margin: 0;
+  font-size: 48px;
+  font-weight: 500;
+}
+
+.entry-page__featured-title {
+  margin: 0;
+  font-size: 80px;
+  font-weight: 800;
+  line-height: 1.28;
+}
+
+.entry-page__featured-title em {
+  font-style: normal;
+  color: #fcd869;
+}
+
+.entry-page__featured-more {
+  align-self: flex-start;
+  margin-top: 20px;
+  padding: 22px 56px;
+  border: 3px solid #fff;
+  border-radius: 999px;
+  font-size: 50px;
+  font-weight: 500;
+}

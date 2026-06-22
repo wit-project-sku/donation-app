@@ -1,11 +1,18 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
-import type { Campaign, DonationType, PaymentMethod } from "../types";
+import type {
+  Campaign,
+  DonationCategory,
+  DonationType,
+  PaymentMethod,
+} from "../types";
 import type { Outfit } from "../api/outfits";
 
 interface DonationState {
   selectedCampaign: Campaign | null;
   donationType: DonationType;
+  /** NGO vs 학교 experience chosen on the entry screen — drives accent theme. */
+  donationCategory: DonationCategory;
   amount: number;
   lastAddedPreset: number | null;
   paymentMethod: PaymentMethod;
@@ -24,6 +31,7 @@ interface DonationState {
 
   setSelectedCampaign: (campaign: Campaign | null) => void;
   setDonationType: (type: DonationType) => void;
+  setDonationCategory: (category: DonationCategory) => void;
   addAmount: (value: number) => void;
   setAmount: (value: number) => void;
   resetAmount: () => void;
@@ -43,6 +51,7 @@ interface DonationState {
 const initialState = {
   selectedCampaign: null,
   donationType: "one-time" as DonationType,
+  donationCategory: "none" as DonationCategory,
   amount: 0,
   lastAddedPreset: null as number | null,
   paymentMethod: null as PaymentMethod,
@@ -62,9 +71,21 @@ export const useDonationStore = create<DonationState>()(
     (set) => ({
       ...initialState,
 
+      // Selecting a campaign resets the per-donation session, but the chosen
+      // donation category (NGO/학교) must survive so the accent theme stays
+      // consistent through the whole flow. Only resetSession() clears it.
       setSelectedCampaign: (campaign) =>
-        set(campaign ? { ...initialState, selectedCampaign: campaign } : initialState),
+        set((state) =>
+          campaign
+            ? {
+                ...initialState,
+                donationCategory: state.donationCategory,
+                selectedCampaign: campaign,
+              }
+            : { ...initialState, donationCategory: state.donationCategory },
+        ),
       setDonationType: (type) => set({ donationType: type }),
+      setDonationCategory: (category) => set({ donationCategory: category }),
       addAmount: (value) =>
         set({
           amount: value,
@@ -90,6 +111,7 @@ export const useDonationStore = create<DonationState>()(
       partialize: (state) => ({
         selectedCampaign: state.selectedCampaign,
         donationType: state.donationType,
+        donationCategory: state.donationCategory,
         amount: state.amount,
         paymentMethod: state.paymentMethod,
         message: state.message,
