@@ -107,7 +107,7 @@ export function CampaignsPage() {
 
       <div className="campaigns-body">
         <p className="campaigns-body__label">
-          기부할 {isSchool ? "학교" : "캠페인"}을 선택해주세요
+          기부할 {isSchool ? "학교를" : "캠페인을"} 선택해주세요
         </p>
 
         {isSchool && (

@@ -118,8 +118,13 @@ export function OutfitSelectionPage() {
             기부 참여자에게만 제공되는 특별 의상을 착용해보세요!
           </h2>
           <p className="outfit-intro__desc">
-            ★ 사진 촬영 버튼을 누르고 좌측 카메라에 얼굴을 바라봐주세요. 10초 후
-            촬영이 시작됩니다.
+            <span className="outfit-intro__star" aria-hidden>
+              ★
+            </span>
+            <span>
+              사진 촬영 버튼을 누르고 좌측 카메라에 얼굴을 바라봐주세요 10초후
+              촬영이 시작됩니다.
+            </span>
           </p>
         </div>
 
@@ -200,7 +205,7 @@ export function OutfitSelectionPage() {
           disabled={!canTakePhoto}
           style={canTakePhoto ? { backgroundColor: theme.primary } : undefined}
         >
-          <IconCamera size={44} aria-hidden />
+          <IconCamera size={68} aria-hidden />
           <span>혼자 찍기</span>
         </button>
         <button
@@ -210,8 +215,8 @@ export function OutfitSelectionPage() {
           disabled={!canTakePhoto}
           style={canTakePhoto ? { backgroundColor: theme.primary } : undefined}
         >
-          <IconCamera size={44} aria-hidden />
-          <span>WITH &apos;인사&apos;</span>
+          <IconCamera size={68} aria-hidden />
+          <span>WITH &lsquo;인사&rsquo;</span>
         </button>
       </div>
 

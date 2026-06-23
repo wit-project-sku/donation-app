@@ -14,7 +14,8 @@ import "./AmountPage.css";
 export function AmountPage() {
   const navigate = useAppNavigate();
   const { selectedCampaign, setAmount } = useDonationStore();
-  const { theme } = useTheme();
+  const { theme, category } = useTheme();
+  const isSchool = category === "school";
 
   const amountOptions = useMemo(
     () => selectedCampaign?.amountOptions ?? [],
@@ -103,15 +104,23 @@ export function AmountPage() {
           </div>
         )}
 
-        <p className="amount-note">
-          기부금 전액이 현장 지원에 사용되며, 법정 기부금으로서 세액공제 혜택이
-          적용됩니다
-        </p>
-        <p className="amount-partner">
-          이 캠페인은
-          <img src={unicefLogo} alt="unicef" className="amount-partner__logo" />
-          와 함께합니다.
-        </p>
+        <ul className="amount-note">
+          <li>
+            기부금 전액이 현장 지원에 사용되며, 법정 기부금으로서 세액공제 혜택이
+            적용됩니다
+          </li>
+        </ul>
+        {!isSchool && (
+          <p className="amount-partner">
+            이 캠페인은
+            <img
+              src={unicefLogo}
+              alt="unicef"
+              className="amount-partner__logo"
+            />
+            와 함께합니다.
+          </p>
+        )}
 
         <button
           type="button"

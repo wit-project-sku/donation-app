@@ -63,7 +63,7 @@ function buildMobileCertificateUrl(params: {
 
 export function DonationCertificatePage() {
   const navigate = useAppNavigate();
-  const { theme } = useTheme();
+  const { theme, category } = useTheme();
   const queryClient = useQueryClient();
   const {
     selectedCampaign,
@@ -115,10 +115,10 @@ export function DonationCertificatePage() {
   };
 
   const campaignSubtitle = useMemo(() => {
-    if (!selectedCampaign) return "· 소중한 나눔 ·";
-    const label = selectedCampaign.title.trim() || "소중한 나눔";
-    return `· ${label} ·`;
-  }, [selectedCampaign]);
+    const fallback = category === "school" ? "아이들의 배움" : "소중한 나눔";
+    const label = selectedCampaign?.title.trim() || fallback;
+    return `- ${label} -`;
+  }, [selectedCampaign, category]);
 
   if (!selectedCampaign) return null;
 
@@ -144,26 +144,35 @@ export function DonationCertificatePage() {
       <div className="cert-body">
         <article className="cert-card">
           <div className="cert-card__head">
-            <div className="cert-card__heading">
-              <h2 className="cert-card__title">· 기부증서 ·</h2>
-              <p className="cert-card__subtitle">{campaignSubtitle}</p>
-            </div>
-            <div className="cert-card__qr" aria-label="모바일 증서 QR">
-              <QRCodeSVG
-                value={qrValue}
-                size={140}
-                bgColor="#FFFFFF"
-                fgColor="#000000"
-                level="M"
-                marginSize={1}
-              />
-            </div>
+            <h2 className="cert-card__title">· 기부증서 ·</h2>
+            <p className="cert-card__subtitle">{campaignSubtitle}</p>
           </div>
 
           <div
             className={`cert-card__photo${hasPhoto ? "" : " cert-card__photo--illust"}`}
           >
             <img src={photoSrc} alt="" loading="lazy" />
+          </div>
+
+          <div className="cert-card__sign">
+            <span className="cert-card__name">{displayName}</span>
+            <span className="cert-card__amount" style={{ color: theme.primary }}>
+              {formatCurrency(amount)}원 기부
+            </span>
+            <span className="cert-card__line" aria-hidden />
+            <div className="cert-card__sign-row">
+              <img className="cert-card__partner" src={unicefLogo} alt="unicef" />
+              <div className="cert-card__qr" aria-label="모바일 증서 QR">
+                <QRCodeSVG
+                  value={qrValue}
+                  size={140}
+                  bgColor="#FFFFFF"
+                  fgColor="#000000"
+                  level="M"
+                  marginSize={1}
+                />
+              </div>
+            </div>
           </div>
 
           <div className="cert-card__foot">
@@ -173,15 +182,6 @@ export function DonationCertificatePage() {
               깊은 감사를 전합니다
             </p>
             <span className="cert-card__date">{dateLabel}</span>
-
-            <div className="cert-card__sign">
-              <span className="cert-card__name">{displayName}</span>
-              <span className="cert-card__amount" style={{ color: theme.primary }}>
-                {formatCurrency(amount)}원 기부
-              </span>
-              <span className="cert-card__line" aria-hidden />
-              <img className="cert-card__partner" src={unicefLogo} alt="unicef" />
-            </div>
           </div>
         </article>
 

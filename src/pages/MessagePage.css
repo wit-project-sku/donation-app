@@ -5,33 +5,25 @@
 
 .msg-body {
   flex: 0 0 auto;
-  padding: 56px 247px 0;
+  padding: 88px 246px 0;
 }
 
 .msg-card {
   border: 15px solid var(--color-border, #e8e8e8);
   border-radius: 80px;
-  padding: 80px 80px;
+  padding: 88px 60px 96px;
   background: #fff;
 }
 
 .msg-card__title {
-  margin: 0 0 18px;
+  margin: 0 0 90px;
   text-align: center;
   font-size: 68px;
   font-weight: 500;
 }
 
-.msg-card__hint {
-  margin: 0 0 56px;
-  text-align: center;
-  font-size: 50px;
-  font-weight: 400;
-  color: var(--color-text-muted, #999999);
-}
-
 .msg-field-group {
-  margin-bottom: 48px;
+  margin-bottom: 60px;
 }
 
 .msg-field-group:last-child {
@@ -40,7 +32,7 @@
 
 .msg-field-label {
   display: block;
-  margin-bottom: 28px;
+  margin-bottom: 30px;
   font-size: 60px;
   font-weight: 400;
   color: var(--color-text-secondary, #636363);
@@ -51,7 +43,7 @@
   height: 180px;
   display: flex;
   align-items: center;
-  padding: 0 50px;
+  padding: 0 70px;
   border: 5px solid var(--color-border, #e8e8e8);
   border-radius: 80px;
   background: #fff;
@@ -75,18 +67,18 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 204px;
-  margin-top: 54px;
+  margin-top: 103px;
 }
 
 .msg-action {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 20px;
+  gap: 24px;
   height: 150px;
   border: none;
   border-radius: 45px;
-  box-shadow: 0 4px 4px 7px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 4px 4px 7px rgba(0, 0, 0, 0.25);
   font-size: 63px;
   font-weight: 700;
   color: #fff;

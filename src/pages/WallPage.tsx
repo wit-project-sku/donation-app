@@ -169,8 +169,8 @@ export function WallPage() {
           )}
           <IconSearch
             className="wall-search__icon"
-            width={48}
-            height={48}
+            width={68}
+            height={68}
             style={{ color: theme.primary }}
           />
         </div>

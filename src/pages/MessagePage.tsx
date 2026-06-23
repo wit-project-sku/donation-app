@@ -106,7 +106,6 @@ export function MessagePage() {
           <h2 className="msg-card__title" style={{ color: theme.primary }}>
             기부증서 발급
           </h2>
-          <p className="msg-card__hint">모바일 기부증서를 발송해드려요</p>
 
           <div className="msg-field-group">
             <span className="msg-field-label">이름/닉네임 :</span>
@@ -130,8 +129,12 @@ export function MessagePage() {
               onClick={() => setActiveField("phone")}
               style={isPhoneActive ? { borderColor: theme.primary } : undefined}
             >
-              {donorPhone && (
+              {donorPhone ? (
                 <span className="msg-field__value">{donorPhone}</span>
+              ) : (
+                <span className="msg-field__hint">
+                  모바일 기부증서를 발송해드려요
+                </span>
               )}
             </button>
           </div>
@@ -153,7 +156,7 @@ export function MessagePage() {
             disabled={!canProceed}
             style={canProceed ? { backgroundColor: theme.primary } : undefined}
           >
-            <IconCamera size={44} aria-hidden />
+            <IconCamera size={64} aria-hidden />
             <span>사진 촬영</span>
           </button>
         </div>

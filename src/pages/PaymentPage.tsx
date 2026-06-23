@@ -23,7 +23,8 @@ import "./PaymentPage.css";
 
 export function PaymentPage() {
   const navigate = useAppNavigate();
-  const { theme } = useTheme();
+  const { theme, category } = useTheme();
+  const isSchool = category === "school";
   const { selectedCampaign, amount, setPaymentMethod, setMerchantUid } =
     useDonationStore();
 
@@ -152,7 +153,9 @@ export function PaymentPage() {
         </button>
 
         <div className="pay-progress">
-          <img className="pay-progress__logo" src={unicefLogo} alt="" />
+          {!isSchool && (
+            <img className="pay-progress__logo" src={unicefLogo} alt="" />
+          )}
           <div className="pay-progress__bar">
             <div
               className="pay-progress__fill"
@@ -167,11 +170,13 @@ export function PaymentPage() {
           </p>
         </div>
 
-        <p className="pay-partner">
-          이 캠페인은
-          <img src={unicefLogo} alt="unicef" className="pay-partner__logo" />와
-          함께합니다.
-        </p>
+        {!isSchool && (
+          <p className="pay-partner">
+            이 캠페인은
+            <img src={unicefLogo} alt="unicef" className="pay-partner__logo" />와
+            함께합니다.
+          </p>
+        )}
 
         {error && (
           <p className="pay-error" role="alert">

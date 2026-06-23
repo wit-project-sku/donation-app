@@ -412,7 +412,7 @@ export function CameraCapturePage() {
                 ? "카메라를 연결하는 중입니다"
                 : "카메라를 시작해 주세요"}
             </h1>
-            <p style={{ color: theme.text.secondary }}>
+            <p>
               {isGreetingMode
                 ? "인사 모드로 촬영합니다. 준비되면 아래 버튼을 눌러주세요."
                 : "준비되면 아래 버튼을 눌러 촬영을 시작해주세요."}
@@ -429,7 +429,7 @@ export function CameraCapturePage() {
               <IconCamera size={96} strokeWidth={2} />
             </div>
             <h1 style={{ color: theme.text.primary }}>카메라 연결 실패</h1>
-            <p style={{ color: theme.text.secondary }}>{errorMsg}</p>
+            <p>{errorMsg}</p>
           </div>
         )}
 
