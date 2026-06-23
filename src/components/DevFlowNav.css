@@ -1,0 +1,57 @@
+/* 개발용 플로우 이동 바 — 배포 전 제거 대상. */
+.dev-flow-nav {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: rgba(17, 24, 39, 0.86);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+  user-select: none;
+}
+
+.dev-flow-nav__tag {
+  padding: 2px 6px;
+  border-radius: 6px;
+  background: #ef4444;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.dev-flow-nav__label {
+  min-width: 92px;
+  text-align: center;
+  white-space: nowrap;
+  opacity: 0.92;
+}
+
+.dev-flow-nav__btn,
+.dev-flow-nav__seed {
+  border: none;
+  border-radius: 8px;
+  padding: 6px 12px;
+  background: #2563eb;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.dev-flow-nav__seed {
+  padding: 6px 8px;
+  background: #16a34a;
+}
+
+.dev-flow-nav__btn:disabled {
+  background: #4b5563;
+  opacity: 0.6;
+  cursor: not-allowed;
+}

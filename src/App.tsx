@@ -1,6 +1,8 @@
 import { useSearchParams } from "react-router-dom";
 import { HashRouter, Route, Routes } from "react-router-dom";
 import { LocationNavigate } from "./components/LocationNavigate";
+// ⚠️ 개발용(디자인 확인) — 배포 전 제거: 이 import 와 아래 <DevFlowNav /> 한 줄.
+import { DevFlowNav } from "./components/DevFlowNav";
 import { AppLayout } from "./components/layout/AppLayout";
 import { KioskShell } from "./components/layout/KioskShell";
 import { AmountPage } from "./pages/AmountPage";
@@ -27,7 +29,8 @@ function LocationAwareApp() {
         <Route
           path="/*"
           element={
-            <KioskShell>
+            <>
+              <KioskShell>
               <Routes>
                 <Route element={<AppLayout />}>
                   <Route path="/" element={<EntryPage />} />
@@ -55,7 +58,10 @@ function LocationAwareApp() {
                   <Route path="*" element={<LocationNavigate to="/" replace />} />
                 </Route>
               </Routes>
-            </KioskShell>
+              </KioskShell>
+              {/* ⚠️ 개발용(디자인 확인) — 배포 전 제거 */}
+              <DevFlowNav />
+            </>
           }
         />
       </Routes>
