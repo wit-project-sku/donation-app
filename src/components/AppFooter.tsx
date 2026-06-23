@@ -12,12 +12,13 @@ interface AppFooterProps {
 export function AppFooter({ note = false }: AppFooterProps) {
   return (
     <footer className="app-footer">
-      {note && (
-        <p className="app-footer__note">
-          기부금 전액이 현장 지원에 사용되며, 법정 기부금으로서 세액공제 혜택이 적용됩니다
-        </p>
-      )}
       <div className="app-footer__bar">
+        {note && (
+          <p className="app-footer__note">
+            기부금 전액이 현장 지원에 사용되며, 법정 기부금으로서 세액공제 혜택이
+            적용됩니다
+          </p>
+        )}
         <p className="app-footer__statement">
           위트글로벌은 국/내외 NGO와 기부 운동을 함께합니다.
         </p>

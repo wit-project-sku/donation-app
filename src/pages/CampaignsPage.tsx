@@ -4,7 +4,6 @@ import { useAppNavigate } from "../hooks/useAppNavigate";
 import { fetchCampaignsPage } from "../api/campaigns";
 import { PageBody } from "../components/layout/PageBody";
 import { AppHeader } from "../components/AppHeader";
-import { AppFooter } from "../components/AppFooter";
 import { IconSearch } from "../components/Icon";
 import { useDonationStore } from "../store/donationStore";
 import { useTheme } from "../theme/ThemeContext";
@@ -22,7 +21,11 @@ export function CampaignsPage() {
 
   const isSchool = category === "school";
 
-  const { data: pageData, isLoading, isError } = useQuery({
+  const {
+    data: pageData,
+    isLoading,
+    isError,
+  } = useQuery({
     queryKey: ["campaigns", "grid"],
     queryFn: () =>
       fetchCampaignsPage({ pageNum: 1, pageSize: CAMPAIGNS_PAGE_SIZE }),
@@ -87,8 +90,6 @@ export function CampaignsPage() {
 
   return (
     <PageBody className="campaigns-page">
-      <AppHeader title={isSchool ? "학교" : "NGO"} />
-
       {heroCampaign && (
         <div className="campaigns-hero">
           <img
@@ -105,7 +106,16 @@ export function CampaignsPage() {
         </div>
       )}
 
+      <div className="campaigns-header-overlay">
+        <AppHeader title={isSchool ? "학교" : "NGO"} light />
+      </div>
+
       <div className="campaigns-body">
+        <p className="campaigns-note">
+          기부금 전액이 현장 지원에 사용되며,
+          <br />
+          법정 기부금으로서 세액공제 혜택이 적용됩니다
+        </p>
         <p className="campaigns-body__label">
           기부할 {isSchool ? "학교를" : "캠페인을"} 선택해주세요
         </p>
@@ -162,20 +172,18 @@ export function CampaignsPage() {
             <p className="campaigns-grid__empty">검색 결과가 없습니다</p>
           )}
         </div>
-      </div>
 
-      <div className="campaigns-cta-wrap">
-        <button
-          type="button"
-          className="campaigns-cta"
-          onClick={handleStart}
-          disabled={!selectedCampaign}
-        >
-          이 마음으로 시작하기
-        </button>
+        <div className="campaigns-cta-wrap">
+          <button
+            type="button"
+            className="campaigns-cta"
+            onClick={handleStart}
+            disabled={!selectedCampaign}
+          >
+            이 마음으로 시작하기
+          </button>
+        </div>
       </div>
-
-      <AppFooter />
     </PageBody>
   );
 }

@@ -3,27 +3,31 @@
   margin-top: auto;
 }
 
+/* 검정 바 내부 상단의 회색 안내문 (Figma: note → statement → logos, 모두 바 안) */
 .app-footer__note {
   margin: 0;
-  padding: 40px 96px;
   text-align: center;
-  font-size: 40px;
-  color: var(--color-text-muted, #999);
+  font-size: 45px;
+  font-weight: 500;
+  color: #999;
 }
 
+/* Figma: 검정 바 design_y 3267→3840 (높이 573), 내용 수직 중앙 (문구 ~3445, 로고 ~3557–3660) */
 .app-footer__bar {
-  background: #111;
-  padding: 64px 96px;
+  background: #000;
+  height: 573px;
+  padding: 0 96px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 40px;
+  justify-content: center;
+  gap: 48px;
 }
 
 .app-footer__statement {
   margin: 0;
   color: #fff;
-  font-size: 64px;
+  font-size: 72px;
   font-weight: 500;
   text-align: center;
 }
@@ -31,15 +35,15 @@
 .app-footer__logos {
   display: flex;
   align-items: center;
-  gap: 60px;
+  gap: 64px;
 }
 
 .app-footer__logo {
-  height: 72px;
+  height: 100px;
   width: auto;
   object-fit: contain;
 }
 
 .app-footer__logo--mark {
-  height: 86px;
+  height: 96px;
 }

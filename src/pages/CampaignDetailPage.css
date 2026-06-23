@@ -3,10 +3,27 @@
   flex-direction: column;
 }
 
-/* Hero */
+/* 상세: 헤더가 히어로에 오버레이되도록 풀블리드(PageBody 패딩/gap 제거) + 헤더 absolute */
+.page-body.campaign-detail {
+  position: relative;
+  padding: 0;
+  gap: 0;
+}
+
+/* 헤더를 다크 히어로 위에 오버레이 (Figma: 헤더·히어로 둘 다 top-0) */
+.cd-header-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+}
+
+/* Hero — 다크 풀블리드. 시트가 Figma 기준 ~2092px에서 시작하도록(-120 overlap) 높이 2212 */
 .cd-hero {
   position: relative;
-  height: 2672px;
+  flex: 0 0 auto;
+  height: 2212px;
   overflow: hidden;
 }
 
@@ -23,98 +40,127 @@
   background: rgba(0, 0, 0, 0.2);
 }
 
-/* Translucent progress card on the hero */
-.cd-card {
+/* 누적 기부금액 진행 블록 — 히어로 좌우 170, 바닥 위(Figma: 로고 1620 / 바 1796 / 금액 1903) */
+.cd-progress {
   position: absolute;
-  left: 78px;
-  right: 78px;
-  bottom: 210px;
+  left: 170px;
+  right: 170px;
+  bottom: 245px;
   display: flex;
   flex-direction: column;
-  gap: 34px;
-  padding: 72px 93px;
-  background: rgba(0, 0, 0, 0.5);
-  border-radius: 80px;
 }
 
-.cd-card__logo {
-  height: 105px;
+.cd-progress__logo {
+  height: 99px;
   width: auto;
   object-fit: contain;
   align-self: flex-start;
-  margin-bottom: 8px;
+  margin-bottom: 75px;
 }
 
-.cd-card__amount {
-  margin: 0;
-  font-size: 76px;
-  font-weight: 700;
-}
-
-.cd-card__target {
-  margin: 0;
-  font-size: 50px;
-  font-weight: 700;
-}
-
-.cd-card__bar {
-  height: 20px;
+.cd-progress__bar {
+  height: 38px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.4);
+  background: #e8e8e8;
   overflow: hidden;
 }
 
-.cd-card__fill {
+.cd-progress__fill {
   height: 100%;
   border-radius: 999px;
 }
 
-/* White sheet */
+.cd-progress__amount {
+  margin: 70px 0 0;
+  font-size: 64px;
+  font-weight: 700;
+  text-align: right;
+}
+
+/* White sheet — 라운드 코너로 히어로를 덮고 바닥까지 채워 CTA를 하단 고정 */
 .cd-body {
   position: relative;
   margin-top: -120px;
   background: #fff;
-  border-radius: 100px 100px 0 0;
-  padding: 100px 170px 0;
-  flex: 1 0 auto;
+  border-radius: 80px 80px 0 0;
+  padding: 120px 170px 0;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 시트 좌상단 back 셰브론 (Figma: 얇은 테두리 원, 코너 아래) */
+.cd-back {
+  position: absolute;
+  top: -2px;
+  left: 60px;
+  width: 100px;
+  height: 100px;
+  border-radius: 999px;
+  background: #fff;
+  border: 5px solid currentColor;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+/* 제목 + 마감일(우측 정렬, baseline) */
+.cd-titlebar {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 40px;
+  margin-bottom: 110px;
 }
 
 .cd-title {
-  margin: 0 0 48px;
+  margin: 0;
   font-size: 80px;
   font-weight: 700;
   color: #000000;
 }
 
+.cd-deadline {
+  flex: 0 0 auto;
+  font-size: 46px;
+  font-weight: 700;
+}
+
 .cd-desc {
-  margin: 0 0 88px;
+  margin: 0 0 150px;
   font-size: 55px;
   font-weight: 500;
-  line-height: 1.6;
+  line-height: 1.36;
   color: var(--color-text-secondary, #636363);
 }
 
-/* Sub-category cards */
+/* 활동영역 카드 3개 */
 .cd-programs {
   display: flex;
-  gap: 107px;
+  gap: 123px;
 }
 
 .cd-prog {
   box-sizing: border-box;
+  position: relative;
   flex: 1 1 0;
-  height: 350px;
+  height: 210px;
   display: flex;
-  flex-direction: column;
+  align-items: center;
   justify-content: center;
-  gap: 34px;
-  padding: 0 50px;
+  padding: 0 36px;
   background: #fff;
   border: 5px solid;
   border-radius: 45px;
 }
 
+/* 번호 뱃지 — 카드 상단 테두리에 걸쳐 중앙 배치 */
 .cd-prog__num {
+  position: absolute;
+  top: -50px;
+  left: 50%;
+  transform: translateX(-50%);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -123,7 +169,7 @@
   border-radius: 999px;
   color: #fff;
   font-family: "Paperlogy", "Noto Sans KR", sans-serif;
-  font-size: 60px;
+  font-size: 56px;
   font-weight: 700;
 }
 
@@ -131,11 +177,13 @@
   font-size: 60px;
   font-weight: 700;
   line-height: 1.2;
+  text-align: center;
 }
 
-/* CTA — white button, black text */
+/* CTA — 흰 버튼, 검은 글자. 시트 내부 하단 고정(Figma: 버튼 3459→3668, 아래 여백 ~172) */
 .cd-cta-wrap {
-  padding: 80px 170px 64px;
+  margin-top: auto;
+  padding: 56px 0 172px;
 }
 
 .cd-cta {

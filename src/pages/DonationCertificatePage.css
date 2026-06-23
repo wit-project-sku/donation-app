@@ -3,6 +3,13 @@
   flex-direction: column;
 }
 
+/* 헤더/푸터 풀블리드 + 한 화면 고정 (PageBody 기본 패딩/gap 제거) */
+.page-body.cert-page {
+  padding: 0;
+  gap: 0;
+}
+
+/* 증서 카드는 Figma 기준 1300px 고정폭. 좌우 여백을 넉넉히 두어 가운데 정렬. */
 .cert-body {
   flex: 1 0 auto;
   display: flex;
@@ -11,14 +18,16 @@
   padding: 48px 170px 0;
 }
 
+/* Figma: 카드 1300×2137, border 20 #999, radius 45, 흰 배경 */
 .cert-card {
   box-sizing: border-box;
-  width: 100%;
-  max-width: 1300px;
+  width: 1300px;
+  max-width: 100%;
   background: #fff;
   border: 20px solid var(--color-text-muted, #999999);
   border-radius: 45px;
-  padding: 45px 70px 42px;
+  /* border 안쪽 padding: 위 45 / 좌우 221 / 아래 42 */
+  padding: 45px 221px 42px;
 }
 
 .cert-card__head {
@@ -26,9 +35,11 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  margin-bottom: 46px;
+  /* subtitle → photo 간격 47 */
+  margin-bottom: 47px;
 }
 
+/* · 기부증서 · — Paperlogy Medium 70 black */
 .cert-card__title {
   margin: 0 0 35px;
   font-family: "Paperlogy", "Noto Sans KR", sans-serif;
@@ -37,6 +48,7 @@
   color: #000000;
 }
 
+/* - 캠페인명 - — Paperlogy Light 36 #636363 */
 .cert-card__subtitle {
   margin: 0;
   font-family: "Paperlogy", "Noto Sans KR", sans-serif;
@@ -45,8 +57,9 @@
   color: #636363;
 }
 
+/* 사진 영역 — Figma 801.66×1425.17, border 5 #999, radius 38 */
 .cert-card__photo {
-  width: 801px;
+  width: 802px;
   max-width: 100%;
   height: 1425px;
   margin: 0 auto;
@@ -63,15 +76,24 @@
   display: block;
 }
 
+/* 하트 일러스트(직접 발급) variant: 사진과 동일 박스에 일러스트를 contain 배치 */
 .cert-card__photo--illust {
-  background: linear-gradient(180deg, #fff5f8 0%, #ffeef4 100%);
+  border: none;
+  background: transparent;
+  border-radius: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .cert-card__photo--illust img {
+  width: 759px;
+  height: 810px;
+  max-width: 100%;
   object-fit: contain;
-  padding: 80px;
 }
 
+/* 서명 블록 — photo → name 간격 52 */
 .cert-card__sign {
   position: relative;
   display: flex;
@@ -80,6 +102,7 @@
   margin-top: 52px;
 }
 
+/* 후원자 이름 — Noto Sans Medium 50 black */
 .cert-card__name {
   font-family: "Noto Sans KR", sans-serif;
   font-size: 50px;
@@ -87,41 +110,39 @@
   color: #000000;
 }
 
-.cert-card__amount {
-  margin-top: 10px;
-  font-family: "Paperlogy", "Noto Sans KR", sans-serif;
-  font-size: 36px;
-  font-weight: 700;
-}
-
+/* 구분선 — 584px, name 아래 14px */
 .cert-card__line {
-  width: 585px;
-  max-width: 80%;
+  width: 584px;
+  max-width: 100%;
   height: 1px;
   margin: 14px 0 0;
   background: var(--color-text-muted, #999999);
 }
 
+/* unicef 로고 + QR 행 — 선 아래 35px */
 .cert-card__sign-row {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 585px;
-  max-width: 80%;
-  margin-top: 26px;
+  width: 584px;
+  max-width: 100%;
+  margin-top: 35px;
 }
 
+/* unicef 로고 — Figma h 39.48 */
 .cert-card__partner {
-  height: 40px;
+  height: 39.5px;
   width: auto;
   object-fit: contain;
 }
 
+/* QR — 153×153 박스, border 3 #636363, radius 25.
+   세로 중심이 구분선 살짝 위(≈ -10px)에 오도록, 우측은 사진/콘텐츠 우단에 정렬 */
 .cert-card__qr {
   position: absolute;
   right: 0;
-  bottom: -18px;
+  bottom: -10px;
   box-sizing: border-box;
   width: 153px;
   height: 153px;
@@ -138,19 +159,22 @@
   height: 100%;
 }
 
+/* 하단 문구 — unicef/QR 행 아래 ~77px */
 .cert-card__foot {
   text-align: center;
-  margin-top: 64px;
+  margin-top: 77px;
 }
 
+/* 감사 문구 — Noto Sans 30 #636363 */
 .cert-card__caption {
-  margin: 0 0 18px;
+  margin: 0 0 12px;
   font-family: "Noto Sans KR", sans-serif;
   font-size: 30px;
-  line-height: 1.5;
+  line-height: 1.4;
   color: #636363;
 }
 
+/* 날짜 — Noto Sans 30 black */
 .cert-card__date {
   display: block;
   font-family: "Noto Sans KR", sans-serif;
@@ -168,15 +192,17 @@
   text-align: center;
 }
 
+/* CTA — 732×150, radius 45, theme primary 배경, Noto Bold 63 white. 카드 아래 124px */
 .cert-cta {
   width: 100%;
   max-width: 732px;
-  margin: 56px auto 0;
+  margin: 124px auto 0;
   height: 150px;
   border: none;
   border-radius: 45px;
   box-shadow: 0 4px 4px 7px rgba(0, 0, 0, 0.25);
   color: #fff;
+  font-family: "Noto Sans KR", sans-serif;
   font-size: 63px;
   font-weight: 700;
   cursor: pointer;

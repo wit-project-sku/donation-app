@@ -8,6 +8,7 @@ import {
   useState,
 } from "react";
 import { fetchWallEntriesPage, type WallEntry } from "../api/wall";
+import { AppFooter } from "../components/AppFooter";
 import { AppHeader } from "../components/AppHeader";
 import { IconSearch } from "../components/Icon";
 import { VirtualKeyboard } from "../components/VirtualKeyboard";
@@ -169,7 +170,7 @@ export function WallPage() {
           )}
           <IconSearch
             className="wall-search__icon"
-            width={68}
+            width={71}
             height={68}
             style={{ color: theme.primary }}
           />
@@ -224,6 +225,8 @@ export function WallPage() {
           )}
         </section>
       </div>
+
+      <AppFooter />
 
       {keyboardOpen && (
         <div className="wall-keyboard" ref={keyboardRef}>

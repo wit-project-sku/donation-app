@@ -16,6 +16,8 @@ interface AppHeaderProps {
   /** Explicit back target (overrides the route map). */
   backTo?: string;
   onBack?: () => void;
+  /** 히어로 위에 오버레이되는 화면(캠페인/상세)에서 타이틀을 흰색으로 (Figma). */
+  light?: boolean;
 }
 
 /**
@@ -30,6 +32,7 @@ export function AppHeader({
   showBack,
   backTo,
   onBack,
+  light = false,
 }: AppHeaderProps) {
   const { theme } = useTheme();
   const navigate = useAppNavigate();
@@ -63,9 +66,14 @@ export function AppHeader({
           style={{ backgroundColor: theme.primary }}
           aria-label="처음으로"
         >
-          <IconHome size={64} color="#fff" />
+          <IconHome size={96} color="#fff" />
         </button>
-        <h1 className="app-header__title">{title}</h1>
+        <h1
+          className="app-header__title"
+          style={light ? { color: "#ffffff" } : undefined}
+        >
+          {title}
+        </h1>
         {canBack ? (
           <button
             type="button"
@@ -74,7 +82,7 @@ export function AppHeader({
             style={{ borderColor: theme.primary, color: theme.primary }}
             aria-label="뒤로"
           >
-            <IconBack size={64} />
+            <IconBack size={108} />
           </button>
         ) : (
           <span className="app-header__spacer" aria-hidden />

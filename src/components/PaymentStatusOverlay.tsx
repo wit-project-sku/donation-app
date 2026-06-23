@@ -198,19 +198,14 @@ export function PaymentStatusOverlay({
         {step === "success" && (
           <>
             <h2 className="pso__title">결제 완료</h2>
-            <p className="pso__desc">당신의 마음이 필요한 곳에 전해집니다</p>
+            <p className="pso__desc pso__desc--success">
+              당신의 마음이 필요한 곳에 전해집니다
+            </p>
             {amountCard}
-            <div
-              className="pso__check"
-              style={{ backgroundColor: theme.primary }}
-              aria-hidden
-            >
-              <IconCheck size={84} strokeWidth={3.2} color="#fff" />
+            <div className="pso__check" aria-hidden>
+              <IconCheck size={96} strokeWidth={3.2} color="#fff" />
             </div>
-            <div
-              className="pso__auto"
-              style={{ backgroundColor: theme.primary }}
-            >
+            <div className="pso__auto">
               {countdown}초 후 다음 단계로 자동 전환됩니다
             </div>
           </>

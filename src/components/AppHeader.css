@@ -1,6 +1,7 @@
 .app-header {
   flex: 0 0 auto;
-  padding: 72px 96px 0;
+  /* Figma: 헤더 0→~675 (location 112, 버튼행 281–506, 부제 ~540, 칩 675) */
+  padding: 112px 170px 50px;
 }
 
 .app-header__meta {
@@ -26,7 +27,7 @@
 
 .app-header__bar {
   display: grid;
-  grid-template-columns: 150px 1fr 150px;
+  grid-template-columns: 225px 1fr 225px;
   align-items: center;
   margin-top: 56px;
 }
@@ -34,8 +35,8 @@
 .app-header__home,
 .app-header__back,
 .app-header__spacer {
-  width: 150px;
-  height: 150px;
+  width: 225px;
+  height: 225px;
   border-radius: 999px;
 }
 

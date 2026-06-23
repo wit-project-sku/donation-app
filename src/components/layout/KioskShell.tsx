@@ -1,5 +1,6 @@
 import { useEffect, useRef, type CSSProperties } from "react";
 import { useTheme } from "../../theme/ThemeContext";
+import { SideNav } from "../SideNav";
 import "./KioskShell.css";
 
 interface KioskShellProps {
@@ -46,6 +47,7 @@ export function KioskShell({ children }: KioskShellProps) {
       <div className="kiosk-stage" ref={stageRef}>
         <div className="kiosk-content" style={themeVars}>
           {children}
+          <SideNav />
         </div>
       </div>
     </div>

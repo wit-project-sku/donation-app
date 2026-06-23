@@ -2,7 +2,6 @@ import { useAppNavigate } from "../hooks/useAppNavigate";
 import { useDonationStore } from "../store/donationStore";
 import { PageBody } from "../components/layout/PageBody";
 import { AppHeader } from "../components/AppHeader";
-import { AppFooter } from "../components/AppFooter";
 import { PlaceholderAsset } from "../components/PlaceholderAsset";
 import type { DonationCategory } from "../types";
 import ngoIcon from "../assets/entry-ngo.png";
@@ -97,9 +96,17 @@ export function EntryPage() {
           </p>
           <span className="entry-page__featured-more">더 알아보기</span>
         </div>
+        <div className="entry-page__featured-dots" aria-hidden>
+          <span className="entry-page__featured-dot entry-page__featured-dot--active" />
+          <span className="entry-page__featured-dot" />
+          <span className="entry-page__featured-dot" />
+          <span className="entry-page__featured-dot" />
+        </div>
       </div>
 
-      <AppFooter note />
+      <p className="entry-page__note">
+        기부금 전액이 현장 지원에 사용되며, 법정 기부금으로서 세액공제 혜택이 적용됩니다
+      </p>
     </PageBody>
   );
 }

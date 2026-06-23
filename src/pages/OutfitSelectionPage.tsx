@@ -148,7 +148,7 @@ export function OutfitSelectionPage() {
               onProgress={loadMoreIfNeeded}
               slidesPerView="auto"
               grid={{ rows: 2, fill: "row" }}
-              spaceBetween={40}
+              spaceBetween={104}
               freeMode={{ enabled: true, momentum: true, momentumRatio: 0.85 }}
               simulateTouch
               allowTouchMove

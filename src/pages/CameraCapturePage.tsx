@@ -5,6 +5,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { processArPhoto } from "../api/arPhoto";
 import { IconCamera, IconCheck, IconReset } from "../components/Icon";
 import { AppHeader } from "../components/AppHeader";
+import { AppFooter } from "../components/AppFooter";
 import { PageBody } from "../components/layout/PageBody";
 import photoGuide from "../assets/photo-guide.png";
 import { useDonationStore } from "../store/donationStore";
@@ -388,14 +389,21 @@ export function CameraCapturePage() {
         )}
 
         {status === "streaming" && (
-          <p
-            className="camera-page__stream-hint"
-            style={{ color: theme.text.primary }}
-          >
-            {isGreetingMode
-              ? "인사 모드 · 화면 중앙에 맞춰 주세요"
-              : "화면 중앙에 맞춰 주세요"}
-          </p>
+          <div className="camera-page__guide-bubble" role="status">
+            <span className="camera-page__guide-arrow" aria-hidden>
+              <svg viewBox="0 0 100 100" width="158" height="176">
+                <path
+                  d="M2 50 L46 14 L46 36 L98 36 L98 64 L46 64 L46 86 Z"
+                  fill="#FFD400"
+                />
+              </svg>
+            </span>
+            <p className="camera-page__guide-bubble-text">
+              “왼쪽 화면을 먼저보시고
+              <br />
+              화면사이 카메라를 봐주세요.”
+            </p>
+          </div>
         )}
 
         {(status === "idle" || status === "requesting") && (
@@ -403,19 +411,24 @@ export function CameraCapturePage() {
             className="camera-page__center-state"
             style={{ backgroundColor: theme.background, color: theme.text.primary }}
           >
-            <p className="camera-page__guide-tip">
-              “왼쪽 화면을 먼저 보시고 화면 사이 카메라를 봐주세요.”
-            </p>
             <img className="camera-page__guide-img" src={photoGuide} alt="" />
-            <h1 style={{ color: theme.text.primary }}>
+            <h1
+              className="camera-page__center-title"
+              style={{ color: theme.primary }}
+            >
               {status === "requesting"
                 ? "카메라를 연결하는 중입니다"
                 : "카메라를 시작해 주세요"}
             </h1>
-            <p>
-              {isGreetingMode
-                ? "인사 모드로 촬영합니다. 준비되면 아래 버튼을 눌러주세요."
-                : "준비되면 아래 버튼을 눌러 촬영을 시작해주세요."}
+            <p className="camera-page__center-desc">
+              <span className="camera-page__center-star" aria-hidden>
+                ★
+              </span>
+              <span>
+                {isGreetingMode
+                  ? "인사 모드로 촬영합니다. 준비되면 아래 버튼을 눌러주세요."
+                  : "준비되면 아래 버튼을 눌러 촬영을 시작해주세요."}
+              </span>
             </p>
           </div>
         )}
@@ -585,6 +598,8 @@ export function CameraCapturePage() {
           )}
         </div>
       </div>
+
+      <AppFooter />
     </PageBody>
   );
 }

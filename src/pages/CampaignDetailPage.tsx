@@ -2,7 +2,6 @@ import { useEffect, useMemo } from "react";
 import { useAppNavigate } from "../hooks/useAppNavigate";
 import { PageBody } from "../components/layout/PageBody";
 import { AppHeader } from "../components/AppHeader";
-import { AppFooter } from "../components/AppFooter";
 import { useDonationStore } from "../store/donationStore";
 import { useTheme } from "../theme/ThemeContext";
 import { formatCampaignProgressAmounts } from "../utils/campaignProgress";
@@ -34,8 +33,6 @@ export function CampaignDetailPage() {
 
   return (
     <PageBody className="campaign-detail">
-      <AppHeader title={category === "school" ? "학교" : "NGO"} />
-
       <div className="cd-hero">
         <img
           className="cd-hero__img"
@@ -45,30 +42,37 @@ export function CampaignDetailPage() {
         />
         <div className="cd-hero__overlay" aria-hidden />
 
-        <div className="cd-card">
-          <img className="cd-card__logo" src={unicefLogo} alt="" />
-          <p className="cd-card__amount" style={{ color: theme.primary }}>
-            누적 기부금액 : {formatCurrency(progress.accumulated)}원
-          </p>
-          {progress.target > 0 && (
-            <p className="cd-card__target" style={{ color: theme.primary }}>
-              목표 {formatCurrency(progress.target)}원
-            </p>
-          )}
-          <div className="cd-card__bar">
+        <div className="cd-progress">
+          <img className="cd-progress__logo" src={unicefLogo} alt="" />
+          <div className="cd-progress__bar">
             <div
-              className="cd-card__fill"
+              className="cd-progress__fill"
               style={{
                 width: `${progress.percent}%`,
                 backgroundColor: theme.primary,
               }}
             />
           </div>
+          <p className="cd-progress__amount" style={{ color: theme.primary }}>
+            누적 기부금액 : {formatCurrency(progress.accumulated)}원
+          </p>
         </div>
       </div>
 
+      <div className="cd-header-overlay">
+        <AppHeader title={category === "school" ? "학교" : "NGO"} light />
+      </div>
+
       <div className="cd-body">
-        <h2 className="cd-title">{selectedCampaign.title}</h2>
+        <div className="cd-titlebar">
+          <h2 className="cd-title">{selectedCampaign.title}</h2>
+          {progress.target > 0 && (
+            <span className="cd-deadline" style={{ color: theme.primary }}>
+              목표 {formatCurrency(progress.target)}원
+            </span>
+          )}
+        </div>
+
         {description && <p className="cd-desc">{description}</p>}
 
         {programs.length > 0 && (
@@ -85,26 +89,27 @@ export function CampaignDetailPage() {
                 >
                   {index + 1}
                 </span>
-                <span className="cd-prog__label" style={{ color: theme.primary }}>
+                <span
+                  className="cd-prog__label"
+                  style={{ color: theme.primary }}
+                >
                   {program.title}
                 </span>
               </div>
             ))}
           </div>
         )}
-      </div>
 
-      <div className="cd-cta-wrap">
-        <button
-          type="button"
-          className="cd-cta"
-          onClick={() => navigate("/amount")}
-        >
-          이 마음으로 시작하기
-        </button>
+        <div className="cd-cta-wrap">
+          <button
+            type="button"
+            className="cd-cta"
+            onClick={() => navigate("/amount")}
+          >
+            이 마음으로 시작하기
+          </button>
+        </div>
       </div>
-
-      <AppFooter />
     </PageBody>
   );
 }

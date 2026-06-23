@@ -123,9 +123,29 @@ export function PaymentPage() {
           onClick={() => navigate("/amount")}
           style={{ backgroundColor: theme.primary }}
         >
-          <IconHeart size={44} aria-hidden />
+          <IconHeart size={68} aria-hidden />
           <span>{selectedCampaign.title}</span>
         </button>
+
+        <div className="pay-progress">
+          {!isSchool && (
+            <img className="pay-progress__logo" src={unicefLogo} alt="" />
+          )}
+          <div className="pay-progress__bar">
+            <div
+              className="pay-progress__fill"
+              style={{
+                width: `${progress.percent}%`,
+                backgroundColor: theme.primary,
+              }}
+            />
+          </div>
+          <p className="pay-progress__label" style={{ color: theme.primary }}>
+            누적 기부금액 : {formatCurrency(progress.accumulated)}원
+          </p>
+        </div>
+
+        <div className="pay-divider" aria-hidden />
 
         <div className="pay-amount-card">
           <p className="pay-amount-card__label">기부 금액</p>
@@ -152,29 +172,11 @@ export function PaymentPage() {
           </span>
         </button>
 
-        <div className="pay-progress">
-          {!isSchool && (
-            <img className="pay-progress__logo" src={unicefLogo} alt="" />
-          )}
-          <div className="pay-progress__bar">
-            <div
-              className="pay-progress__fill"
-              style={{
-                width: `${progress.percent}%`,
-                backgroundColor: theme.primary,
-              }}
-            />
-          </div>
-          <p className="pay-progress__label" style={{ color: theme.primary }}>
-            누적 기부금액 : {formatCurrency(progress.accumulated)}원
-          </p>
-        </div>
-
         {!isSchool && (
           <p className="pay-partner">
             이 캠페인은
-            <img src={unicefLogo} alt="unicef" className="pay-partner__logo" />와
-            함께합니다.
+            <img src={unicefLogo} alt="unicef" className="pay-partner__logo" />
+            와 함께합니다.
           </p>
         )}
 

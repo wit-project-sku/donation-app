@@ -156,7 +156,7 @@ export function MessagePage() {
             disabled={!canProceed}
             style={canProceed ? { backgroundColor: theme.primary } : undefined}
           >
-            <IconCamera size={64} aria-hidden />
+            <IconCamera size={72} aria-hidden />
             <span>사진 촬영</span>
           </button>
         </div>

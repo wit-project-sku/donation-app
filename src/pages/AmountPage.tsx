@@ -56,7 +56,7 @@ export function AmountPage() {
           onClick={() => navigate("/campaign")}
           style={{ backgroundColor: theme.primary }}
         >
-          <IconHeart size={44} aria-hidden />
+          <IconHeart size={68} aria-hidden />
           <span>{selectedCampaign.title}</span>
         </button>
 
@@ -71,10 +71,15 @@ export function AmountPage() {
               }}
             />
           </div>
-          <p className="amount-progress__label" style={{ color: theme.primary }}>
+          <p
+            className="amount-progress__label"
+            style={{ color: theme.primary }}
+          >
             누적 기부금액 : {formatCurrency(progress.accumulated)}원
           </p>
         </div>
+
+        <hr className="amount-divider" aria-hidden />
 
         <p className="amount-page__label">기부금을 선택해 주세요</p>
 
@@ -106,8 +111,8 @@ export function AmountPage() {
 
         <ul className="amount-note">
           <li>
-            기부금 전액이 현장 지원에 사용되며, 법정 기부금으로서 세액공제 혜택이
-            적용됩니다
+            기부금 전액이 현장 지원에 사용되며, 법정 기부금으로서 세액공제
+            혜택이 적용됩니다
           </li>
         </ul>
         {!isSchool && (
@@ -133,7 +138,7 @@ export function AmountPage() {
         </button>
       </div>
 
-      <AppFooter note />
+      <AppFooter />
     </PageBody>
   );
 }

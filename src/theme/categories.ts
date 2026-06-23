@@ -10,7 +10,7 @@ const CATEGORY_ACCENTS: Record<
   { primary: string; secondary: string }
 > = {
   ngo: { primary: "#009FE3", secondary: "#33B4EC" },
-  school: { primary: "#3DB44A", secondary: "#5FC56B" },
+  school: { primary: "#30B95C", secondary: "#5ECA80" },
 };
 
 /**

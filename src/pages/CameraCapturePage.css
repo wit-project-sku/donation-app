@@ -18,17 +18,54 @@
   background: #111;
 }
 
-.camera-page__guide-tip {
-  margin: 0 0 48px;
-  max-width: 1500px;
+/* 안내 말풍선 — Figma: maroon #6C0002, 라운드 50, 노란 좌측 화살표 + 하단 꼬리 */
+.camera-page__guide-bubble {
+  position: absolute;
+  top: 130px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  width: 1170px;
+  max-width: calc(100% - 200px);
+  min-height: 332px;
   padding: 40px 64px;
-  background: #b3261e;
-  color: #fff;
+  background: #6c0002;
+  border-radius: 50px;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.28);
+}
+
+.camera-page__guide-bubble::after {
+  content: "";
+  position: absolute;
+  bottom: -44px;
+  left: 640px;
+  width: 96px;
+  height: 60px;
+  background: #6c0002;
+  clip-path: polygon(0 0, 100% 0, 22% 100%);
+}
+
+.camera-page__guide-arrow {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 158px;
+  height: 176px;
+}
+
+.camera-page__guide-bubble-text {
+  flex: 1 1 auto;
+  margin: 0;
+  color: #ffffff;
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
   font-size: 50px;
   font-weight: 700;
-  border-radius: 45px;
-  text-align: center;
   line-height: 1.4;
+  text-align: center;
   word-break: keep-all;
 }
 
@@ -85,25 +122,6 @@
   );
 }
 
-.camera-page__stream-hint {
-  position: absolute;
-  top: 190px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 6;
-  max-width: 1500px;
-  padding: 30px 64px;
-  border-radius: 45px;
-  background: color-mix(in srgb, var(--camera-card-bg) 92%, transparent);
-  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 50px;
-  font-weight: 700;
-  line-height: 1.4;
-  text-align: center;
-  word-break: keep-all;
-  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.18);
-}
-
 .camera-page__result-badge {
   position: absolute;
   top: 40px;
@@ -157,7 +175,28 @@
   word-break: keep-all;
 }
 
-.camera-page__center-state p {
+.camera-page__center-desc {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 20px;
+  max-width: 1481px;
+  margin: 0;
+  font-size: 50px;
+  font-weight: 500;
+  line-height: 1.4;
+  word-break: keep-all;
+  color: var(--color-text-muted, #999999);
+}
+
+.camera-page__center-star {
+  flex: 0 0 auto;
+  font-size: 50px;
+  line-height: 1.4;
+  color: var(--color-text-muted, #999999);
+}
+
+.camera-page__center-state--error p {
   max-width: 1481px;
   margin: 0;
   font-size: 50px;

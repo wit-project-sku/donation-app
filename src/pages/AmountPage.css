@@ -3,20 +3,28 @@
   flex-direction: column;
 }
 
+/* 금액 선택: 헤더/푸터 풀블리드 (PageBody 기본 패딩/gap 제거) */
+.page-body.amount-page {
+  padding: 0;
+  gap: 0;
+}
+
+/* 본문 — 좌우 170px (Figma: chip/divider/CTA 기준), 헤더 바로 아래 20px */
 .amount-page__body {
   display: flex;
   flex-direction: column;
   flex: 1 0 auto;
-  padding: 56px 170px 0;
+  padding: 20px 170px 0;
 }
 
+/* 선택 캠페인 칩 (Figma: 1270×180, radius45, 좌패딩64, 아이콘↔텍스트 38) */
 .amount-chip {
   display: inline-flex;
   align-items: center;
-  gap: 26px;
+  gap: 38px;
   align-self: flex-start;
-  min-height: 180px;
-  padding: 0 75px;
+  height: 180px;
+  padding: 0 64px;
   border: none;
   border-radius: 45px;
   color: #fff;
@@ -25,15 +33,15 @@
   cursor: pointer;
 }
 
+/* 진행 블록 (Figma: chip 아래 130, 로고 105 → 바 20 → 라벨) */
 .amount-progress {
   display: flex;
   flex-direction: column;
-  gap: 22px;
-  margin: 60px 0 64px;
+  margin: 130px 0 0;
 }
 
 .amount-progress__logo {
-  height: 96px;
+  height: 105px;
   width: auto;
   object-fit: contain;
   align-self: flex-start;
@@ -41,8 +49,9 @@
 
 .amount-progress__bar {
   height: 20px;
+  margin-top: 72px;
   border-radius: 999px;
-  background: #ececec;
+  background: #e8e8e8;
   overflow: hidden;
 }
 
@@ -52,24 +61,35 @@
 }
 
 .amount-progress__label {
-  margin: 0;
+  margin: 50px 0 0;
   align-self: flex-end;
   font-size: 76px;
   font-weight: 700;
 }
 
+/* 진행 블록과 라벨 사이 전폭 구분선 (Figma Line 65) */
+.amount-divider {
+  height: 0;
+  margin: 124px 0 112px;
+  border: none;
+  border-top: 2px solid #e8e8e8;
+}
+
+/* "기부금을 선택해 주세요" — 프리셋 그리드와 같은 인셋(170+123=293) */
 .amount-page__label {
-  margin: 0 0 56px;
+  margin: 0 0 38px 123px;
   font-size: 66px;
   font-weight: 400;
   text-align: left;
-  color: var(--color-text-secondary, #636363);
+  color: #636363;
 }
 
+/* 금액 프리셋 그리드 — 2×2, 본문 안쪽 123px 인셋(max-width 1574 중앙) */
 .amount-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 30px;
+  grid-template-columns: 772px 772px;
+  column-gap: 30px;
+  row-gap: 63px;
   width: 100%;
   max-width: 1574px;
   margin: 0 auto;
@@ -80,13 +100,13 @@
   align-items: center;
   justify-content: center;
   height: 350px;
-  border: 5px solid var(--color-border, #e8e8e8);
+  border: 5px solid #e8e8e8;
   border-radius: 45px;
   background: #fff;
   font-family: "Paperlogy", "Noto Sans KR", sans-serif;
   font-size: 90px;
   font-weight: 700;
-  color: var(--color-text-secondary, #636363);
+  color: #636363;
   cursor: pointer;
 }
 
@@ -97,13 +117,14 @@
   padding: 80px 0;
 }
 
+/* 세금 안내 불릿 (Figma: 그리드 아래 46, 55px, #999, ms 82.5) */
 .amount-note {
-  margin: 64px 0 30px;
+  margin: 46px 0 0;
   padding-left: 82px;
   font-size: 55px;
   font-weight: 400;
   line-height: 1.18;
-  color: var(--color-text-muted, #999999);
+  color: #999999;
   text-align: left;
   list-style: disc;
 }
@@ -112,31 +133,33 @@
   display: list-item;
 }
 
+/* "이 캠페인은 unicef 와 함께합니다." (Figma: 노트 아래 158, 70px #636363, 중앙) */
 .amount-partner {
   display: flex;
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 18px;
-  margin: 0 0 56px;
+  gap: 24px;
+  margin: 158px 0 0;
   font-size: 70px;
   font-weight: 400;
-  color: var(--color-text-secondary, #636363);
+  color: #636363;
 }
 
 .amount-partner__logo {
-  height: 66px;
+  height: 70px;
   width: auto;
   object-fit: contain;
 }
 
+/* CTA — 전폭(1820), h208, radius45, 비활성 #999 (Figma) */
 .amount-cta {
   width: 100%;
-  margin-top: auto;
+  margin: auto 0 107px;
   height: 208px;
   border: none;
   border-radius: 45px;
-  background: var(--color-disabled, #c0b8b0);
+  background: #999999;
   color: #fff;
   font-size: 70px;
   font-weight: 700;

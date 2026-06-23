@@ -3,19 +3,26 @@
   flex-direction: column;
 }
 
+/* 헤더/푸터 풀블리드 + 한 화면 고정 (PageBody 기본 패딩/gap 제거) */
+.page-body.wall-page {
+  padding: 0;
+  gap: 0;
+}
+
 .wall-body {
   flex: 1 1 auto;
   min-height: 0;
   display: flex;
   flex-direction: column;
-  padding: 40px 170px 0;
+  padding: 35px 170px 0;
 }
 
 .wall-title {
-  margin: 0 0 48px;
+  margin: 0 0 74px;
   font-size: 68px;
   font-weight: 500;
   color: var(--color-text-muted, #999999);
+  white-space: nowrap;
 }
 
 .wall-search {
@@ -28,7 +35,7 @@
   border-radius: 120px;
   box-shadow: 0 4px 3.5px rgba(0, 0, 0, 0.25);
   padding: 0 75px;
-  margin-bottom: 52px;
+  margin-bottom: 152px;
   background: #fff;
 }
 
@@ -67,8 +74,9 @@
 
 .wall-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 56px 80px;
+  grid-template-columns: repeat(3, 485px);
+  gap: 202px 120px;
+  justify-content: center;
   justify-items: center;
 }
 

@@ -9,7 +9,6 @@ import { PageBody } from "../components/layout/PageBody";
 import { submitCurrentDonation } from "../utils/buildSubmitPayload";
 import { useDonationStore } from "../store/donationStore";
 import { useTheme } from "../theme/ThemeContext";
-import { formatCurrency } from "../utils/format";
 import unicefLogo from "../assets/logo-unicef.png";
 import heartIllustration from "../assets/donated.png";
 import "./DonationCertificatePage.css";
@@ -156,9 +155,6 @@ export function DonationCertificatePage() {
 
           <div className="cert-card__sign">
             <span className="cert-card__name">{displayName}</span>
-            <span className="cert-card__amount" style={{ color: theme.primary }}>
-              {formatCurrency(amount)}원 기부
-            </span>
             <span className="cert-card__line" aria-hidden />
             <div className="cert-card__sign-row">
               <img className="cert-card__partner" src={unicefLogo} alt="unicef" />

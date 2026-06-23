@@ -1,20 +1,21 @@
+/* Figma 5262:28313 실측: 백드롭 design_y 2499→3264 (높이 765), 키 163×101, 키간격 ~14, 행간격 ~50 */
 .virtual-keyboard {
   width: 100%;
-  height: 868px;
+  height: 765px;
   box-sizing: border-box;
-  padding: 86px 46px 72px;
-  background: #D8D8D4;
+  padding: 30px 104px;
+  background: #d7d7d4;
   border-radius: 0;
   display: flex;
   flex-direction: column;
-  gap: 44px;
+  gap: 50px;
 }
 
 .virtual-keyboard__row {
   display: flex;
   justify-content: center;
-  gap: 24px;
-  height: 88px;
+  gap: 16px;
+  height: 101px;
   flex-shrink: 0;
 }
 
@@ -36,15 +37,15 @@
 
 .virtual-keyboard__key {
   min-width: 126px;
-  height: 88px;
+  height: 101px;
   border: 0;
-  border-radius: var(--radius-lg);
+  border-radius: 20px;
   background: #fff;
   box-shadow: 0 4px 0 rgba(0, 0, 0, 0.28);
   color: #000;
   font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 34px;
-  font-weight: 900;
+  font-size: 58px;
+  font-weight: 800;
   line-height: 1;
   display: flex;
   align-items: center;
@@ -75,7 +76,7 @@
 
 .virtual-keyboard__key--spacebar {
   flex: 6;
-  font-size: 30px;
+  font-size: 50px;
 }
 
 .virtual-keyboard__key--active {
