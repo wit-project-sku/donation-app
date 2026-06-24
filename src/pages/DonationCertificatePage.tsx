@@ -9,7 +9,6 @@ import { PageBody } from "../components/layout/PageBody";
 import { submitCurrentDonation } from "../utils/buildSubmitPayload";
 import { useDonationStore } from "../store/donationStore";
 import { useTheme } from "../theme/ThemeContext";
-import unicefLogo from "../assets/logo-unicef.png";
 import heartIllustration from "../assets/donated.png";
 import "./DonationCertificatePage.css";
 
@@ -62,7 +61,7 @@ function buildMobileCertificateUrl(params: {
 
 export function DonationCertificatePage() {
   const navigate = useAppNavigate();
-  const { theme, category } = useTheme();
+  const { theme, category, organizer } = useTheme();
   const queryClient = useQueryClient();
   const {
     selectedCampaign,
@@ -157,7 +156,11 @@ export function DonationCertificatePage() {
             <span className="cert-card__name">{displayName}</span>
             <span className="cert-card__line" aria-hidden />
             <div className="cert-card__sign-row">
-              <img className="cert-card__partner" src={unicefLogo} alt="unicef" />
+              <img
+                className="cert-card__partner"
+                src={organizer.logo}
+                alt={organizer.label}
+              />
               <div className="cert-card__qr" aria-label="모바일 증서 QR">
                 <QRCodeSVG
                   value={qrValue}

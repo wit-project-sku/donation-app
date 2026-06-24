@@ -6,13 +6,12 @@ import { useDonationStore } from "../store/donationStore";
 import { useTheme } from "../theme/ThemeContext";
 import { formatCampaignProgressAmounts } from "../utils/campaignProgress";
 import { formatCurrency } from "../utils/format";
-import unicefLogo from "../assets/logo-unicef.png";
 import "./CampaignDetailPage.css";
 
 export function CampaignDetailPage() {
   const navigate = useAppNavigate();
   const { selectedCampaign } = useDonationStore();
-  const { theme, category } = useTheme();
+  const { theme, category, organizer } = useTheme();
 
   useEffect(() => {
     if (!selectedCampaign) navigate("/", { replace: true });
@@ -43,7 +42,11 @@ export function CampaignDetailPage() {
         <div className="cd-hero__overlay" aria-hidden />
 
         <div className="cd-progress">
-          <img className="cd-progress__logo" src={unicefLogo} alt="" />
+          <img
+            className="cd-progress__logo"
+            src={organizer.logo}
+            alt={organizer.label}
+          />
           <div className="cd-progress__bar">
             <div
               className="cd-progress__fill"

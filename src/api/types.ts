@@ -22,6 +22,13 @@ export interface PaginatedData<T> {
 
 export type CampaignStatus = "ACTIVE" | "INACTIVE" | string;
 
+/** 주최단체 enum (payment-be CampaignOrganizer) */
+export type CampaignOrganizerDto =
+  | "SAVE_THE_CHILDREN"
+  | "UNICEF"
+  | "GOOD_NEIGHBORS"
+  | "SCHOOL";
+
 export interface CampaignAmountOptionDto {
   label: string;
   amount: number;
@@ -51,6 +58,7 @@ export interface CampaignDto {
   description: string;
   imageUrl: string;
   status: CampaignStatus;
+  organizer?: CampaignOrganizerDto | null;
   targetAmount: number;
   accumulatedAmount: number;
   amountOptions: CampaignAmountOptionDto[];

@@ -8,13 +8,12 @@ import { useTheme } from "../theme/ThemeContext";
 import { IconHeart } from "../components/Icon";
 import { formatCampaignProgressAmounts } from "../utils/campaignProgress";
 import { formatCurrency } from "../utils/format";
-import unicefLogo from "../assets/logo-unicef.png";
 import "./AmountPage.css";
 
 export function AmountPage() {
   const navigate = useAppNavigate();
   const { selectedCampaign, setAmount } = useDonationStore();
-  const { theme, category } = useTheme();
+  const { theme, category, organizer } = useTheme();
   const isSchool = category === "school";
 
   const amountOptions = useMemo(
@@ -61,7 +60,11 @@ export function AmountPage() {
         </button>
 
         <div className="amount-progress">
-          <img className="amount-progress__logo" src={unicefLogo} alt="" />
+          <img
+            className="amount-progress__logo"
+            src={organizer.logo}
+            alt={organizer.label}
+          />
           <div className="amount-progress__bar">
             <div
               className="amount-progress__fill"
@@ -119,8 +122,8 @@ export function AmountPage() {
           <p className="amount-partner">
             이 캠페인은
             <img
-              src={unicefLogo}
-              alt="unicef"
+              src={organizer.logo}
+              alt={organizer.label}
               className="amount-partner__logo"
             />
             와 함께합니다.

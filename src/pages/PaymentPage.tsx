@@ -17,13 +17,12 @@ import { useTheme } from "../theme/ThemeContext";
 import { formatCampaignProgressAmounts } from "../utils/campaignProgress";
 import { formatCurrency } from "../utils/format";
 import cardIcon from "../assets/icon-card.png";
-import unicefLogo from "../assets/logo-unicef.png";
 import type { PaymentMethod } from "../types";
 import "./PaymentPage.css";
 
 export function PaymentPage() {
   const navigate = useAppNavigate();
-  const { theme, category } = useTheme();
+  const { theme, category, organizer } = useTheme();
   const isSchool = category === "school";
   const { selectedCampaign, amount, setPaymentMethod, setMerchantUid } =
     useDonationStore();
@@ -129,7 +128,11 @@ export function PaymentPage() {
 
         <div className="pay-progress">
           {!isSchool && (
-            <img className="pay-progress__logo" src={unicefLogo} alt="" />
+            <img
+              className="pay-progress__logo"
+              src={organizer.logo}
+              alt={organizer.label}
+            />
           )}
           <div className="pay-progress__bar">
             <div
@@ -175,7 +178,11 @@ export function PaymentPage() {
         {!isSchool && (
           <p className="pay-partner">
             이 캠페인은
-            <img src={unicefLogo} alt="unicef" className="pay-partner__logo" />
+            <img
+              src={organizer.logo}
+              alt={organizer.label}
+              className="pay-partner__logo"
+            />
             와 함께합니다.
           </p>
         )}
