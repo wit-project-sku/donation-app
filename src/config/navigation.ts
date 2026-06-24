@@ -7,6 +7,18 @@ export function finishDonationFlow(
   navigate("/", { replace: true });
 }
 
+/** 진입 라우트("/") — 기부 앱의 첫 화면. */
+export const ENTRY_ROUTE = "/";
+
+/**
+ * 진입 화면에서 뒤로가기 = 기부 앱을 빠져나가 키오스크 메인 메뉴(WebView 를 띄운 이전 화면)로 복귀.
+ * 앱 안에는 이전 단계가 없으므로 WebView 의 브라우저 히스토리를 한 단계 되돌린다.
+ * (Unity 전용 '메뉴로 나가기' 브리지가 생기면 이 함수만 교체하면 된다.)
+ */
+export function exitDonationApp() {
+  window.history.back();
+}
+
 /**
  * Explicit previous-step per route for the kiosk header back chevron.
  * HashRouter inside a WebView has no reliable browser history, so map it

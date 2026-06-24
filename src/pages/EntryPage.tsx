@@ -1,5 +1,6 @@
 import { useAppNavigate } from "../hooks/useAppNavigate";
 import { useDonationStore } from "../store/donationStore";
+import { exitDonationApp } from "../config/navigation";
 import { PageBody } from "../components/layout/PageBody";
 import { AppHeader } from "../components/AppHeader";
 import { PlaceholderAsset } from "../components/PlaceholderAsset";
@@ -21,7 +22,7 @@ export function EntryPage() {
 
   return (
     <PageBody className="entry-page">
-      <AppHeader showBack={false} />
+      <AppHeader showBack onBack={exitDonationApp} />
 
       <div className="entry-page__hero">
         <h2 className="entry-page__headline">

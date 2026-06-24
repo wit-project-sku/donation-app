@@ -2,7 +2,12 @@ import { useLocation } from "react-router-dom";
 import { useDonationStore } from "../store/donationStore";
 import { useTheme } from "../theme/ThemeContext";
 import { useAppNavigate } from "../hooks/useAppNavigate";
-import { finishDonationFlow, getBackRoute } from "../config/navigation";
+import {
+  ENTRY_ROUTE,
+  exitDonationApp,
+  finishDonationFlow,
+  getBackRoute,
+} from "../config/navigation";
 import { IconBack, IconHome } from "./Icon";
 import "./SideNav.css";
 
@@ -16,10 +21,14 @@ export function SideNav() {
   const { pathname } = useLocation();
   const resetSession = useDonationStore((state) => state.resetSession);
 
+  const isEntry = pathname === ENTRY_ROUTE;
   const backTarget = getBackRoute(pathname);
+  // 진입 화면은 앱 내부 이전 단계가 없으므로 뒤로가기를 '앱 이탈'(키오스크 메뉴 복귀)로 처리.
+  const showBack = isEntry || backTarget !== null;
 
   const handleHome = () => finishDonationFlow(navigate, resetSession);
   const handleBack = () => {
+    if (isEntry) return exitDonationApp();
     if (backTarget) navigate(backTarget);
   };
 
@@ -34,7 +43,7 @@ export function SideNav() {
       >
         <IconHome size={54} color="#fff" />
       </button>
-      {backTarget && (
+      {showBack && (
         <button
           type="button"
           className="side-nav__back"
