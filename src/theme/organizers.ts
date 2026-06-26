@@ -1,8 +1,4 @@
-import type {
-  Campaign,
-  CampaignOrganizerCode,
-  DonationCategory,
-} from "../types";
+import type { Campaign, DonationCategory } from "../types";
 import type { LocationTheme } from "./locations";
 import savethechildrenLogo from "../assets/logo-savethechildren.png";
 import unicefLogo from "../assets/logo-unicef.png";
@@ -18,13 +14,6 @@ export type OrganizerId =
   | "unicef"
   | "goodneighbors"
   | "school";
-
-const CODE_TO_ID: Record<CampaignOrganizerCode, OrganizerId> = {
-  SAVE_THE_CHILDREN: "savethechildren",
-  UNICEF: "unicef",
-  GOOD_NEIGHBORS: "goodneighbors",
-  SCHOOL: "school",
-};
 
 export interface Organizer {
   id: OrganizerId;
@@ -101,18 +90,22 @@ function matchNgoOrganizerByText(text: string): OrganizerId | null {
 }
 
 /**
- * 선택된 캠페인이 어느 주최단체의 것인지 판별한다.
- * 1순위: 캠페인의 organizer 필드(백엔드에서 운영자가 지정).
- * 2순위: 학교 기부 흐름(category === "school")은 학교 단체로 고정 — organizer 미지정이어도 초록 유지.
- * 3순위: organizer 미지정 NGO 캠페인은 이름/설명 키워드로 추론(전환기 안전망).
- * 최종 폴백: 유니세프(파랑) — 기존 동작과 동일.
+ * 선택된 캠페인이 어느 주최단체의 것인지 판별한다(색/로고는 프론트 로컬 보유).
+ * 1순위: 캠페인의 organization(백엔드 단체). type === "SCHOOL" 이면 학교 테마, NGO 면 단체명으로 매핑.
+ * 2순위: 학교 기부 흐름(category === "school")은 학교 단체로 고정 — 단체 미지정이어도 초록 유지.
+ * 3순위: 단체 미지정 NGO 캠페인은 이름/설명 키워드로 추론(전환기 안전망).
+ * 최종 폴백: 유니세프(파랑) — 신규 단체로 로컬 매핑이 없을 때 포함.
  */
 export function resolveOrganizer(
   campaign: Campaign | null,
   category: DonationCategory,
 ): Organizer {
-  const code = campaign?.organizer;
-  if (code && CODE_TO_ID[code]) return ORGANIZERS[CODE_TO_ID[code]];
+  const org = campaign?.organization;
+  if (org) {
+    if (org.type === "SCHOOL") return ORGANIZERS.school;
+    const matched = matchNgoOrganizerByText(org.name);
+    if (matched) return ORGANIZERS[matched];
+  }
   if (category === "school") return ORGANIZERS.school;
   if (campaign) {
     const matched = matchNgoOrganizerByText(
