@@ -22,6 +22,16 @@ export interface PaginatedData<T> {
 
 export type CampaignStatus = "ACTIVE" | "INACTIVE" | string;
 
+/** 기부 종류 (payment-be DonationType) */
+export type DonationTypeDto = "NGO" | "SCHOOL";
+
+/** 주최 단체 (payment-be DonationOrganization) */
+export interface CampaignOrganizationDto {
+  id: number;
+  type: DonationTypeDto;
+  name: string;
+}
+
 export interface CampaignAmountOptionDto {
   label: string;
   amount: number;
@@ -51,6 +61,7 @@ export interface CampaignDto {
   description: string;
   imageUrl: string;
   status: CampaignStatus;
+  organization?: CampaignOrganizationDto | null;
   targetAmount: number;
   accumulatedAmount: number;
   amountOptions: CampaignAmountOptionDto[];

@@ -10,6 +10,13 @@ function mapCampaignDto(dto: CampaignDto): Campaign {
     title: dto.name,
     description: dto.description,
     imageUrl: dto.imageUrl,
+    organization: dto.organization
+      ? {
+          id: dto.organization.id,
+          type: dto.organization.type,
+          name: dto.organization.name,
+        }
+      : undefined,
     amountOptions: (dto.amountOptions ?? []).map((option) => ({
       label: option.label,
       amount: option.amount,

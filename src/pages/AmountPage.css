@@ -1,252 +1,167 @@
 .amount-page {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  box-sizing: border-box;
-  padding: 58px 0 0;
-  overflow: hidden;
-  display: grid;
-  grid-template-rows: minmax(0, 1fr) auto;
-  background: #fff;
+  display: flex;
+  flex-direction: column;
 }
 
-.amount-page.page-body {
-  display: grid;
-  flex: 1;
-  height: 100%;
-  padding: 58px 0 0;
+/* 금액 선택: 헤더/푸터 풀블리드 (PageBody 기본 패딩/gap 제거) */
+.page-body.amount-page {
+  padding: 0;
   gap: 0;
-  min-height: 0;
-  overflow: hidden;
 }
 
-.amount-page__main {
-  min-height: 0;
-  overflow-y: auto;
-  padding: 0 58px 48px;
-  box-sizing: border-box;
-  scrollbar-width: auto;
-  scrollbar-color: var(--main-01, #fe6c50) transparent;
-}
-
-.amount-page__main::-webkit-scrollbar {
-  width: 34.32px;
-}
-
-.amount-page__main::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.amount-page__main::-webkit-scrollbar-thumb {
-  display: flex;
-  width: 34.32px;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  background: #fe6c50;
-  border-radius: 999px;
-  min-height: 120px;
-}
-
-/* Header */
-.amount-page__header {
+/* 본문 — 좌우 170px (Figma: chip/divider/CTA 기준), 헤더 바로 아래 20px */
+.amount-page__body {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 48px;
-  margin-bottom: 80px;
+  flex: 1 0 auto;
+  padding: 20px 170px 0;
 }
 
-.amount-page__campaign-badge {
+/* 선택 캠페인 칩 (Figma: 1270×180, radius45, 좌패딩64, 아이콘↔텍스트 38) */
+.amount-chip {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  gap: 20px;
-  width: auto;
-  max-width: 100%;
-  height: 150px;
-  padding: 0 40px;
-  border: none;
-  border-radius: 45px;
-  color: #fff;
-  font-family: var(--font-paperlogy);
-  font-size: 68px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: normal;
-  cursor: pointer;
-  box-sizing: border-box;
-  white-space: nowrap;
-}
-
-.amount-page__campaign-badge span {
-  white-space: nowrap;
-}
-
-.amount-page__campaign-badge-icon {
-  width: 68px;
-  height: 61px;
-  aspect-ratio: 68 / 61;
-  flex-shrink: 0;
-}
-
-.amount-page__campaign-badge:active {
-  opacity: 0.94;
-}
-
-.amount-page__title {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  margin: 0;
-  word-break: keep-all;
-}
-
-.amount-page__title-row {
-  display: block;
-  color: #636363;
-  font-family: var(--font-paperlogy);
-  font-size: 128px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: normal;
-}
-
-.amount-page__title-amount {
-  color: var(--main-01, #fe6c50);
-  font-weight: 700;
-}
-
-.amount-page__title-particle {
-  color: #636363;
-  font-weight: 500;
-}
-
-.amount-page__title-row--suffix {
-  color: #636363;
-  font-weight: 500;
-}
-
-/* Amount options */
-.amount-page__options {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 56px;
-  width: 100%;
-}
-
-.amount-page__empty {
-  margin: 0;
-  color: var(--main, #999);
-  font-family: var(--font-paperlogy);
-  font-size: 48px;
-  font-weight: 500;
-  line-height: 1.35;
-  text-align: center;
-  word-break: keep-all;
-}
-
-.amount-page__option {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 1553px;
-  max-width: 100%;
-  height: 219px;
+  gap: 38px;
+  align-self: flex-start;
+  height: 180px;
   padding: 0 64px;
-  border: 5px solid var(--5, #e8e8e8);
-  border-radius: 80px;
-  background: #fff;
-  box-shadow: 0 4px 10px 7px rgba(0, 0, 0, 0.15);
-  cursor: pointer;
-  box-sizing: border-box;
-  --amount-half-width: 220px;
-  --label-amount-gap: 120px;
-  --amount-offset: 96px;
-}
-
-.amount-page__option-label {
-  position: absolute;
-  left: 64px;
-  right: calc(50% + var(--amount-half-width) + var(--label-amount-gap));
-  color: #636363;
-  font-family: var(--font-paperlogy);
-  font-size: 48px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: normal;
-  text-align: left;
-  white-space: nowrap;
-}
-
-.amount-page__option-amount {
-  position: relative;
-  z-index: 1;
-  margin-left: var(--amount-offset);
-  color: #636363;
-  font-family: var(--font-paperlogy);
-  font-size: 95px;
-  font-style: normal;
-  font-weight: 600;
-  line-height: normal;
-  text-align: center;
-  white-space: nowrap;
-}
-
-.amount-page__option:active {
-  opacity: 0.96;
-}
-
-.amount-page__option--active {
-  width: 1821px;
-  height: 257px;
-  border-color: var(--main-01, #fe6c50);
-}
-
-.amount-page__option--active .amount-page__option-label {
-  color: var(--main-01, #fe6c50);
-  font-weight: 500;
-}
-
-.amount-page__option--active .amount-page__option-amount {
-  color: var(--main-01, #fe6c50);
-  font-weight: 600;
-}
-
-/* Bottom donate button */
-.amount-page__donate-wrap {
-  flex-shrink: 0;
-  display: flex;
-  justify-content: center;
-  width: 100%;
-  margin-bottom: 52px;
-}
-
-.amount-page__donate-btn {
-  width: 1821px;
-  max-width: calc(100% - 116px);
-  height: 210px;
   border: none;
   border-radius: 45px;
-  background: var(--main-01, #fe6c50);
-  box-shadow: 0 4px 4px 7px rgba(0, 0, 0, 0.25);
   color: #fff;
-  text-align: center;
-  font-family: var(--font-paperlogy);
-  font-size: 68px;
-  font-style: normal;
+  font-size: 80px;
   font-weight: 700;
-  line-height: 100%;
   cursor: pointer;
 }
 
-.amount-page__donate-btn:disabled {
-  background: #c4c4c4;
-  cursor: not-allowed;
+/* 진행 블록 (Figma: chip 아래 130, 로고 105 → 바 20 → 라벨) */
+.amount-progress {
+  display: flex;
+  flex-direction: column;
+  margin: 130px 0 0;
 }
 
-.amount-page__donate-btn:active:not(:disabled) {
-  opacity: 0.94;
+.amount-progress__logo {
+  height: 105px;
+  width: auto;
+  object-fit: contain;
+  align-self: flex-start;
+}
+
+.amount-progress__bar {
+  height: 20px;
+  margin-top: 72px;
+  border-radius: 999px;
+  background: #e8e8e8;
+  overflow: hidden;
+}
+
+.amount-progress__fill {
+  height: 100%;
+  border-radius: 999px;
+}
+
+.amount-progress__label {
+  margin: 50px 0 0;
+  align-self: flex-end;
+  font-size: 76px;
+  font-weight: 700;
+}
+
+/* 진행 블록과 라벨 사이 전폭 구분선 (Figma Line 65) */
+.amount-divider {
+  height: 0;
+  margin: 124px 0 112px;
+  border: none;
+  border-top: 2px solid #e8e8e8;
+}
+
+/* "기부금을 선택해 주세요" — 프리셋 그리드와 같은 인셋(170+123=293) */
+.amount-page__label {
+  margin: 0 0 38px 123px;
+  font-size: 66px;
+  font-weight: 400;
+  text-align: left;
+  color: #636363;
+}
+
+/* 금액 프리셋 그리드 — 2×2, 본문 안쪽 123px 인셋(max-width 1574 중앙) */
+.amount-grid {
+  display: grid;
+  grid-template-columns: 772px 772px;
+  column-gap: 30px;
+  row-gap: 63px;
+  width: 100%;
+  max-width: 1574px;
+  margin: 0 auto;
+}
+
+.amount-opt {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 350px;
+  border: 5px solid #e8e8e8;
+  border-radius: 45px;
+  background: #fff;
+  font-family: "Paperlogy", "Noto Sans KR", sans-serif;
+  font-size: 90px;
+  font-weight: 700;
+  color: #636363;
+  cursor: pointer;
+}
+
+.amount-empty {
+  font-size: 50px;
+  color: var(--color-text-muted, #999999);
+  text-align: center;
+  padding: 80px 0;
+}
+
+/* 세금 안내 불릿 (Figma: 그리드 아래 46, 55px, #999, ms 82.5) */
+.amount-note {
+  margin: 46px 0 0;
+  padding-left: 82px;
+  font-size: 55px;
+  font-weight: 400;
+  line-height: 1.18;
+  color: #999999;
+  text-align: left;
+  list-style: disc;
+}
+
+.amount-note li {
+  display: list-item;
+}
+
+/* "이 캠페인은 unicef 와 함께합니다." (Figma: 노트 아래 158, 70px #636363, 중앙) */
+.amount-partner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 24px;
+  margin: 158px 0 0;
+  font-size: 70px;
+  font-weight: 400;
+  color: #636363;
+}
+
+.amount-partner__logo {
+  height: 70px;
+  width: auto;
+  object-fit: contain;
+}
+
+/* CTA — 전폭(1820), h208, radius45, 비활성 #999 (Figma) */
+.amount-cta {
+  width: 100%;
+  margin: auto 0 107px;
+  height: 208px;
+  border: none;
+  border-radius: 45px;
+  background: #999999;
+  color: #fff;
+  font-size: 70px;
+  font-weight: 700;
+  cursor: pointer;
 }

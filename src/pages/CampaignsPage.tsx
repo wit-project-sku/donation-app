@@ -3,6 +3,8 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAppNavigate } from "../hooks/useAppNavigate";
 import { fetchCampaignsPage } from "../api/campaigns";
 import { PageBody } from "../components/layout/PageBody";
+import { AppHeader } from "../components/AppHeader";
+import { IconSearch } from "../components/Icon";
 import { useDonationStore } from "../store/donationStore";
 import { useTheme } from "../theme/ThemeContext";
 import type { Campaign } from "../types";
@@ -13,16 +15,31 @@ const CAMPAIGNS_PAGE_SIZE = 20;
 export function CampaignsPage() {
   const navigate = useAppNavigate();
   const { setSelectedCampaign } = useDonationStore();
-  const { theme } = useTheme();
+  const { theme, category } = useTheme();
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [query, setQuery] = useState("");
 
-  const { data: pageData, isLoading, isError } = useQuery({
+  const isSchool = category === "school";
+
+  const {
+    data: pageData,
+    isLoading,
+    isError,
+  } = useQuery({
     queryKey: ["campaigns", "grid"],
-    queryFn: () => fetchCampaignsPage({ pageNum: 1, pageSize: CAMPAIGNS_PAGE_SIZE }),
+    queryFn: () =>
+      fetchCampaignsPage({ pageNum: 1, pageSize: CAMPAIGNS_PAGE_SIZE }),
     staleTime: 5 * 60 * 1000,
   });
 
   const campaigns = useMemo(() => pageData?.content ?? [], [pageData?.content]);
+
+  // 학교 플로우에서만 이름 검색(백엔드 카테고리 필드 부재 → 클라이언트 필터)
+  const visibleCampaigns = useMemo(() => {
+    if (!isSchool || !query.trim()) return campaigns;
+    const q = query.trim().toLowerCase();
+    return campaigns.filter((c) => c.title.toLowerCase().includes(q));
+  }, [campaigns, isSchool, query]);
 
   useEffect(() => {
     if (campaigns.length === 0) return;
@@ -30,11 +47,13 @@ export function CampaignsPage() {
   }, [campaigns]);
 
   const selectedCampaign = useMemo(
-    () => campaigns.find((campaign) => campaign.id === selectedId) ?? null,
+    () => campaigns.find((c) => c.id === selectedId) ?? null,
     [campaigns, selectedId],
   );
 
-  const handleOpenCampaign = useCallback(
+  const heroCampaign = selectedCampaign ?? campaigns[0] ?? null;
+
+  const handleOpen = useCallback(
     (campaign: Campaign) => {
       setSelectedId(campaign.id);
       setSelectedCampaign(campaign);
@@ -52,7 +71,8 @@ export function CampaignsPage() {
   if (isLoading) {
     return (
       <PageBody className="campaigns-page" scroll={false}>
-        <p className="campaigns-page__loading">불러오는 중...</p>
+        <AppHeader title={isSchool ? "학교" : "NGO"} />
+        <p className="campaigns-page__state">불러오는 중...</p>
       </PageBody>
     );
   }
@@ -60,10 +80,8 @@ export function CampaignsPage() {
   if (isError || campaigns.length === 0) {
     return (
       <PageBody className="campaigns-page" scroll={false}>
-        <p
-          className="campaigns-page__loading campaigns-page__loading--error"
-          style={{ color: "#b42318" }}
-        >
+        <AppHeader title={isSchool ? "학교" : "NGO"} />
+        <p className="campaigns-page__state campaigns-page__state--error">
           캠페인을 불러오지 못했습니다
         </p>
       </PageBody>
@@ -71,52 +89,100 @@ export function CampaignsPage() {
   }
 
   return (
-    <PageBody className="campaigns-page" scroll={false}>
-      <header className="campaigns-page__header">
-        <p className="campaigns-page__header-desc">
-          기부금 전액이 현장 지원에 사용되며, 법정 기부금으로서 세액공제 혜택이 적용됩니다
-        </p>
-        <h1 className="campaigns-page__title">이 마음을 전해볼까요?</h1>
-      </header>
-
-      <div className="campaigns-page__scroll">
-        <div className="campaigns-page__grid" role="list">
-          {campaigns.map((campaign) => (
-            <button
-              key={campaign.id}
-              type="button"
-              className="campaigns-page__card"
-              role="listitem"
-              onClick={() => handleOpenCampaign(campaign)}
-              aria-label={`${campaign.title} 캠페인 보기`}
-            >
-              <span className="campaigns-page__card-visual">
-                <img
-                  className="campaigns-page__card-image"
-                  src={campaign.imageUrl}
-                  alt=""
-                  decoding="async"
-                />
-                <span className="campaigns-page__card-overlay" aria-hidden />
-                <span className="campaigns-page__card-title">{campaign.title}</span>
-              </span>
-              <span className="campaigns-page__card-action">기부하기</span>
-            </button>
-          ))}
+    <PageBody className="campaigns-page">
+      {heroCampaign && (
+        <div className="campaigns-hero">
+          <img
+            className="campaigns-hero__img"
+            src={heroCampaign.imageUrl}
+            alt=""
+          />
+          <div className="campaigns-hero__overlay" aria-hidden />
+          <h2 className="campaigns-hero__headline">
+            당신의 따뜻한 마음이
+            <br />
+            누군가의 희망이 됩니다
+          </h2>
         </div>
+      )}
+
+      <div className="campaigns-header-overlay">
+        <AppHeader title={isSchool ? "학교" : "NGO"} light />
       </div>
 
-      <div className="campaigns-page__cta-fade" aria-hidden />
-      <div className="campaigns-page__cta-wrap">
-        <button
-          type="button"
-          className="campaigns-page__cta"
-          onClick={handleStart}
-          disabled={!selectedCampaign}
-          style={{ backgroundColor: theme.primary }}
-        >
-          이 마음으로 시작하기
-        </button>
+      <div className="campaigns-body">
+        <p className="campaigns-note">
+          기부금 전액이 현장 지원에 사용되며,
+          <br />
+          법정 기부금으로서 세액공제 혜택이 적용됩니다
+        </p>
+        <p className="campaigns-body__label">
+          기부할 {isSchool ? "학교를" : "캠페인을"} 선택해주세요
+        </p>
+
+        {isSchool && (
+          <div
+            className="campaigns-search"
+            style={query ? { borderColor: theme.primary } : undefined}
+          >
+            <input
+              className="campaigns-search__input"
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="학교를 검색해 찾아보세요"
+            />
+            <IconSearch
+              className="campaigns-search__icon"
+              width={44}
+              height={44}
+              style={{ color: theme.primary }}
+            />
+          </div>
+        )}
+
+        <div className="campaigns-grid" role="list">
+          {visibleCampaigns.map((campaign) => {
+            const active = campaign.id === selectedId;
+            return (
+              <button
+                key={campaign.id}
+                type="button"
+                className={`campaign-card ${active ? "campaign-card--active" : ""}`}
+                role="listitem"
+                onClick={() => handleOpen(campaign)}
+                aria-label={`${campaign.title} 캠페인 보기`}
+              >
+                <span
+                  className="campaign-card__visual"
+                  style={active ? { borderColor: theme.primary } : undefined}
+                >
+                  <img
+                    className="campaign-card__image"
+                    src={campaign.imageUrl}
+                    alt=""
+                    decoding="async"
+                  />
+                  <span className="campaign-card__title">{campaign.title}</span>
+                </span>
+                <span className="campaign-card__action">기부하기</span>
+              </button>
+            );
+          })}
+          {visibleCampaigns.length === 0 && (
+            <p className="campaigns-grid__empty">검색 결과가 없습니다</p>
+          )}
+        </div>
+
+        <div className="campaigns-cta-wrap">
+          <button
+            type="button"
+            className="campaigns-cta"
+            onClick={handleStart}
+            disabled={!selectedCampaign}
+          >
+            이 마음으로 시작하기
+          </button>
+        </div>
       </div>
     </PageBody>
   );

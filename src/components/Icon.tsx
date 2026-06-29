@@ -14,13 +14,14 @@ import {
   User,
   Users,
   Wifi,
-  ArrowLeft,
+  ChevronLeft,
+  School,
 } from "lucide-react";
 
 type IconProps = LucideProps;
 
 export function IconBack(props: IconProps) {
-  return <ArrowLeft strokeWidth={2.5} {...props} />;
+  return <ChevronLeft strokeWidth={2} {...props} />;
 }
 
 export function IconCheck(props: IconProps) {
@@ -75,6 +76,10 @@ export function IconUsers(props: IconProps) {
   return <Users strokeWidth={2} {...props} />;
 }
 
+export function IconSchool(props: IconProps) {
+  return <School strokeWidth={2} {...props} />;
+}
+
 export function IconSearch(props: SVGProps<SVGSVGElement>) {
   return (
     <svg
@@ -84,13 +89,7 @@ export function IconSearch(props: SVGProps<SVGSVGElement>) {
       aria-hidden
       {...props}
     >
-      <circle
-        cx="29"
-        cy="29"
-        r="17.5"
-        stroke="currentColor"
-        strokeWidth="9"
-      />
+      <circle cx="29" cy="29" r="17.5" stroke="currentColor" strokeWidth="9" />
       <path
         d="M42.5 42.5L61 61"
         stroke="currentColor"

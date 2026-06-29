@@ -1,310 +1,192 @@
 .payment-page {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  box-sizing: border-box;
-  padding: 58px 0 0;
-  overflow: hidden;
-  display: grid;
-  grid-template-rows: minmax(0, 1fr) auto;
-  background: #fff;
+  display: flex;
+  flex-direction: column;
 }
 
-.payment-page.page-body {
-  display: grid;
-  flex: 1;
-  height: 100%;
-  padding: 58px 0 0;
+/* 헤더/푸터 풀블리드 + 한 화면 고정 (PageBody 기본 패딩/gap 제거) — AmountPage와 동일 */
+.page-body.payment-page {
+  padding: 0;
   gap: 0;
-  min-height: 0;
-  overflow: hidden;
 }
 
-.payment-page__main {
-  min-height: 0;
-  overflow-y: auto;
-  padding: 0 58px 48px;
-  box-sizing: border-box;
+/* Figma: 본문 좌우 170px, 헤더 바로 아래 ~20px 에서 칩 시작 */
+.payment-page__body {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 56px;
-  scrollbar-width: auto;
-  scrollbar-color: var(--main-01, #fe6c50) transparent;
+  flex: 1 0 auto;
+  padding: 20px 170px 0;
 }
 
-.payment-page__main::-webkit-scrollbar {
-  width: 34.32px;
-}
-
-.payment-page__main::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.payment-page__main::-webkit-scrollbar-thumb {
-  display: flex;
-  width: 34.32px;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  background: #fe6c50;
-  border-radius: 999px;
-  min-height: 120px;
-}
-
-/* Summary card */
-.payment-page__summary {
-  width: 1829px;
-  max-width: 100%;
-  height: 689px;
-  padding: 48px 64px;
-  box-sizing: border-box;
-  border-radius: 80px;
-  border: 5px solid var(--5, #e8e8e8);
-  background: #fff;
-  box-shadow: 4px 4px 7px 0 rgba(0, 0, 0, 0.25);
-  display: flex;
-  flex-direction: column;
-  gap: 32px;
-  flex-shrink: 0;
-}
-
-.payment-page__summary-top {
-  display: flex;
-  align-items: flex-start;
-  gap: 48px;
-  flex: 1;
-  min-height: 0;
-}
-
-.payment-page__summary-image {
-  width: 351px;
-  height: 351px;
-  border-radius: 45px;
-  background: #d9d9d9;
-  object-fit: cover;
-  flex-shrink: 0;
-}
-
-.payment-page__summary-info {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 32px;
-  min-width: 0;
-  padding-top: 8px;
-}
-
-.payment-page__summary-badge {
+/* 캠페인 칩 — AmountPage와 동일 (1270×180, r45, theme.primary, 흰 글씨 80px) */
+.pay-chip {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  gap: 20px;
-  width: auto;
-  max-width: 100%;
-  height: 150px;
-  padding: 0 40px;
+  gap: 38px;
+  align-self: flex-start;
+  height: 180px;
+  padding: 0 64px;
+  border: none;
   border-radius: 45px;
   color: #fff;
-  font-family: var(--font-paperlogy);
-  font-size: 68px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: normal;
-  box-sizing: border-box;
-  white-space: nowrap;
-}
-
-.payment-page__summary-badge span {
-  white-space: nowrap;
-}
-
-.payment-page__summary-badge-icon {
-  width: 68px;
-  height: 61px;
-  aspect-ratio: 68 / 61;
-  flex-shrink: 0;
-}
-
-.payment-page__summary-amount {
-  display: flex;
-  align-items: baseline;
-  gap: 12px;
-  margin: 0;
-}
-
-.payment-page__summary-amount-value {
-  color: var(--main-01, #fe6c50);
-  -webkit-text-stroke-width: 1px;
-  -webkit-text-stroke-color: var(--main-01, #fe6c50);
-  font-family: var(--font-paperlogy);
-  font-size: 150px;
-  font-style: normal;
+  font-size: 80px;
   font-weight: 700;
-  line-height: normal;
+  cursor: pointer;
 }
 
-.payment-page__summary-amount-currency {
-  color: var(--main, #999);
-  font-family: var(--font-paperlogy);
-  font-size: 100px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: normal;
-}
-
-.payment-page__summary-divider {
-  width: 1701px;
-  max-width: 100%;
-  height: 5px;
-  margin: 0 auto;
-  background: var(--5, #e8e8e8);
-  flex-shrink: 0;
-}
-
-.payment-page__summary-note {
-  margin: 0;
-  color: var(--main, #999);
-  font-family: var(--font-paperlogy);
-  font-size: 44px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: normal;
-  word-break: keep-all;
-}
-
-/* Payment method */
-.payment-page__method {
-  width: 1829px;
-  max-width: 100%;
+/* 진행 블록 — Figma: 칩 아래 unicef 로고 → 진행바 → 누적라벨 → 구분선 */
+.pay-progress {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 24px;
-  flex-shrink: 0;
-  margin-top: 32px;
+  margin: 130px 0 0;
 }
 
-.payment-page__method-title {
-  margin: 0;
-  color: #6d6d6d;
-  font-family: var(--font-paperlogy);
-  font-size: 68px;
-  font-style: normal;
+.pay-progress__logo {
+  height: 105px;
+  width: auto;
+  object-fit: contain;
+  align-self: flex-start;
+}
+
+.pay-progress__bar {
+  height: 20px;
+  margin-top: 72px;
+  border-radius: 999px;
+  background: #e8e8e8;
+  overflow: hidden;
+}
+
+.pay-progress__fill {
+  height: 100%;
+  border-radius: 999px;
+}
+
+.pay-progress__label {
+  margin: 50px 0 0;
+  align-self: flex-end;
+  font-size: 76px;
   font-weight: 700;
-  line-height: normal;
 }
 
-.payment-page__method-desc {
+/* 구분선 — AmountPage와 동일 (2px, 124 위 / 112 아래) */
+.pay-divider {
+  height: 0;
+  border: none;
+  border-top: 2px solid #e8e8e8;
+  margin: 124px 0 112px;
+}
+
+/* 금액 카드 — Figma: 1299×445, r35.49, border 5 #e8e8e8, pt/px 40.56, gap 20.28 */
+.pay-amount-card {
+  width: 1299px;
+  max-width: 100%;
+  margin: 0 auto;
+  border: 5px solid var(--color-border, #e8e8e8);
+  border-radius: 35.49px;
+  padding: 40.56px 40.56px 0;
+  text-align: center;
+}
+
+.pay-amount-card__label {
   margin: 0;
-  color: var(--main, #999);
-  font-family: var(--font-paperlogy);
-  font-size: 48px;
-  font-style: normal;
+  font-size: 70px;
   font-weight: 400;
-  line-height: normal;
-  word-break: keep-all;
+  line-height: 76.05px;
+  color: var(--color-text-secondary, #636363);
 }
 
-.payment-page__card-btn {
-  display: flex;
+.pay-amount-card__value {
+  margin: 20.28px 0 0;
+  font-family: "Paperlogy", "Noto Sans KR", sans-serif;
+  font-size: 100px;
+  font-weight: 700;
+  line-height: 136.89px;
+  color: var(--color-text-secondary, #636363);
+}
+
+/* 카드 안내 — Figma: 금액카드 바로 아래 "카드"(63px #6d6d6d) + 안내(50px #999) */
+.pay-method-title {
+  margin: 0;
+  font-size: 63px;
+  font-weight: 700;
+  color: #6d6d6d;
+}
+
+.pay-method-desc {
+  margin: 30px 0 0;
+  font-size: 50px;
+  font-weight: 400;
+  color: var(--color-text-muted, #999999);
+}
+
+/* 카드 박스 — Figma: 400×400, r45, border 5 #e8e8e8 */
+.pay-card {
+  display: inline-flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 24px;
+  gap: 28px;
+  align-self: flex-start;
   width: 400px;
   height: 400px;
-  padding: 32px;
-  border: 5px solid var(--5, #e8e8e8);
+  margin-top: 72px;
+  border: 5px solid var(--color-border, #e8e8e8);
   border-radius: 45px;
   background: #fff;
   box-shadow: 0 4px 4px 3px rgba(0, 0, 0, 0.25);
   cursor: pointer;
-  box-sizing: border-box;
 }
 
-.payment-page__card-btn--selected {
-  border-color: var(--main-01, #fe6c50);
-}
-
-.payment-page__card-btn-icon {
+.pay-card__icon {
   width: 235px;
-  height: 235px;
-  aspect-ratio: 1 / 1;
+  height: auto;
   object-fit: contain;
-  display: block;
-  transform: rotate(90deg);
 }
 
-.payment-page__card-btn-label {
-  color: var(--main, #999);
-  font-family: var(--font-paperlogy);
+.pay-card__label {
   font-size: 48px;
-  font-style: normal;
   font-weight: 400;
-  line-height: normal;
+  color: var(--color-text-secondary, #636363);
+}
+
+/* 파트너 안내 — Figma: 중앙 정렬, 70px #636363, unicef 로고 인라인 */
+.pay-partner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 24px;
+  margin: 158px 0 0;
+  font-size: 70px;
+  font-weight: 400;
+  color: var(--color-text-secondary, #636363);
+}
+
+.pay-partner__logo {
+  height: 70px;
+  width: auto;
+  object-fit: contain;
+}
+
+.pay-error {
+  margin: 32px 0 0;
+  padding: 28px 36px;
+  border-radius: 24px;
+  background: #fdecec;
+  color: #b42318;
+  font-size: 40px;
   text-align: center;
 }
 
-.payment-page__card-btn--selected .payment-page__card-btn-label {
-  color: var(--main-01, #fe6c50);
-  -webkit-text-stroke-width: 1px;
-  -webkit-text-stroke-color: var(--main-01, #fe6c50);
-}
-
-.payment-page__card-btn:active {
-  opacity: 0.96;
-}
-
-/* Error */
-.payment-page__error {
+/* 결제하기 — AmountPage CTA와 동일 (1820×208, r45, 비활성 #999, 선택 시 theme.primary) */
+.pay-cta {
   width: 100%;
-  max-width: 1829px;
-  margin: 0;
-  padding: 24px 32px;
-  border-radius: 45px;
-  border: 3px solid #e8a0a0;
-  background: #fff5f5;
-  color: #b42318;
-  font-family: var(--font-paperlogy);
-  font-size: 40px;
-  font-weight: 500;
-  line-height: 1.4;
-  box-sizing: border-box;
-}
-
-/* Bottom pay button — same as amount page */
-.payment-page__pay-wrap {
-  flex-shrink: 0;
-  display: flex;
-  justify-content: center;
-  width: 100%;
-  margin-bottom: 52px;
-}
-
-.payment-page__pay-btn {
-  width: 1821px;
-  max-width: calc(100% - 116px);
-  height: 210px;
+  margin: auto 0 107px;
+  height: 208px;
   border: none;
   border-radius: 45px;
-  background: var(--main-01, #fe6c50);
-  box-shadow: 0 4px 4px 7px rgba(0, 0, 0, 0.25);
+  background: #999999;
   color: #fff;
-  text-align: center;
-  font-family: var(--font-paperlogy);
-  font-size: 68px;
-  font-style: normal;
+  font-size: 70px;
   font-weight: 700;
-  line-height: 100%;
   cursor: pointer;
-}
-
-.payment-page__pay-btn:disabled {
-  background: #c4c4c4;
-  cursor: not-allowed;
-}
-
-.payment-page__pay-btn:active:not(:disabled) {
-  opacity: 0.94;
 }

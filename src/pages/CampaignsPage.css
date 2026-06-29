@@ -1,252 +1,220 @@
 .campaigns-page {
+  display: flex;
+  flex-direction: column;
+}
+
+/* 캠페인: 헤더가 히어로에 오버레이되도록 풀블리드(PageBody 패딩/gap 제거) + 헤더 absolute */
+.page-body.campaigns-page {
   position: relative;
-  width: 100%;
-  height: 100%;
-  box-sizing: border-box;
-  padding: 58px 0 0;
-  overflow: hidden;
-  display: grid;
-  grid-template-rows: auto 1fr;
-  background: #fff;
-}
-
-.campaigns-page.page-body {
-  display: grid;
-  flex: 1;
-  height: 100%;
-  padding: 58px 0 0;
-  gap: 0;
-  min-height: 0;
-}
-
-/* Header */
-.campaigns-page__header {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-bottom: 80px;
-  padding: 0 58px;
-  box-sizing: border-box;
-}
-
-.campaigns-page__label {
-  margin: 0;
-  color: var(--main, #999);
-  font-family: var(--font-paperlogy);
-  font-size: 36px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: normal;
-}
-
-.campaigns-page__title {
-  margin: 0;
-  color: #636363;
-  font-family: var(--font-paperlogy);
-  font-size: 68px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: normal;
-  word-break: keep-all;
-}
-
-.campaigns-page__header-desc {
-  margin: 0;
-  color: var(--main-01, #fe6c50);
-  font-family: var(--font-paperlogy);
-  font-size: 36px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: normal;
-  word-break: keep-all;
-}
-
-.campaigns-page__loading {
-  margin: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  grid-row: 1 / -1;
-  color: #999;
-  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 46px;
-  font-weight: 800;
-}
-
-.campaigns-page__loading--error {
-  color: #b42318;
-}
-
-/* Scrollable grid area — full body width, edge to edge */
-.campaigns-page__scroll {
-  min-height: 0;
-  width: 100%;
-  overflow-y: auto;
-  overflow-x: hidden;
-  padding-bottom: 240px;
-  scrollbar-width: auto;
-  scrollbar-color: var(--main-01, #fe6c50) transparent;
-}
-
-.campaigns-page__scroll::-webkit-scrollbar {
-  width: 34.32px;
-}
-
-.campaigns-page__scroll::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.campaigns-page__scroll::-webkit-scrollbar-thumb {
-  background: #fe6c50;
-  border-radius: 999px;
-  min-height: 120px;
-}
-
-/* Campaign grid */
-.campaigns-page__grid {
-  display: grid;
-  grid-template-columns: repeat(3, 530px);
-  column-gap: 80px;
-  row-gap: 80px;
-  justify-content: center;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.campaigns-page__card {
-  width: 530px;
-  height: 630px;
-  display: flex;
-  flex-direction: column;
-  border-radius: 45px;
-  overflow: hidden;
-  border: none;
   padding: 0;
-  background: #fff;
-  box-shadow: 0 4px 4px 3px rgba(0, 0, 0, 0.1);
-  cursor: pointer;
-  text-align: center;
+  gap: 0;
 }
 
-.campaigns-page__card:active {
-  opacity: 0.96;
+/* 헤더를 히어로 위에 오버레이 (Figma: 헤더·히어로 둘 다 top-0) */
+.campaigns-header-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
 }
 
-.campaigns-page__card-visual {
+/* Hero — 헤더 오버레이형, 시트가 Figma 기준 ~2032px(53%)에서 시작하도록 풀높이 */
+.campaigns-hero {
   position: relative;
-  flex: 1;
-  min-height: 0;
-  width: 100%;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
+  flex: 0 0 auto;
+  height: 2150px;
   overflow: hidden;
 }
 
-.campaigns-page__card-image {
-  position: absolute;
-  inset: 0;
+.campaigns-hero__img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center;
-  pointer-events: none;
+  display: block;
 }
 
-.campaigns-page__card-overlay {
+.campaigns-hero__overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    180deg,
-    rgba(0, 0, 0, 0) 45%,
-    rgba(0, 0, 0, 0.55) 100%
-  );
-  pointer-events: none;
+  /* Figma: full-bleed 0.2 black dim + bottom fade-to-#c4c4c4 (584px) */
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, #c4c4c4 100%) bottom /
+      100% 584px no-repeat,
+    rgba(0, 0, 0, 0.2);
 }
 
-.campaigns-page__card-title {
-  position: relative;
-  z-index: 1;
-  margin: 0 24px 36px;
+.campaigns-hero__headline {
+  position: absolute;
+  left: 170px;
+  bottom: 190px;
+  margin: 0;
+  width: 1276px;
   color: #fff;
-  font-family: var(--font-paperlogy);
-  font-size: 48px;
-  font-style: normal;
-  font-weight: 700;
-  line-height: normal;
-  text-align: center;
-  word-break: keep-all;
+  font-size: 128px;
+  font-weight: 900;
+  line-height: 1.18;
 }
 
-.campaigns-page__card-action {
-  flex-shrink: 0;
+/* White sheet — 바닥까지 채워서 CTA를 하단에 고정 (Figma: 시트 2032→3840) */
+.campaigns-body {
+  position: relative;
+  margin-top: -120px;
+  background: #fff;
+  padding: 150px 170px 0;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 세금 안내문 — 히어로 바로 아래(라벨 위), 흰 배경 (Figma 4997:98377) */
+.campaigns-note {
+  margin: 0 0 120px;
+  font-size: 55px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--color-text-muted, #999999);
+}
+
+.campaigns-body__label {
+  margin: 0 0 56px;
+  font-size: 70px;
+  font-weight: 700;
+  color: #000000;
+}
+
+/* School search */
+.campaigns-search {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  border: 4px solid var(--color-border, #e8e8e8);
+  border-radius: 999px;
+  padding: 36px 56px;
+  margin-bottom: 64px;
+}
+
+.campaigns-search__input {
+  flex: 1;
+  border: none;
+  background: none;
+  font-size: 60px;
+  font-weight: 500;
+  color: var(--color-text-secondary, #636363);
+}
+
+.campaigns-search__input::placeholder {
+  color: var(--color-text-muted, #999999);
+}
+
+.campaigns-search__icon {
+  flex: 0 0 auto;
+}
+
+/* Card carousel */
+.campaigns-grid {
+  display: flex;
+  gap: 85px;
+  overflow-x: auto;
+  padding-bottom: 32px;
+}
+
+.campaign-card {
+  box-sizing: border-box;
+  flex: 0 0 550px;
+  display: flex;
+  flex-direction: column;
+  height: 630px;
+  background: #fff;
+  border: 7px solid transparent;
+  border-radius: 45px;
+  box-shadow: 0 4px 4px 3px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  padding: 0;
+  cursor: pointer;
+}
+
+.campaign-card__visual {
+  position: relative;
+  display: block;
+  flex: 0 0 530px;
+  height: 530px;
+  border-top-left-radius: 45px;
+  border-top-right-radius: 45px;
+  overflow: hidden;
+}
+
+.campaign-card__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.campaign-card__title {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 36px 36px;
+  background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.5));
+  color: #fff;
+  font-size: 48px;
+  font-weight: 700;
+  text-align: left;
+}
+
+.campaign-card__action {
+  flex: 1 1 auto;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 100%;
-  height: 96px;
-  border-top: 1px solid #ececec;
-  background: #ffffff;
-  color: var(--main, #999);
-  font-family: var(--font-paperlogy);
-  font-size: 48px;
-  font-style: normal;
+  font-size: 50px;
   font-weight: 600;
-  line-height: normal;
+  color: var(--color-text-muted, #999999);
+  text-align: center;
 }
 
-/* Bottom fade — sits under the floating button */
-.campaigns-page__cta-fade {
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 2160px;
-  height: 584px;
-  z-index: 5;
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0) 0%,
-    #c4c4c4 100%
-  );
-  pointer-events: none;
+.campaigns-grid__empty {
+  padding: 80px;
+  font-size: 50px;
+  color: var(--color-text-muted, #999999);
 }
 
-.campaigns-page__cta-wrap {
-  position: absolute;
-  bottom: 52px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 10;
-  display: flex;
-  justify-content: center;
-  width: 1560px;
-  max-width: calc(100% - 116px);
-  pointer-events: none;
+/* CTA — white button, black text. 시트 내부 하단에 고정(Figma: 버튼 3455→3669, 아래 여백 ~171) */
+.campaigns-cta-wrap {
+  margin-top: auto;
+  padding: 56px 0 171px;
 }
 
-.campaigns-page__cta {
-  width: 1560px;
-  max-width: 100%;
+.campaigns-cta {
+  width: 100%;
   height: 210px;
   border: none;
   border-radius: 45px;
+  background: #ffffff;
+  color: #000000;
   box-shadow: 0 4px 4px 7px rgba(0, 0, 0, 0.25);
-  color: #fff;
-  font-family: var(--font-paperlogy);
-  font-size: 68px;
-  font-style: normal;
+  font-size: 70px;
   font-weight: 700;
-  line-height: normal;
   cursor: pointer;
-  pointer-events: auto;
 }
 
-.campaigns-page__cta:active:not(:disabled) {
-  opacity: 0.94;
+.campaigns-cta:disabled {
+  background: var(--color-disabled, #c0b8b0);
+  color: #fff;
+  box-shadow: none;
 }
 
-.campaigns-page__cta:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
+/* States */
+.campaigns-page__state {
+  padding: 300px 96px;
+  text-align: center;
+  font-size: 56px;
+  font-weight: 700;
+  color: var(--color-text-muted, #999999);
+}
+
+.campaigns-page__state--error {
+  color: #b42318;
 }

@@ -1,26 +1,29 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { useCallback, useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
-import { useAppNavigate } from "../hooks/useAppNavigate";
+import {
+  useCallback,
+  useDeferredValue,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { fetchWallEntriesPage, type WallEntry } from "../api/wall";
+import { AppFooter } from "../components/AppFooter";
+import { AppHeader } from "../components/AppHeader";
 import { IconSearch } from "../components/Icon";
 import { VirtualKeyboard } from "../components/VirtualKeyboard";
 import { WallGiverCard } from "../components/WallGiverCard";
 import { PageBody } from "../components/layout/PageBody";
-import { finishDonationFlow } from "../config/navigation";
 import { useDonationStore } from "../store/donationStore";
 import { useTheme } from "../theme/ThemeContext";
 import { defaultDonationImage } from "../utils/defaultDonationImage";
-import {
-  appendKeyboardInput,
-  removeLastHangul,
-} from "../utils/hangulInput";
+import { appendKeyboardInput, removeLastHangul } from "../utils/hangulInput";
 import "./WallPage.css";
 
 const WALL_PAGE_SIZE = 9;
 const SCROLL_LOAD_THRESHOLD = 240;
 
 export function WallPage() {
-  const navigate = useAppNavigate();
   const { theme } = useTheme();
   const [search, setSearch] = useState("");
   const [keyboardOpen, setKeyboardOpen] = useState(false);
@@ -36,7 +39,6 @@ export function WallPage() {
     selectedCampaign,
     capturedPhotoUrl,
     submittedRecordId,
-    resetSession,
   } = useDonationStore();
 
   const {
@@ -64,7 +66,6 @@ export function WallPage() {
 
   useEffect(() => {
     if (!keyboardOpen) return;
-
     const handlePointerDown = (event: PointerEvent) => {
       const target = event.target as Node;
       if (
@@ -75,7 +76,6 @@ export function WallPage() {
       }
       setKeyboardOpen(false);
     };
-
     document.addEventListener("pointerdown", handlePointerDown);
     return () => document.removeEventListener("pointerdown", handlePointerDown);
   }, [keyboardOpen]);
@@ -110,12 +110,9 @@ export function WallPage() {
   const handleGridScroll = useCallback(() => {
     const panel = gridPanelRef.current;
     if (!panel || !hasNextPage || isFetchingNextPage) return;
-
     const distanceFromEnd =
       panel.scrollHeight - panel.scrollTop - panel.clientHeight;
-    if (distanceFromEnd < SCROLL_LOAD_THRESHOLD) {
-      fetchNextPage();
-    }
+    if (distanceFromEnd < SCROLL_LOAD_THRESHOLD) fetchNextPage();
   }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
   const handleKeyPress = (key: string) => {
@@ -126,12 +123,7 @@ export function WallPage() {
     setSearch((value) => appendKeyboardInput(value, key));
   };
 
-  const handleGoHome = () => {
-    finishDonationFlow(navigate, resetSession);
-  };
-
   const themeVars = {
-    backgroundColor: theme.background,
     ["--wall-primary" as string]: theme.primary,
     ["--wall-on-primary" as string]: theme.text.onPrimary,
     ["--wall-text-primary" as string]: theme.text.primary,
@@ -144,32 +136,20 @@ export function WallPage() {
 
   return (
     <PageBody className="wall-page" scroll={false} style={themeVars}>
-      <button
-        type="button"
-        className="wall-page__home-btn"
-        onClick={handleGoHome}
-        style={{
-          backgroundColor: theme.primary,
-          borderColor: theme.primary,
-          color: theme.text.onPrimary,
-        }}
-      >
-        홈으로
-      </button>
+      <AppHeader />
 
-      <main className="wall-page__main">
-        <header className="wall-page__header">
-          <h1 className="wall-page__title">함께해주셔서 감사합니다</h1>
-        </header>
+      <div className="wall-body">
+        <h2 className="wall-title">함께해주셔서 감사합니다</h2>
 
         <div
-          className={`wall-page__search-card${keyboardOpen ? " wall-page__search-card--active" : ""}`}
+          className={`wall-search${keyboardOpen ? " wall-search--on" : ""}`}
           ref={searchRef}
+          style={keyboardOpen ? { borderColor: theme.primary } : undefined}
         >
           <input
-            className="wall-page__search"
+            className="wall-search__input"
             type="text"
-            placeholder="이름 또는 캠페인으로 검색해보세요"
+            placeholder="이름으로 검색해보세요!"
             value={search}
             onChange={(event) => setSearch(event.target.value)}
             onFocus={() => setKeyboardOpen(true)}
@@ -178,7 +158,7 @@ export function WallPage() {
           {search.length > 0 && (
             <button
               type="button"
-              className="wall-page__search-clear"
+              className="wall-search__clear"
               onClick={(event) => {
                 event.stopPropagation();
                 setSearch("");
@@ -188,39 +168,32 @@ export function WallPage() {
               지우기
             </button>
           )}
-          <IconSearch className="wall-page__search-icon" aria-hidden />
+          <IconSearch
+            className="wall-search__icon"
+            width={71}
+            height={68}
+            style={{ color: theme.primary }}
+          />
         </div>
 
         <section
           ref={gridPanelRef}
-          className="wall-page__grid-panel"
+          className="wall-grid-panel"
           aria-label="기부자의 벽"
           onScroll={handleGridScroll}
         >
-          {isLoading && (
-            <p
-              className="wall-page__status"
-              style={{ color: theme.text.secondary }}
-            >
-              불러오는 중...
-            </p>
-          )}
+          {isLoading && <p className="wall-status">불러오는 중...</p>}
           {isError && (
-            <p className="wall-page__status wall-page__status--error">
+            <p className="wall-status wall-status--error">
               기부 내역을 불러오지 못했습니다
             </p>
           )}
           {!isLoading && !isError && visibleEntries.length === 0 && (
-            <p
-              className="wall-page__status"
-              style={{ color: theme.text.secondary }}
-            >
-              표시할 기부 내역이 없습니다
-            </p>
+            <p className="wall-status">표시할 기부 내역이 없습니다</p>
           )}
           {!isLoading && !isError && visibleEntries.length > 0 && (
             <>
-              <div className="wall-page__grid">
+              <div className="wall-grid">
                 {visibleEntries.map((entry) => (
                   <WallGiverCard
                     key={entry.id}
@@ -241,7 +214,7 @@ export function WallPage() {
               {hasNextPage && (
                 <button
                   type="button"
-                  className="wall-page__load-more"
+                  className="wall-load-more"
                   onClick={() => fetchNextPage()}
                   disabled={isFetchingNextPage}
                 >
@@ -251,10 +224,12 @@ export function WallPage() {
             </>
           )}
         </section>
-      </main>
+      </div>
+
+      <AppFooter />
 
       {keyboardOpen && (
-        <div className="wall-page__keyboard" ref={keyboardRef}>
+        <div className="wall-keyboard" ref={keyboardRef}>
           <VirtualKeyboard
             onKeyPress={handleKeyPress}
             onBackspace={() => setSearch((value) => removeLastHangul(value))}

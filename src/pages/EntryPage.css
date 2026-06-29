@@ -1,0 +1,206 @@
+.entry-page {
+  display: flex;
+  flex-direction: column;
+}
+
+/* 진입: 헤더/본문이 Figma 좌표(1px=1디자인px)대로 흐르도록 PageBody 기본 패딩·gap 제거 */
+.page-body.entry-page {
+  padding: 0;
+  gap: 0;
+}
+
+/* 헤드라인 + 서브 (헤더 아래, Figma: 헤드라인 top≈757, 서브 top≈1050) */
+.entry-page__hero {
+  padding: 58px 170px 0;
+  text-align: center;
+}
+
+.entry-page__headline {
+  margin: 0;
+  font-size: 80px;
+  font-weight: 700;
+  line-height: 1.36;
+  color: #000000;
+}
+
+.entry-page__sub {
+  margin: 76px 0 0;
+  font-size: 55px;
+  font-weight: 500;
+  color: var(--color-text-secondary, #636363);
+}
+
+/* 선택 카드 2개 (Figma: 카드 top≈1287, w830/h1158, gap≈180) */
+.entry-page__cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 180px;
+  padding: 166px 170px 0;
+}
+
+.entry-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 60px;
+  height: 1158px;
+  padding: 0 60px;
+  border: 5px solid var(--color-border, #e8e8e8);
+  border-radius: 80px;
+  cursor: pointer;
+  text-align: center;
+}
+
+.entry-card--ngo {
+  background: #f6faf2;
+}
+
+.entry-card--school {
+  background: #eff4f7;
+}
+
+.entry-card__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 540px;
+  height: 540px;
+  border-radius: 999px;
+  background: #ffffff;
+  overflow: hidden;
+}
+
+.entry-card__icon-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.entry-card__icon-img--school {
+  width: 53%;
+  height: 53%;
+}
+
+.entry-card__label {
+  font-family: "Paperlogy", "Noto Sans KR", sans-serif;
+  font-size: 63px;
+  font-weight: 800;
+  color: var(--color-text-secondary, #636363);
+}
+
+.entry-card__desc {
+  font-size: 50px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--color-text-secondary, #636363);
+}
+
+/* 기부내역 보기 (Figma: pill w561/h111, radius 55.5, bg #e8e8e8, 글씨 60/medium/검정) */
+.entry-page__history {
+  align-self: center;
+  margin: 84px 0 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 111px;
+  padding: 0 75px;
+  background: #e8e8e8;
+  border: none;
+  border-radius: 55.5px;
+  font-size: 60px;
+  font-weight: 500;
+  color: #000000;
+  cursor: pointer;
+}
+
+/* featured 배너 (Figma: top≈2704, w1825/h833, radius 45, 0.2 black dim) */
+.entry-page__featured {
+  position: relative;
+  margin: 64px 170px 0;
+  height: 833px;
+  border-radius: 45px;
+  overflow: hidden;
+}
+
+.entry-page__featured-bg {
+  position: absolute;
+  inset: 0;
+}
+
+.entry-page__featured-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 28px;
+  padding: 88px;
+  background: rgba(0, 0, 0, 0.2);
+  color: #fff;
+}
+
+.entry-page__featured-eyebrow {
+  margin: 0;
+  font-size: 48px;
+  font-weight: 500;
+}
+
+.entry-page__featured-title {
+  margin: 0;
+  font-size: 80px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.entry-page__featured-title em {
+  font-style: normal;
+  color: #fcd869;
+}
+
+.entry-page__featured-more {
+  align-self: flex-start;
+  margin-top: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 111px;
+  padding: 0 56px;
+  border: 3px solid #fff;
+  border-radius: 55.5px;
+  font-size: 50px;
+  font-weight: 500;
+}
+
+/* 캐러셀 도트 인디케이터 (Figma: 하단 중앙) */
+.entry-page__featured-dots {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+}
+
+.entry-page__featured-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.entry-page__featured-dot--active {
+  width: 48px;
+  background: #ffffff;
+}
+
+/* 하단 세액공제 안내문 (Figma: 검정 파트너바 없음, 회색 안내문만) */
+.entry-page__note {
+  margin: 177px 170px 77px;
+  text-align: center;
+  font-size: 55px;
+  font-weight: 500;
+  color: var(--color-text-muted, #999999);
+}

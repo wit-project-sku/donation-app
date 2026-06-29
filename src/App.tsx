@@ -1,12 +1,15 @@
 import { useSearchParams } from "react-router-dom";
 import { HashRouter, Route, Routes } from "react-router-dom";
 import { LocationNavigate } from "./components/LocationNavigate";
+// ⚠️ 개발용(디자인 확인) — 배포 전 제거: 이 import 와 아래 <DevFlowNav /> 한 줄.
+import { DevFlowNav } from "./components/DevFlowNav";
 import { AppLayout } from "./components/layout/AppLayout";
 import { KioskShell } from "./components/layout/KioskShell";
 import { AmountPage } from "./pages/AmountPage";
 import { CampaignDetailPage } from "./pages/CampaignDetailPage";
 import { CampaignsPage } from "./pages/CampaignsPage";
 import { CameraCapturePage } from "./pages/CameraCapturePage";
+import { EntryPage } from "./pages/EntryPage";
 import { DonationCertificatePage } from "./pages/DonationCertificatePage";
 import { MessagePage } from "./pages/MessagePage";
 import { MobileCertificatePage } from "./pages/MobileCertificatePage";
@@ -26,10 +29,12 @@ function LocationAwareApp() {
         <Route
           path="/*"
           element={
-            <KioskShell>
+            <>
+              <KioskShell>
               <Routes>
                 <Route element={<AppLayout />}>
-                  <Route path="/" element={<CampaignsPage />} />
+                  <Route path="/" element={<EntryPage />} />
+                  <Route path="/campaigns" element={<CampaignsPage />} />
                   <Route path="/campaign" element={<CampaignDetailPage />} />
                   <Route path="/amount" element={<AmountPage />} />
                   <Route path="/payment" element={<PaymentPage />} />
@@ -53,7 +58,10 @@ function LocationAwareApp() {
                   <Route path="*" element={<LocationNavigate to="/" replace />} />
                 </Route>
               </Routes>
-            </KioskShell>
+              </KioskShell>
+              {/* ⚠️ 개발용(디자인 확인) — 배포 전 제거 */}
+              <DevFlowNav />
+            </>
           }
         />
       </Routes>

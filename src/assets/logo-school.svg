@@ -1,0 +1,11 @@
+<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="학교 로고 (예시)">
+  <!-- image 448 자리표시(예시 로고). 실제 학교 엠블럼 제공 시 동일 위치에 교체. -->
+  <circle cx="100" cy="100" r="92" fill="#FFFFFF" stroke="#30B95C" stroke-width="6"/>
+  <circle cx="100" cy="100" r="78" fill="none" stroke="#30B95C" stroke-width="2" stroke-dasharray="6 6" opacity="0.5"/>
+  <!-- 졸업 모자 -->
+  <path d="M100 58 L150 80 L100 102 L50 80 Z" fill="#30B95C"/>
+  <path d="M70 90 L70 116 C70 128 130 128 130 116 L130 90" fill="none" stroke="#30B95C" stroke-width="7" stroke-linecap="round"/>
+  <line x1="150" y1="80" x2="150" y2="110" stroke="#30B95C" stroke-width="5" stroke-linecap="round"/>
+  <circle cx="150" cy="113" r="6" fill="#30B95C"/>
+  <text x="100" y="158" text-anchor="middle" font-family="'Pretendard','Apple SD Gothic Neo',sans-serif" font-size="26" font-weight="700" fill="#30B95C">학교</text>
+</svg>
