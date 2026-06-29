@@ -60,7 +60,7 @@ function LocationAwareApp() {
               </Routes>
               </KioskShell>
               {/* ⚠️ 개발용(디자인 확인) — 배포 전 제거 */}
-              <DevFlowNav />
+              {/* <DevFlowNav /> */}
             </>
           }
         />
