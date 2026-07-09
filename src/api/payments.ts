@@ -175,11 +175,21 @@ export function buildPaymentRequest(
   method: PaymentMethod,
   type: DonationTypeDto,
 ): ProcessPaymentRequest {
+  const normalizedCampaignId = Number(campaignId);
+  const normalizedTotalAmount = Math.trunc(totalAmount);
+
+  if (!Number.isInteger(normalizedCampaignId) || normalizedCampaignId < 1) {
+    throw new Error("Invalid campaignId for payment request");
+  }
+  if (!Number.isInteger(normalizedTotalAmount) || normalizedTotalAmount < 1) {
+    throw new Error("Invalid totalAmount for payment request");
+  }
+
   return {
     merchantUid,
-    campaignId: Number(campaignId),
-    totalAmount,
+    campaignId: normalizedCampaignId,
+    totalAmount: normalizedTotalAmount,
     paymentMethod: toPaymentMethodDto(method),
-    type,
+    type: type === "SCHOOL" ? "SCHOOL" : "NGO",
   };
 }
