@@ -46,8 +46,10 @@ export function OutfitSelectionPage() {
   const [captureOpen, setCaptureOpen] = useState(false);
   const [greetingMode, setGreetingMode] = useState(false);
   const [captureError, setCaptureError] = useState<string | null>(null);
-  // 촬영 진행 중 표식 — 'generating' 단계에서 한 번만 다음 화면으로 이동시킨다.
+  // 촬영 진행 중 표식 — 결과/타임아웃 시 한 번만 다음 화면으로 이동시킨다.
   const capturingRef = useRef(false);
+  // NGO AI 생성 대기 상한 60초 타이머.
+  const aiTimerRef = useRef<number | null>(null);
 
   const {
     data,
@@ -157,35 +159,56 @@ export function OutfitSelectionPage() {
 
   const cancelCapture = useCallback(() => {
     capturingRef.current = false;
+    if (aiTimerRef.current) window.clearTimeout(aiTimerRef.current);
     getKioskBridge()?.cancelPhoto?.();
     setCaptureOpen(false);
     setCaptureError(null);
     setPhotoStatus("idle");
   }, [setPhotoStatus]);
 
-  // Subscribe to the kiosk photo progress while embedded: once the shot is captured
-  // & sent to the AI ('generating'), close the popup and advance Monitor 1.
+  // Subscribe to the kiosk photo lifecycle while embedded.
+  //  - School: on 'generating' (shot taken) advance to amount; AI runs async.
+  //  - NGO: keep the same guide popup showing (no extra spinner) until the AI
+  //    result arrives, then go to the certificate. 60s is a safety cap.
   useEffect(() => {
     const bridge = getKioskBridge();
     if (!bridge?.on) return;
     const offProgress = bridge.on("photoProgress", (payload) => {
       const p = payload as { phase?: string };
-      if (p.phase === "generating") {
-        if (!capturingRef.current) return;
+      if (p.phase !== "generating" || !capturingRef.current) return;
+      if (isSchool) {
         capturingRef.current = false;
         setCaptureOpen(false);
-        navigate(isSchool ? "/school-amount" : "/certificate");
+        navigate("/school-amount");
+      } else {
+        // NGO: leave the popup as-is; wait for the result (max 60s), then go.
+        if (aiTimerRef.current) window.clearTimeout(aiTimerRef.current);
+        aiTimerRef.current = window.setTimeout(() => {
+          capturingRef.current = false;
+          setCaptureOpen(false);
+          navigate("/certificate");
+        }, 60000);
       }
+    });
+    const offResult = bridge.on("photoResult", () => {
+      if (!capturingRef.current || isSchool) return;
+      capturingRef.current = false;
+      if (aiTimerRef.current) window.clearTimeout(aiTimerRef.current);
+      setCaptureOpen(false);
+      navigate("/certificate");
     });
     const offError = bridge.on("photoError", (payload) => {
       if (!capturingRef.current) return;
       capturingRef.current = false;
+      if (aiTimerRef.current) window.clearTimeout(aiTimerRef.current);
       const message = (payload as { message?: string }).message;
       setCaptureError(message || "촬영에 실패했습니다. 다시 시도해 주세요.");
     });
     return () => {
       offProgress();
+      offResult();
       offError();
+      if (aiTimerRef.current) window.clearTimeout(aiTimerRef.current);
     };
   }, [isSchool, navigate]);
 

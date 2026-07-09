@@ -32,7 +32,7 @@ export function toPaymentMethodDto(method: PaymentMethod): PaymentMethodDto {
 function fallbackRecord(payload: SubmitDonationDetailsPayload): DonationDetailsResponse {
   return {
     campaignName: "",
-    imageUrl: payload.imageUrl,
+    imageUrl: null,
     amount: 0,
     donatorName: payload.donatorName,
   };

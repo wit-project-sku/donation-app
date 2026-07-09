@@ -46,12 +46,23 @@ export function CertificatePromptPage() {
         </div>
 
         <div className="cert-prompt__complete">
-          <img
-            src="/icons/SVGRepo_iconCarrier.png"
-            alt=""
+          {/* 완료 체크 — 조직 테마색 원 + 흰 체크 (Figma 301×301) */}
+          <svg
             className="cert-prompt__check"
+            viewBox="0 0 301 301"
+            fill="none"
             aria-hidden
-          />
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <circle cx="150.5" cy="150.5" r="150.5" fill={theme.primary} />
+            <path
+              d="M88 154L131 197L214 106"
+              stroke="#ffffff"
+              strokeWidth="24"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
           <h2 className="cert-prompt__complete-title">결제 완료</h2>
           <p className="cert-prompt__complete-desc">
             당신의 마음이 필요한 곳에 전해집니다

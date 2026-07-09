@@ -100,12 +100,12 @@ export interface PaymentHistoryDto {
   donatedAt: string;
 }
 
-/** Body for POST /api/donations/details */
+/** `data` part for POST /api/donations/details (multipart; `photo` sent separately) */
 export interface SubmitDonationDetailsPayload {
   merchantUid: string;
   donatorName: string;
-  phoneNumber: string;
-  imageUrl: string | null;
+  /** 학교 흐름 졸업연도. NGO 흐름은 없으므로 null. */
+  graduationYear: number | null;
 }
 
 /** Response data from POST /api/donations/details */

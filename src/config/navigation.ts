@@ -18,6 +18,19 @@ export function finishDonationFlow(
   navigate("/", { replace: true });
 }
 
+export function resetAndGoHome(
+  navigate: (path: string, options?: { replace?: boolean }) => void,
+  resetSession: () => void,
+) {
+  resetSession();
+  const bridge = getKioskBridge();
+  if (bridge) {
+    bridge.goKioskHome();
+    return;
+  }
+  navigate("/", { replace: true });
+}
+
 /** 진입 라우트("/") — 기부 앱의 첫 화면. */
 export const ENTRY_ROUTE = "/";
 

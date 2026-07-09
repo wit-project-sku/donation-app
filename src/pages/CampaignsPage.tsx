@@ -12,7 +12,8 @@ import { PartnerBar } from "../components/PartnerBar";
 import type { Campaign } from "../types";
 import "./CampaignsPage.css";
 
-const CAMPAIGNS_PAGE_SIZE = 20;
+// 모든 캠페인을 한 번에 받아 가로 스크롤로 노출 (개수 제한 없음).
+const CAMPAIGNS_PAGE_SIZE = 100;
 
 export function CampaignsPage() {
   const navigate = useAppNavigate();
@@ -40,16 +41,14 @@ export function CampaignsPage() {
 
   const campaigns = useMemo(() => pageData?.content ?? [], [pageData?.content]);
 
-  // 학교 플로우에서만 이름 검색(백엔드 카테고리 필드 부재 → 클라이언트 필터)
-  // Figma: 3열 × 2행 = 최대 6개만 노출
+  // 학교 플로우에서만 이름 검색(백엔드 카테고리 필드 부재 → 클라이언트 필터).
+  // 개수 제한 없이 전체 노출 — 가로 스크롤로 스와이프.
   const visibleCampaigns = useMemo(() => {
-    const base =
-      isSchool && query.trim()
-        ? campaigns.filter((c) =>
-            c.title.toLowerCase().includes(query.trim().toLowerCase()),
-          )
-        : campaigns;
-    return base.slice(0, 6);
+    return isSchool && query.trim()
+      ? campaigns.filter((c) =>
+          c.title.toLowerCase().includes(query.trim().toLowerCase()),
+        )
+      : campaigns;
   }, [campaigns, isSchool, query]);
 
   const heroCampaign = campaigns[0] ?? null;

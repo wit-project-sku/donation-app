@@ -1,6 +1,6 @@
 import { ApiError } from "./client";
 import { toPaymentMethodDto } from "./submitDonation";
-import type { PaymentMethodDto } from "./types";
+import type { DonationTypeDto, PaymentMethodDto } from "./types";
 import type { PaymentMethod } from "../types";
 
 /** Kiosk payment agent can block until the user finishes on the terminal */
@@ -14,6 +14,8 @@ export interface ProcessPaymentRequest {
   campaignId: number;
   totalAmount: number;
   paymentMethod: PaymentMethodDto;
+  /** 기부 대상 유형 — NGO=캠페인, SCHOOL=학교(같은 campaignId 필드에 학교 id) */
+  type: DonationTypeDto;
 }
 
 export interface ProcessPaymentResponse {
@@ -171,11 +173,13 @@ export function buildPaymentRequest(
   campaignId: string | number,
   totalAmount: number,
   method: PaymentMethod,
+  type: DonationTypeDto,
 ): ProcessPaymentRequest {
   return {
     merchantUid,
     campaignId: Number(campaignId),
     totalAmount,
     paymentMethod: toPaymentMethodDto(method),
+    type,
   };
 }

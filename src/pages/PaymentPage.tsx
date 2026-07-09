@@ -50,6 +50,7 @@ export function PaymentPage() {
           selectedCampaign.id,
           amount,
           method,
+          "NGO",
         ),
       );
     },

@@ -93,32 +93,32 @@ export function MobileCertificatePage() {
       style={{ backgroundColor: theme.background }}
     >
       <div className="mobile-cert__scroll">
-        <article className="mobile-cert__card" aria-label="기부 증서">
-          <h1 className="mobile-cert__title">기부증서</h1>
+        <section className="mobile-cert__hero" aria-label="기부 증서 미리보기">
+          <article className="mobile-cert__card" aria-label="기부 증서 카드">
+            <div className="mobile-cert__photo-wrap">
+              {photoSrc ? (
+                <img
+                  className="mobile-cert__photo"
+                  src={photoSrc}
+                  alt=""
+                  crossOrigin="anonymous"
+                />
+              ) : (
+                <div className="mobile-cert__photo mobile-cert__photo--empty" />
+              )}
+            </div>
 
-          <div className="mobile-cert__photo-wrap">
-            {photoSrc ? (
-              <img
-                className="mobile-cert__photo"
-                src={photoSrc}
-                alt=""
-                crossOrigin="anonymous"
-              />
-            ) : (
-              <div className="mobile-cert__photo mobile-cert__photo--empty" />
-            )}
-          </div>
-
-          <div className="mobile-cert__info">
-            <strong className="mobile-cert__amount">{amountLabel}</strong>
-            {name ? <span className="mobile-cert__name">{name}</span> : null}
-            {phoneLabel ? (
-              <span className="mobile-cert__phone">{phoneLabel}</span>
-            ) : null}
-            {message ? <p className="mobile-cert__message">{message}</p> : null}
-            {date ? <span className="mobile-cert__date">{date}</span> : null}
-          </div>
-        </article>
+            <div className="mobile-cert__info">
+              <strong className="mobile-cert__amount">{amountLabel}</strong>
+              {name ? <span className="mobile-cert__name">{name}</span> : null}
+              {phoneLabel ? (
+                <span className="mobile-cert__phone">{phoneLabel}</span>
+              ) : null}
+              {message ? <p className="mobile-cert__message">{message}</p> : null}
+              {date ? <span className="mobile-cert__date">{date}</span> : null}
+            </div>
+          </article>
+        </section>
 
         {downloadError ? (
           <p className="mobile-cert__error" role="alert">
@@ -126,15 +126,22 @@ export function MobileCertificatePage() {
           </p>
         ) : null}
 
-        <button
-          type="button"
-          className="mobile-cert__download"
-          onClick={downloadImage}
-          disabled={downloading}
-        >
-          <Download size={20} strokeWidth={2.5} aria-hidden />
-          {downloading ? "저장 중..." : "사진 저장하기"}
-        </button>
+        <div className="mobile-cert__actions">
+          <button
+            type="button"
+            className="mobile-cert__download"
+            onClick={downloadImage}
+            disabled={downloading}
+            style={{
+              backgroundColor: theme.primary,
+              color: theme.text.onPrimary,
+              borderColor: theme.primary,
+            }}
+          >
+            <Download size={20} strokeWidth={2.5} aria-hidden />
+            {downloading ? "저장 중..." : "사진 저장하기"}
+          </button>
+        </div>
       </div>
     </main>
   );

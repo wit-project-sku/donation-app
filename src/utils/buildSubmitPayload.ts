@@ -10,6 +10,8 @@ export type SubmitSessionSlice = {
   donorName: string;
   donorPhone: string;
   message: string;
+  /** 학교 흐름 졸업연도 (NGO 흐름은 null) */
+  graduationYear: number | null;
   capturedPhotoUrl: string | null;
   selectedOutfit: Outfit | null;
   merchantUid: string | null;
@@ -25,21 +27,13 @@ export function buildSubmitPayload(
     throw new Error("기부 저장에 필요한 정보가 없습니다.");
   }
 
-  // blob: and data: URLs are local-only — the backend cannot access them.
-  // When capturedPhotoUrl is a blob:, the actual image is sent as the `photo` multipart part
-  // (see submitCurrentDonation below), so imageUrl stays null here.
-  const shareableImageUrl =
-    state.capturedPhotoUrl &&
-    !state.capturedPhotoUrl.startsWith("blob:") &&
-    !state.capturedPhotoUrl.startsWith("data:")
-      ? state.capturedPhotoUrl
-      : null;
-
+  // The image is delivered separately as the `photo` multipart part (see
+  // submitCurrentDonation); the `data` part carries only these fields.
+  // graduationYear: 학교 흐름은 값, NGO 흐름은 null.
   return {
     merchantUid: state.merchantUid,
     donatorName: state.donorName.trim() || "익명",
-    phoneNumber: state.donorPhone.replace(/\D/g, ""),
-    imageUrl: shareableImageUrl,
+    graduationYear: state.graduationYear,
   };
 }
 

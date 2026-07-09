@@ -56,6 +56,7 @@ export function SchoolPaymentPage() {
           selectedCampaign.id,
           amount,
           method,
+          "SCHOOL",
         ),
       );
     },

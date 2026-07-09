@@ -102,17 +102,24 @@
   flex: 0 0 auto;
 }
 
-/* 3열 카드 그리드 (Figma: 카드 w550/h629, 열간격 85, 행간격 85) */
+/* 전체 캠페인을 가로 스크롤로 노출 (Figma 카드 w550/h629, 간격 85) */
 .campaigns-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 550px);
-  justify-content: space-between;
-  row-gap: 85px;
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 85px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x proximity;
+  /* 카드 그림자가 위/아래로 잘리지 않도록 여백 */
+  padding: 12px 0 32px;
 }
 
 /* 카드 Figma 5535:18382: w550/h629, radius 45, shadow 0 4 4 3 / 0.1 */
 .campaign-card {
   box-sizing: border-box;
+  flex: 0 0 550px;
+  scroll-snap-align: start;
   width: 550px;
   height: 629px;
   display: flex;
@@ -188,7 +195,7 @@
 }
 
 .campaigns-grid__empty {
-  grid-column: 1 / -1;
+  flex: 1 1 auto;
   padding: 80px;
   text-align: center;
   font-size: 50px;
