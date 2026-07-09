@@ -11,7 +11,7 @@ import { useDonationStore } from "../store/donationStore";
 import { exitDonationApp } from "../config/navigation";
 import { PageBody } from "../components/layout/PageBody";
 import { AppHeader } from "../components/AppHeader";
-import type { DonationCategory } from "../types";
+import type { Campaign, DonationCategory } from "../types";
 import ngoIcon from "../assets/entry-ngo.png";
 import schoolIcon from "../assets/entry-school.png";
 import bannerBg from "../assets/featured-banner.png";
@@ -24,6 +24,8 @@ interface BannerSlide {
   eyebrow: ReactNode;
   title: ReactNode;
   image?: string;
+  /** Source campaign (real data) — tapping the banner opens its detail page. */
+  campaign?: Campaign;
 }
 
 /** 캠페인이 없을 때(로딩/오프라인) 보여줄 기본 배너. */
@@ -69,10 +71,25 @@ export function EntryPage() {
   const setDonationCategory = useDonationStore(
     (state) => state.setDonationCategory,
   );
+  const setSelectedCampaign = useDonationStore(
+    (state) => state.setSelectedCampaign,
+  );
 
   const choose = (category: Exclude<DonationCategory, "none">) => {
     setDonationCategory(category);
     navigate(category === "school" ? "/school" : "/campaigns");
+  };
+
+  // 하단 배너 탭 → 해당 캠페인 상세 페이지로 이동 (NGO 흐름). 실캠페인이 없으면
+  // (폴백 배너) 캠페인 목록으로 이동한다.
+  const openBanner = (banner: BannerSlide) => {
+    if (!banner.campaign) {
+      navigate("/campaigns");
+      return;
+    }
+    setDonationCategory("ngo");
+    setSelectedCampaign(banner.campaign);
+    navigate("/campaign");
   };
 
   // 하단 배너는 NGO 캠페인 API 로부터 받아온다(같은 fetchCampaignsPage).
@@ -94,6 +111,7 @@ export function EntryPage() {
         campaign.organization?.name ||
         "",
       image: campaign.imageUrl || undefined,
+      campaign,
     }));
   }, [campaignsData]);
 
@@ -179,25 +197,33 @@ export function EntryPage() {
         >
           {bannerSlides.map((banner) => (
             <SwiperSlide key={banner.id} className="entry-featured-slide">
-              <img
-                src={banner.image ?? bannerBg}
-                alt=""
-                className="entry-page__featured-bg-img"
-              />
-              <div className="entry-page__featured-overlay">
-                <p className="entry-page__featured-eyebrow">{banner.eyebrow}</p>
-                <p className="entry-page__featured-title">{banner.title}</p>
-                <button
-                  type="button"
-                  className="entry-page__featured-more"
-                  onClick={() => navigate("/campaigns")}
-                >
-                  더 알아보기
-                  <span className="entry-page__featured-more-chevron" aria-hidden>
-                    ›
+              <button
+                type="button"
+                className="entry-page__featured-hit"
+                onClick={() => openBanner(banner)}
+                aria-label="캠페인 자세히 보기"
+              >
+                <img
+                  src={banner.image ?? bannerBg}
+                  alt=""
+                  className="entry-page__featured-bg-img"
+                />
+                <div className="entry-page__featured-overlay">
+                  <p className="entry-page__featured-eyebrow">
+                    {banner.eyebrow}
+                  </p>
+                  <p className="entry-page__featured-title">{banner.title}</p>
+                  <span className="entry-page__featured-more">
+                    더 알아보기
+                    <span
+                      className="entry-page__featured-more-chevron"
+                      aria-hidden
+                    >
+                      ›
+                    </span>
                   </span>
-                </button>
-              </div>
+                </div>
+              </button>
             </SwiperSlide>
           ))}
         </Swiper>

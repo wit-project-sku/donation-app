@@ -8,6 +8,9 @@ import type {
 } from "../types";
 import type { Outfit } from "../api/outfits";
 
+/** Monitor-2 AI photo lifecycle (kiosk). Transient — not persisted. */
+export type PhotoStatus = "idle" | "generating" | "ready" | "error";
+
 interface DonationState {
   selectedCampaign: Campaign | null;
   donationType: DonationType;
@@ -26,6 +29,8 @@ interface DonationState {
   selectedOutfit: Outfit | null;
   /** Booth / token image URL (from Unity camera or outfit preview) */
   capturedPhotoUrl: string | null;
+  /** Monitor-2 AI photo generation state (transient, not persisted) */
+  photoStatus: PhotoStatus;
   /** Set after successful POST from certificate page */
   submittedRecordId: number | null;
   /** Kiosk payment id sent to /api/donations/payments */
@@ -46,6 +51,7 @@ interface DonationState {
   setSkipPhoto: (skip: boolean) => void;
   setSelectedOutfit: (outfit: Outfit | null) => void;
   setCapturedPhotoUrl: (url: string | null) => void;
+  setPhotoStatus: (status: PhotoStatus) => void;
   setSubmittedRecordId: (id: number | null) => void;
   setMerchantUid: (uid: string | null) => void;
   resetSession: () => void;
@@ -66,6 +72,7 @@ const initialState = {
   skipPhoto: false,
   selectedOutfit: null as Outfit | null,
   capturedPhotoUrl: null as string | null,
+  photoStatus: "idle" as PhotoStatus,
   submittedRecordId: null as number | null,
   merchantUid: null as string | null,
 };
@@ -106,6 +113,7 @@ export const useDonationStore = create<DonationState>()(
       setSkipPhoto: (skip) => set({ skipPhoto: skip }),
       setSelectedOutfit: (outfit) => set({ selectedOutfit: outfit }),
       setCapturedPhotoUrl: (url) => set({ capturedPhotoUrl: url }),
+      setPhotoStatus: (status) => set({ photoStatus: status }),
       setSubmittedRecordId: (id) => set({ submittedRecordId: id }),
       setMerchantUid: (uid) => set({ merchantUid: uid }),
       resetSession: () => set(initialState),

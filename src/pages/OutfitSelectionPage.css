@@ -98,9 +98,11 @@
   margin: 0 71px;
 }
 
-/* 학교 흐름은 1행(교복 카드)만 노출 → 높이 축소 */
+/* 학교 흐름 또는 아이템 2개 이하(1행) → 높이 축소, 가로 나열 */
 .outfit-page--school .outfit-swiper-wrap,
-.outfit-page--school .outfit-swiper {
+.outfit-page--school .outfit-swiper,
+.outfit-page--onerow .outfit-swiper-wrap,
+.outfit-page--onerow .outfit-swiper {
   height: 806px;
 }
 

@@ -16,7 +16,6 @@ import { SchoolCompletePage } from "./pages/SchoolCompletePage";
 import { SchoolRegisterPage } from "./pages/SchoolRegisterPage";
 import { SchoolCertificatePage } from "./pages/SchoolCertificatePage";
 import { SchoolWallPage } from "./pages/SchoolWallPage";
-import { CameraCapturePage } from "./pages/CameraCapturePage";
 import { CertificatePromptPage } from "./pages/CertificatePromptPage";
 import { EntryPage } from "./pages/EntryPage";
 import { DonationCertificatePage } from "./pages/DonationCertificatePage";
@@ -63,7 +62,6 @@ function LocationAwareApp() {
                   />
                   <Route path="/message" element={<MessagePage />} />
                   <Route path="/outfit" element={<OutfitSelectionPage />} />
-                  <Route path="/camera" element={<CameraCapturePage />} />
                   <Route path="/certificate" element={<DonationCertificatePage />} />
                   <Route path="/wall" element={<WallPage />} />
                   <Route

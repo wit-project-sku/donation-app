@@ -21,7 +21,6 @@ const FLOW: { path: string; label: string }[] = [
   { path: "/payment", label: "결제" },
   { path: "/message", label: "증서발급" },
   { path: "/outfit", label: "의상" },
-  { path: "/camera", label: "촬영" },
   { path: "/certificate", label: "증서" },
   { path: "/wall", label: "기부벽" },
 ];

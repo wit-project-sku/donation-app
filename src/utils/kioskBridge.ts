@@ -39,8 +39,19 @@ interface KioskWindow {
   kioskBridge?: { isKiosk?: boolean };
 }
 
-/** True when embedded in the kiosk (URL marker or an injected preload bridge). */
+/**
+ * True when embedded in the kiosk. Detected by (in order):
+ *  1. Electron user-agent — the kiosk <webview> runs in Electron, a normal
+ *     browser does not. This is the robust default (no URL marker required).
+ *  2. an injected preload bridge (window.kioskBridge), if present.
+ *  3. a ?kiosk=1 marker in the URL search or hash (opt-in override).
+ */
 function embedded(): boolean {
+  try {
+    if (/electron/i.test(navigator.userAgent)) return true;
+  } catch {
+    /* navigator may be unavailable in SSR/tests */
+  }
   const w = window as unknown as KioskWindow;
   if (w.kioskBridge?.isKiosk) return true;
   try {

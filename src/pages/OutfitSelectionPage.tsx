@@ -13,7 +13,7 @@ import { useDonationStore } from "../store/donationStore";
 import { useTheme } from "../theme/ThemeContext";
 import { formatCurrency } from "../utils/format";
 import { getCampaignProgressPercent } from "../utils/campaignProgress";
-import { isEmbeddedInKiosk } from "../utils/kioskBridge";
+import { getKioskBridge } from "../utils/kioskBridge";
 import cameraGuideModal from "../assets/camera-guide-modal.png";
 import "swiper/css";
 import "swiper/css/grid";
@@ -37,6 +37,7 @@ export function OutfitSelectionPage() {
     setSelectedOutfit,
     setSkipPhoto,
     setCapturedPhotoUrl,
+    setPhotoStatus,
   } = useDonationStore();
 
   const [selected, setSelected] = useState<Outfit | null>(null);
@@ -71,6 +72,11 @@ export function OutfitSelectionPage() {
     () => data?.pages.flatMap((page) => page.content) ?? [],
     [data],
   );
+
+  // Swiper grid는 rows=2일 때 아이템이 rows 이하면 세로 1열로 접힌다.
+  // 아이템이 2개 이하이면 1행(가로 나열)로 보여준다.
+  const gridRows = isSchool || outfits.length <= 2 ? 1 : 2;
+  const singleRow = gridRows === 1;
 
   useEffect(() => {
     if (!selectedCampaign) {
@@ -118,10 +124,31 @@ export function OutfitSelectionPage() {
     [selected, setCapturedPhotoUrl, setSelectedOutfit, setSkipPhoto],
   );
 
-  const startCamera = useCallback(() => {
+  // Kick off the AI photo on the kiosk's Monitor 2, then move Monitor 1 forward.
+  // The camera + AI run entirely on the second screen (there is no in-app camera
+  // page); the result lands in the store via useKioskPhotoBridge. School proceeds
+  // to amount/payment while it generates; NGO goes to the certificate, which shows
+  // a "generating" state until the photo is ready.
+  const startKioskPhoto = useCallback(() => {
     setGuideOpen(false);
-    navigate(greetingMode ? "/camera?mode=greeting" : "/camera");
-  }, [greetingMode, navigate]);
+    const bridge = getKioskBridge();
+    if (bridge?.takePhoto) {
+      setCapturedPhotoUrl(null);
+      setPhotoStatus("generating");
+      bridge.takePhoto({
+        mode: greetingMode ? "together" : "solo",
+        clothingKey: selected?.outfitCode ?? "",
+      });
+    }
+    navigate(isSchool ? "/school-amount" : "/certificate");
+  }, [
+    greetingMode,
+    isSchool,
+    navigate,
+    selected,
+    setCapturedPhotoUrl,
+    setPhotoStatus,
+  ]);
 
   if (!selectedCampaign) return null;
 
@@ -130,7 +157,7 @@ export function OutfitSelectionPage() {
 
   return (
     <PageBody
-      className={`outfit-page${isSchool ? " outfit-page--school" : ""}${guideOpen ? " outfit-page--modal" : ""}`}
+      className={`outfit-page${isSchool ? " outfit-page--school" : ""}${singleRow && !isSchool ? " outfit-page--onerow" : ""}${guideOpen ? " outfit-page--modal" : ""}`}
       scroll={false}
     >
       <AppHeader backTo={isSchool ? "/school-detail" : undefined} />
@@ -172,7 +199,7 @@ export function OutfitSelectionPage() {
               onReachEnd={loadMoreIfNeeded}
               onProgress={loadMoreIfNeeded}
               slidesPerView="auto"
-              grid={{ rows: isSchool ? 1 : 2, fill: "row" }}
+              grid={{ rows: gridRows, fill: "row" }}
               spaceBetween={104}
               freeMode={{ enabled: true, momentum: true, momentumRatio: 0.85 }}
               simulateTouch
@@ -283,7 +310,7 @@ export function OutfitSelectionPage() {
           className="outfit-guide"
           role="dialog"
           aria-modal="true"
-          onClick={isSchool || isEmbeddedInKiosk() ? startCamera : () => setGuideOpen(false)}
+          onClick={startKioskPhoto}
         >
           <img
             className="outfit-guide__img"

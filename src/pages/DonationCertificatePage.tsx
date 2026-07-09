@@ -58,6 +58,7 @@ export function DonationCertificatePage() {
     donorName,
     donorPhone,
     capturedPhotoUrl,
+    photoStatus,
     submittedRecordId,
     setSubmittedRecordId,
     setCapturedPhotoUrl,
@@ -122,6 +123,9 @@ export function DonationCertificatePage() {
   const displayName = donorName.trim() || "후원자";
   const hasPhoto = Boolean(capturedPhotoUrl);
   const photoSrc = capturedPhotoUrl || heartIllustration;
+  // Monitor-2 AI still running: wait before letting the user save the certificate
+  // so the generated photo is included instead of the placeholder illustration.
+  const photoPending = photoStatus === "generating" && !capturedPhotoUrl;
 
   const today = new Date();
   const dateLabel = `${today.getFullYear()}.${String(today.getMonth() + 1).padStart(2, "0")}.${String(today.getDate()).padStart(2, "0")}`;
@@ -142,8 +146,21 @@ export function DonationCertificatePage() {
           귀하의 따뜻한 마음과 의미 있는 기여에 깊은 감사를 전합니다
         </p>
 
-        <div className={`cert-photo${hasPhoto ? "" : " cert-photo--illust"}`}>
-          <img src={photoSrc} alt="" loading="lazy" />
+        <div
+          className={`cert-photo${hasPhoto ? "" : " cert-photo--illust"}${photoPending ? " cert-photo--loading" : ""}`}
+        >
+          {photoPending ? (
+            <div className="cert-photo__pending">
+              <span
+                className="cert-photo__spinner"
+                style={{ borderTopColor: theme.primary }}
+                aria-hidden
+              />
+              <p>AI 이미지 생성 중입니다...</p>
+            </div>
+          ) : (
+            <img src={photoSrc} alt="" loading="lazy" />
+          )}
         </div>
 
         <div className="cert-sign">
@@ -177,17 +194,21 @@ export function DonationCertificatePage() {
             type="button"
             className="cert-btn cert-btn--save"
             onClick={handleSave}
-            disabled={submitMutation.isPending}
+            disabled={submitMutation.isPending || photoPending}
             style={{ backgroundColor: theme.primary }}
           >
-            {submitMutation.isPending ? "저장 중..." : "저장하기"}
+            {submitMutation.isPending
+              ? "저장 중..."
+              : photoPending
+                ? "생성 중..."
+                : "저장하기"}
           </button>
 
           <button
             type="button"
             className="cert-btn cert-btn--history"
             onClick={handleHistory}
-            disabled={submitMutation.isPending}
+            disabled={submitMutation.isPending || photoPending}
           >
             기부내역보기
           </button>

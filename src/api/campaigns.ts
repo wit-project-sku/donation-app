@@ -3,7 +3,6 @@ import type { CampaignDto, CampaignListParams, PaginatedData } from "./types";
 import type { Campaign } from "../types";
 
 const CAMPAIGNS_PATH = "/api/donations/campaigns";
-const DEFAULT_NGO_ORGANIZATION_ID = 2;
 
 function mapCampaignDto(dto: CampaignDto): Campaign {
   const effectPrograms = (dto.effects ?? []).map((effect) => ({
@@ -58,13 +57,14 @@ function mapCampaignDto(dto: CampaignDto): Campaign {
 export async function fetchCampaignsPage(
   params: CampaignListParams = {},
 ): Promise<PaginatedData<Campaign>> {
-  const organizationId = params.organizationId ?? DEFAULT_NGO_ORGANIZATION_ID;
-
+  // organizationId 미전송 시 전체 단체의 캠페인을 보여준다(특정 단체만 보려면 명시).
   const data = await apiGet<PaginatedData<CampaignDto>>(CAMPAIGNS_PATH, {
     pageNum: params.pageNum ?? 1,
     pageSize: params.pageSize ?? 20,
     type: params.type ?? "NGO",
-    organizationId,
+    ...(params.organizationId != null
+      ? { organizationId: params.organizationId }
+      : {}),
     includeInactive: params.includeInactive ?? false,
   });
 

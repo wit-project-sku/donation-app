@@ -148,10 +148,21 @@
   margin: 113px 0 0;
 }
 
+/* 결제 대기/진행 중 로딩바 — 좌→우로 반복 이동하는 인디터미닛 애니메이션 */
 .pso__bar-fill {
-  width: 75%;
+  width: 40%;
   height: 100%;
   border-radius: 999px;
+  animation: psoBarIndeterminate 1.4s ease-in-out infinite;
+}
+
+@keyframes psoBarIndeterminate {
+  0% {
+    transform: translateX(-110%);
+  }
+  100% {
+    transform: translateX(260%);
+  }
 }
 
 /* 취소/다시시도 — Figma: 1258×180, r45, #999 회색, 56px */

@@ -56,7 +56,6 @@ const BACK_ROUTES: Record<string, string> = {
   "/payment": "/amount",
   "/message": "/certificate-prompt",
   "/outfit": "/message",
-  "/camera": "/outfit",
   "/wall": "/certificate",
 };
 

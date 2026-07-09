@@ -63,6 +63,39 @@
   object-fit: contain;
 }
 
+/* Monitor-2 AI 이미지 생성 대기 — 사진 카드 안 중앙 스피너 + 안내 */
+.cert-photo--loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cert-photo__pending {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 48px;
+  color: var(--color-text-muted, #999999);
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
+  font-size: 48px;
+  font-weight: 500;
+}
+
+.cert-photo__spinner {
+  width: 160px;
+  height: 160px;
+  border: 14px solid #e8e8e8;
+  border-top-color: #009fe3;
+  border-radius: 50%;
+  animation: certSpin 0.9s linear infinite;
+}
+
+@keyframes certSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 /* 서명 행 — Figma: 날짜 2026.05.22 · 이름 (50 black) + 좌우 선(240px) */
 .cert-sign {
   display: flex;

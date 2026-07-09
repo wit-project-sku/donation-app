@@ -1,5 +1,7 @@
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { QRCodeSVG } from "qrcode.react";
+import { ApiError } from "../api/client";
 import { useAppNavigate } from "../hooks/useAppNavigate";
 import { PageBody } from "../components/layout/PageBody";
 import { AppHeader } from "../components/AppHeader";
@@ -7,6 +9,7 @@ import { AppFooter } from "../components/AppFooter";
 import { useDonationStore } from "../store/donationStore";
 import { useTheme } from "../theme/ThemeContext";
 import { buildMobileCertificateUrl } from "../utils/mobileCertificateUrl";
+import { submitCurrentDonation } from "../utils/buildSubmitPayload";
 import certSample from "../assets/cert-sample.jpg";
 import schoolEmblem from "../assets/school-emblem.png";
 import "./SchoolCertificatePage.css";
@@ -19,6 +22,19 @@ function formatDot(date: Date): string {
   return `${y}.${m}.${d}`;
 }
 
+function isAlreadySavedError(error: unknown) {
+  if (!(error instanceof ApiError)) return false;
+  const message = error.message.toLowerCase();
+  return (
+    error.status === 409 ||
+    error.code === 409 ||
+    message.includes("already") ||
+    message.includes("duplicate") ||
+    message.includes("이미") ||
+    message.includes("중복")
+  );
+}
+
 /**
  * 학교 기부증서/기부한컷 결과 화면 (Figma 5659:96278).
  * 합성 사진 + 졸업연도/이름/날짜 + QR + 저장하기 / 기부내역보기.
@@ -26,6 +42,7 @@ function formatDot(date: Date): string {
 export function SchoolCertificatePage() {
   const navigate = useAppNavigate();
   const { theme } = useTheme();
+  const queryClient = useQueryClient();
   const {
     selectedCampaign,
     amount,
@@ -33,8 +50,30 @@ export function SchoolCertificatePage() {
     donorPhone,
     graduationYear,
     capturedPhotoUrl,
+    photoStatus,
+    submittedRecordId,
+    setSubmittedRecordId,
+    setCapturedPhotoUrl,
   } = useDonationStore();
   const [qrOpen, setQrOpen] = useState(false);
+
+  const submitMutation = useMutation({
+    mutationFn: () => {
+      const state = useDonationStore.getState();
+      return submitCurrentDonation(state);
+    },
+    onSuccess: (record) => {
+      setSubmittedRecordId(-1);
+      if (record.imageUrl) setCapturedPhotoUrl(record.imageUrl);
+      queryClient.invalidateQueries({ queryKey: ["schoolWallEntries"] });
+    },
+    onError: (error) => {
+      if (isAlreadySavedError(error)) {
+        setSubmittedRecordId(-1);
+        queryClient.invalidateQueries({ queryKey: ["schoolWallEntries"] });
+      }
+    },
+  });
 
   useEffect(() => {
     if (!selectedCampaign) navigate("/", { replace: true });
@@ -45,6 +84,35 @@ export function SchoolCertificatePage() {
   const photo = capturedPhotoUrl || certSample;
   const gradText = graduationYear ? `${graduationYear} 졸업` : "졸업";
   const displayName = donorName || "기부자";
+  const isSaved = submittedRecordId != null || submitMutation.isSuccess;
+  const photoPending = photoStatus === "generating" && !capturedPhotoUrl;
+
+  const handleSave = () => {
+    if (submitMutation.isPending || photoPending) return;
+    if (isSaved) {
+      setQrOpen(true);
+      return;
+    }
+    submitMutation.mutate(undefined, {
+      onSuccess: () => setQrOpen(true),
+      onError: (error) => {
+        if (isAlreadySavedError(error)) setQrOpen(true);
+      },
+    });
+  };
+
+  const handleHistory = () => {
+    if (isSaved) {
+      navigate("/school-wall");
+      return;
+    }
+    submitMutation.mutate(undefined, {
+      onSuccess: () => navigate("/school-wall"),
+      onError: (error) => {
+        if (isAlreadySavedError(error)) navigate("/school-wall");
+      },
+    });
+  };
 
   // 합성 사진 + 기부 정보를 담은 모바일 증서 링크 → QR 로 발급 (기존 로직 재사용)
   const qrValue = buildMobileCertificateUrl({
@@ -104,14 +172,16 @@ export function SchoolCertificatePage() {
             type="button"
             className="sc2-action sc2-action--save"
             style={{ backgroundColor: theme.primary }}
-            onClick={() => setQrOpen(true)}
+            onClick={handleSave}
+            disabled={submitMutation.isPending || photoPending}
           >
-            저장하기
+            {submitMutation.isPending ? "저장 중..." : photoPending ? "생성 중..." : "저장하기"}
           </button>
           <button
             type="button"
             className="sc2-action sc2-action--history"
-            onClick={() => navigate("/school-wall")}
+            onClick={handleHistory}
+            disabled={submitMutation.isPending || photoPending}
           >
             기부내역보기
           </button>
