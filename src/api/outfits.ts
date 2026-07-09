@@ -11,6 +11,9 @@ export interface Outfit {
   outfitCode: string;
   status: string;
   type: string;
+  /** 학교 교복일 때 소속 학교 */
+  schoolId?: number | null;
+  schoolName?: string | null;
 }
 
 function mapOutfitDto(dto: OutfitDto): Outfit {
@@ -22,6 +25,8 @@ function mapOutfitDto(dto: OutfitDto): Outfit {
     outfitCode: dto.outfitCode,
     status: dto.status,
     type: dto.type,
+    schoolId: dto.schoolId ?? null,
+    schoolName: dto.schoolName ?? null,
   };
 }
 
@@ -33,7 +38,8 @@ export async function fetchOutfitsPage(
     pageSize: params.pageSize ?? 10,
     keyword: params.keyword ?? "",
     status: params.status ?? "ACTIVE",
-    type: params.type ?? "PREMIUM",
+    // NGO=PREMIUM, 학교=SCHOOL_UNIFORM. Caller passes the right type per flow.
+    ...(params.type ? { type: params.type } : {}),
   });
 
   return {

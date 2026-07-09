@@ -1,10 +1,12 @@
-import { useRef, type ReactNode } from "react";
+import { useMemo, useRef, type ReactNode } from "react";
+import { useQuery } from "@tanstack/react-query";
 import type { Swiper as SwiperClass } from "swiper";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
 import { useAppNavigate } from "../hooks/useAppNavigate";
+import { fetchCampaignsPage } from "../api/campaigns";
 import { useDonationStore } from "../store/donationStore";
 import { exitDonationApp } from "../config/navigation";
 import { PageBody } from "../components/layout/PageBody";
@@ -15,14 +17,17 @@ import schoolIcon from "../assets/entry-school.png";
 import bannerBg from "../assets/featured-banner.png";
 import "./EntryPage.css";
 
-/** 하단 featured 캐러셀 슬라이드 (Figma 5535:18557 배너 · 강조 텍스트 #fcd869) */
-interface FeaturedBanner {
-  id: number;
-  eyebrow: string;
+/** 하단 featured 캐러셀 슬라이드 (Figma 5535:18557 배너 · 강조 텍스트 #fcd869)
+ *  실데이터: 캠페인 API 의 bannerTitle(큰 글씨)/bannerSubtitle(작은 글씨). */
+interface BannerSlide {
+  id: string | number;
+  eyebrow: ReactNode;
   title: ReactNode;
+  image?: string;
 }
 
-const FEATURED_BANNERS: FeaturedBanner[] = [
+/** 캠페인이 없을 때(로딩/오프라인) 보여줄 기본 배너. */
+const FALLBACK_BANNERS: BannerSlide[] = [
   {
     id: 1,
     eyebrow: "오늘도 도움이 필요한 아이들이 있습니다",
@@ -69,6 +74,28 @@ export function EntryPage() {
     setDonationCategory(category);
     navigate(category === "school" ? "/school" : "/campaigns");
   };
+
+  // 하단 배너는 NGO 캠페인 API 로부터 받아온다(같은 fetchCampaignsPage).
+  const { data: campaignsData } = useQuery({
+    queryKey: ["campaigns", "home-banner"],
+    queryFn: () => fetchCampaignsPage({ pageSize: 10 }),
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const bannerSlides = useMemo<BannerSlide[]>(() => {
+    const campaigns = campaignsData?.content ?? [];
+    if (campaigns.length === 0) return FALLBACK_BANNERS;
+    return campaigns.map((campaign) => ({
+      id: campaign.id,
+      // 큰 글씨 = bannerTitle, 작은 글씨 = bannerSubtitle (미설정 시 캠페인명/단체명 폴백).
+      title: campaign.bannerTitle?.trim() || campaign.title,
+      eyebrow:
+        campaign.bannerSubtitle?.trim() ||
+        campaign.organization?.name ||
+        "",
+      image: campaign.imageUrl || undefined,
+    }));
+  }, [campaignsData]);
 
   return (
     <PageBody className="entry-page">
@@ -150,10 +177,10 @@ export function EntryPage() {
           autoplay={{ delay: 5000, disableOnInteraction: false }}
           pagination={{ clickable: true }}
         >
-          {FEATURED_BANNERS.map((banner) => (
+          {bannerSlides.map((banner) => (
             <SwiperSlide key={banner.id} className="entry-featured-slide">
               <img
-                src={bannerBg}
+                src={banner.image ?? bannerBg}
                 alt=""
                 className="entry-page__featured-bg-img"
               />

@@ -50,6 +50,8 @@ function mapCampaignDto(dto: CampaignDto): Campaign {
     programs,
     status: dto.status,
     createdAt: dto.createdAt,
+    bannerTitle: dto.bannerTitle ?? null,
+    bannerSubtitle: dto.bannerSubtitle ?? null,
   };
 }
 

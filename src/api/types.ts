@@ -75,6 +75,9 @@ export interface CampaignDto {
   effects?: string[];
   sections?: CampaignSectionDto[];
   programs?: CampaignProgramDto[];
+  /** 홈 하단 배너 문구 (큰 글씨/작은 글씨). 미설정 시 null. */
+  bannerTitle?: string | null;
+  bannerSubtitle?: string | null;
   createdAt: string;
 }
 
@@ -136,10 +139,14 @@ export interface WallEntry {
   isNew?: boolean;
 }
 
+/** 의상 타입: NGO=PREMIUM, 학교=SCHOOL_UNIFORM */
+export type OutfitType = "NORMAL" | "PREMIUM" | "SCHOOL_UNIFORM";
+
 export interface OutfitParams extends PageParams {
   keyword?: string;
   status?: "ACTIVE" | "INACTIVE";
-  type?: "NORMAL" | "PREMIUM";
+  /** 타입 필터 (미입력 시 전체) */
+  type?: OutfitType;
 }
 
 export interface OutfitDto {
@@ -147,10 +154,13 @@ export interface OutfitDto {
   categoryName: string;
   name: string;
   status: "ACTIVE" | "INACTIVE" | string;
-  type: "NORMAL" | "PREMIUM" | string;
+  type: OutfitType | string;
   imageUrl: string;
   kioskIds?: number[];
   outfitCode: string;
+  /** 학교 교복(SCHOOL_UNIFORM)일 때 소속 학교 */
+  schoolId?: number | null;
+  schoolName?: string | null;
   startDate?: string;
   endDate?: string;
 }
@@ -188,7 +198,14 @@ export interface SchoolDto {
   regionLabel: string;
   initial: string;
   active: boolean;
+  /** 누적 기부액 (기부액 컬럼) */
   accumulatedAmount: number;
+  /** 기부 참여자 수 (참여자 컬럼) */
+  participantCount?: number;
+  /** 학생 수 (수혜자 컬럼) */
+  studentCount?: number;
+  /** 하루 전 대비 순위 변동 (양수=상승 ▲, 음수=하락 ▼, 0=변동 없음). DONATION 정렬에서만 의미. */
+  rankChange?: number;
   createdAt: string;
 }
 

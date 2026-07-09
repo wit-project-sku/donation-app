@@ -30,6 +30,8 @@ export function OutfitSelectionPage() {
   const navigate = useAppNavigate();
   const { theme, organizer, category } = useTheme();
   const isSchool = category === "school";
+  // NGO flow shows PREMIUM outfits; school flow shows SCHOOL_UNIFORM (교복).
+  const outfitType = isSchool ? "SCHOOL_UNIFORM" : "PREMIUM";
   const swiperRef = useRef<SwiperClass | null>(null);
   const {
     selectedCampaign,
@@ -55,7 +57,7 @@ export function OutfitSelectionPage() {
   } = useInfiniteQuery({
     queryKey: [
       "outfits",
-      { status: "ACTIVE", type: "PREMIUM", pageSize: PAGE_SIZE },
+      { status: "ACTIVE", type: outfitType, pageSize: PAGE_SIZE },
     ],
     initialPageParam: 1,
     queryFn: ({ pageParam }) =>
@@ -63,7 +65,7 @@ export function OutfitSelectionPage() {
         pageNum: pageParam,
         pageSize: PAGE_SIZE,
         status: "ACTIVE",
-        type: "PREMIUM",
+        type: outfitType,
       }),
     getNextPageParam: (lastPage) =>
       lastPage.last ? undefined : lastPage.pageNum + 1,

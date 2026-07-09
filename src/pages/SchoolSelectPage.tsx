@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useAppNavigate } from "../hooks/useAppNavigate";
 import { useTheme } from "../theme/ThemeContext";
@@ -14,12 +14,10 @@ import { PartnerBar } from "../components/PartnerBar";
 import { VirtualKeyboard } from "../components/VirtualKeyboard";
 import { appendKeyboardInput, removeLastHangul } from "../utils/hangulInput";
 import { formatCurrency } from "../utils/format";
-import {
-  readRankChanges,
-  rollRankSnapshot,
-  RANK_SNAPSHOT_TTL_MS,
-} from "../utils/schoolRankChange";
 import "./SchoolSelectPage.css";
+
+/** 랭킹은 하루 1회만 갱신 (24시간 캐시 + 마운트 중 24시간마다 재요청). */
+const RANKING_REFETCH_MS = 24 * 60 * 60 * 1000;
 
 /** Figma 5659:87591 검색 아이콘 — 테마색(인사동 코랄 #FE6C50) 마스크, stroke 9 */
 function SchoolSearchIcon({ color }: { color: string }) {
@@ -117,7 +115,8 @@ export function SchoolSelectPage() {
   const [query, setQuery] = useState("");
   // null → 전체 랭킹 표(Figma 5656:26114), 지역 선택 → 학교 칩 그리드(Figma 5659:87407)
   const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
-  const [consonant, setConsonant] = useState("ㄱ");
+  // null = 초성 미선택(진입 시 기부액순 랭킹). 초성 선택 시 가나다순(NAME) 정렬.
+  const [consonant, setConsonant] = useState<string | null>(null);
   // 검색창 클릭 시 검색창 바로 아래에 가상 키보드 노출 (다른 입력 화면과 동일 컴포넌트)
   const [keyboardOpen, setKeyboardOpen] = useState(false);
 
@@ -130,11 +129,15 @@ export function SchoolSelectPage() {
   };
 
   const keyword = query.trim();
-  const initial = keyword ? undefined : consonant;
+  const initial = keyword ? undefined : (consonant ?? undefined);
   const regionCode = selectedRegion
     ? REGION_CODE_MAP[selectedRegion as keyof typeof REGION_CODE_MAP]
     : undefined;
   const pageSize = selectedRegion ? GRID_PAGE_SIZE : TABLE_PAGE_SIZE;
+  // 진입/기본 = DONATION(기부액순 랭킹). 초성 선택 시 = NAME(가나다순).
+  const sort: "DONATION" | "NAME" = consonant ? "NAME" : "DONATION";
+  // 순위 변동 배지는 기부액순 랭킹(초성/검색 미적용)에서만 노출한다.
+  const isRankingView = !selectedRegion && !consonant && !keyword;
 
   const { data, isLoading, isError } = useQuery({
     queryKey: [
@@ -145,7 +148,7 @@ export function SchoolSelectPage() {
         regionCode: regionCode ?? null,
         keyword: keyword || null,
         initial: initial ?? null,
-        sort: "DONATION",
+        sort,
         includeInactive: false,
       },
     ],
@@ -156,12 +159,11 @@ export function SchoolSelectPage() {
         region: regionCode,
         keyword: keyword || undefined,
         initial: initial || undefined,
-        sort: "DONATION",
+        sort,
         includeInactive: false,
       }),
-    // 랭킹은 하루 1회만 갱신한다(24시간 캐시 + 마운트 상태에서 24시간마다 재요청)
-    staleTime: RANK_SNAPSHOT_TTL_MS,
-    refetchInterval: RANK_SNAPSHOT_TTL_MS,
+    staleTime: RANKING_REFETCH_MS,
+    refetchInterval: RANKING_REFETCH_MS,
     refetchOnWindowFocus: false,
   });
 
@@ -176,19 +178,6 @@ export function SchoolSelectPage() {
     () => (selectedRegion ? [] : schools.slice(0, TABLE_PAGE_SIZE)),
     [selectedRegion, schools],
   );
-
-  // 순위 변동(▲/▼) — 하루 전 스냅샷과 비교. 랭킹 표(지역 미선택)에서만 계산.
-  const rankViewKey = `${initial ?? "all"}:${keyword}`;
-  const rankChanges = useMemo(() => {
-    if (selectedRegion || tableSchools.length === 0) return {};
-    return readRankChanges(rankViewKey, tableSchools);
-  }, [selectedRegion, tableSchools, rankViewKey]);
-
-  // 기준 스냅샷 롤오버는 렌더 이후 부수효과로 처리(24시간 1회)
-  useEffect(() => {
-    if (selectedRegion || tableSchools.length === 0) return;
-    rollRankSnapshot(rankViewKey, tableSchools);
-  }, [selectedRegion, tableSchools, rankViewKey]);
 
   // 학교 선택 → 캠페인 설정 후 학교 상세로 이동
   const openSchool = (school: SchoolDto) => {
@@ -268,7 +257,7 @@ export function SchoolSelectPage() {
             key={char}
             type="button"
             className={`school-consonant${consonant === char ? " is-active" : ""}`}
-            onClick={() => setConsonant(char)}
+            onClick={() => setConsonant((prev) => (prev === char ? null : char))}
           >
             {char}
           </button>
@@ -346,7 +335,8 @@ export function SchoolSelectPage() {
               tableSchools.map((school, index) => {
                 const rank = index + 1;
                 const tone = rankTone(rank);
-                const change = rankChanges[school.id];
+                // 순위 변동은 백엔드 rankChange (양수=상승 ▲ / 음수=하락 ▼), 랭킹 뷰에서만.
+                const change = isRankingView ? school.rankChange ?? 0 : 0;
 
                 return (
                   <button
@@ -357,7 +347,7 @@ export function SchoolSelectPage() {
                   >
                     <span className="school-table__col school-table__col--rank">
                       <span className="school-table__rank-no">{rank}</span>
-                      {change != null && change !== 0 && (
+                      {change !== 0 && (
                         <span
                           key={`${school.id}-${change}`}
                           className={`school-table__change ${
@@ -376,10 +366,10 @@ export function SchoolSelectPage() {
                       {formatCurrency(school.accumulatedAmount)}원
                     </span>
                     <span className="school-table__col school-table__col--part">
-                      0
+                      {school.participantCount ?? 0}
                     </span>
                     <span className="school-table__col school-table__col--benef">
-                      0
+                      {school.studentCount ?? 0}
                     </span>
                   </button>
                 );

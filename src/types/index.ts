@@ -52,4 +52,7 @@ export interface Campaign {
   programs: CampaignProgram[];
   status?: string;
   createdAt?: string;
+  /** 홈 하단 배너 문구: bannerTitle=큰 글씨, bannerSubtitle=작은 글씨 */
+  bannerTitle?: string | null;
+  bannerSubtitle?: string | null;
 }
