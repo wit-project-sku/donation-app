@@ -41,8 +41,13 @@ export function OutfitSelectionPage() {
   } = useDonationStore();
 
   const [selected, setSelected] = useState<Outfit | null>(null);
-  const [guideOpen, setGuideOpen] = useState(false);
+  // 촬영 모달: 버튼 탭 → 즉시 Monitor 2 촬영 트리거 + 안내 팝업. 카운트다운/타이머는
+  // Monitor 2가 직접 보여주므로 이 팝업은 안내 이미지만 띄운다.
+  const [captureOpen, setCaptureOpen] = useState(false);
   const [greetingMode, setGreetingMode] = useState(false);
+  const [captureError, setCaptureError] = useState<string | null>(null);
+  // 촬영 진행 중 표식 — 'generating' 단계에서 한 번만 다음 화면으로 이동시킨다.
+  const capturingRef = useRef(false);
 
   const {
     data,
@@ -112,43 +117,77 @@ export function OutfitSelectionPage() {
     [fetchNextPage, hasNextPage, isFetchingNextPage],
   );
 
+  // Fire the Monitor-2 capture immediately and open the guide popup. We do NOT
+  // navigate here — Monitor 2 shows its own 10s timer; once the shot is taken and
+  // handed to the AI ('generating' phase) the popup closes and Monitor 1 advances.
+  // School → amount, NGO → certificate.
+  const triggerCapture = useCallback(
+    (mode: "solo" | "together") => {
+      const bridge = getKioskBridge();
+      if (!bridge?.takePhoto) {
+        // 비임베드(개발/브라우저): 카메라가 없으므로 곧바로 다음 단계로 진행.
+        navigate(isSchool ? "/school-amount" : "/certificate");
+        return;
+      }
+      capturingRef.current = true;
+      setCapturedPhotoUrl(null);
+      setPhotoStatus("generating");
+      bridge.takePhoto({ mode, clothingKey: selected?.outfitCode ?? "" });
+    },
+    [isSchool, navigate, selected, setCapturedPhotoUrl, setPhotoStatus],
+  );
+
   const handlePhoto = useCallback(
     (withGreeting = false) => {
       setSelectedOutfit(selected);
       setSkipPhoto(false);
       setCapturedPhotoUrl(null);
       setGreetingMode(withGreeting);
-      // 촬영 안내 팝업을 띄운다 (Figma 5535:18720) → 탭하면 카메라로 진행
-      setGuideOpen(true);
+      setCaptureError(null);
+      setCaptureOpen(true);
+      triggerCapture(withGreeting ? "together" : "solo");
     },
-    [selected, setCapturedPhotoUrl, setSelectedOutfit, setSkipPhoto],
+    [selected, setCapturedPhotoUrl, setSelectedOutfit, setSkipPhoto, triggerCapture],
   );
 
-  // Kick off the AI photo on the kiosk's Monitor 2, then move Monitor 1 forward.
-  // The camera + AI run entirely on the second screen (there is no in-app camera
-  // page); the result lands in the store via useKioskPhotoBridge. School proceeds
-  // to amount/payment while it generates; NGO goes to the certificate, which shows
-  // a "generating" state until the photo is ready.
-  const startKioskPhoto = useCallback(() => {
-    setGuideOpen(false);
+  const retryCapture = useCallback(() => {
+    setCaptureError(null);
+    triggerCapture(greetingMode ? "together" : "solo");
+  }, [greetingMode, triggerCapture]);
+
+  const cancelCapture = useCallback(() => {
+    capturingRef.current = false;
+    getKioskBridge()?.cancelPhoto?.();
+    setCaptureOpen(false);
+    setCaptureError(null);
+    setPhotoStatus("idle");
+  }, [setPhotoStatus]);
+
+  // Subscribe to the kiosk photo progress while embedded: once the shot is captured
+  // & sent to the AI ('generating'), close the popup and advance Monitor 1.
+  useEffect(() => {
     const bridge = getKioskBridge();
-    if (bridge?.takePhoto) {
-      setCapturedPhotoUrl(null);
-      setPhotoStatus("generating");
-      bridge.takePhoto({
-        mode: greetingMode ? "together" : "solo",
-        clothingKey: selected?.outfitCode ?? "",
-      });
-    }
-    navigate(isSchool ? "/school-amount" : "/certificate");
-  }, [
-    greetingMode,
-    isSchool,
-    navigate,
-    selected,
-    setCapturedPhotoUrl,
-    setPhotoStatus,
-  ]);
+    if (!bridge?.on) return;
+    const offProgress = bridge.on("photoProgress", (payload) => {
+      const p = payload as { phase?: string };
+      if (p.phase === "generating") {
+        if (!capturingRef.current) return;
+        capturingRef.current = false;
+        setCaptureOpen(false);
+        navigate(isSchool ? "/school-amount" : "/certificate");
+      }
+    });
+    const offError = bridge.on("photoError", (payload) => {
+      if (!capturingRef.current) return;
+      capturingRef.current = false;
+      const message = (payload as { message?: string }).message;
+      setCaptureError(message || "촬영에 실패했습니다. 다시 시도해 주세요.");
+    });
+    return () => {
+      offProgress();
+      offError();
+    };
+  }, [isSchool, navigate]);
 
   if (!selectedCampaign) return null;
 
@@ -157,7 +196,7 @@ export function OutfitSelectionPage() {
 
   return (
     <PageBody
-      className={`outfit-page${isSchool ? " outfit-page--school" : ""}${singleRow && !isSchool ? " outfit-page--onerow" : ""}${guideOpen ? " outfit-page--modal" : ""}`}
+      className={`outfit-page${isSchool ? " outfit-page--school" : ""}${singleRow && !isSchool ? " outfit-page--onerow" : ""}${captureOpen ? " outfit-page--modal" : ""}`}
       scroll={false}
     >
       <AppHeader backTo={isSchool ? "/school-detail" : undefined} />
@@ -305,18 +344,36 @@ export function OutfitSelectionPage() {
 
       <AppFooter />
 
-      {guideOpen && (
-        <div
-          className="outfit-guide"
-          role="dialog"
-          aria-modal="true"
-          onClick={startKioskPhoto}
-        >
+      {captureOpen && (
+        <div className="outfit-guide" role="dialog" aria-modal="true">
           <img
             className="outfit-guide__img"
             src={cameraGuideModal}
             alt="왼쪽 화면을 먼저보시고 화면사이 카메라를 봐주세요."
           />
+
+          {captureError && (
+            <div className="outfit-capture__error">
+              <p className="outfit-capture__error-text">{captureError}</p>
+              <div className="outfit-capture__error-actions">
+                <button
+                  type="button"
+                  className="outfit-capture__btn outfit-capture__btn--ghost"
+                  onClick={cancelCapture}
+                >
+                  닫기
+                </button>
+                <button
+                  type="button"
+                  className="outfit-capture__btn"
+                  style={{ backgroundColor: theme.primary }}
+                  onClick={retryCapture}
+                >
+                  다시 시도
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </PageBody>

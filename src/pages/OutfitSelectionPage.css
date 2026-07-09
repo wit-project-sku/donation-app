@@ -31,6 +31,59 @@
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
 }
 
+/* 촬영 실패 — 안내 이미지 위 중앙 카드 + 재시도/닫기 */
+.outfit-capture__error {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 62;
+  box-sizing: border-box;
+  width: 1100px;
+  max-width: 86%;
+  background: #ffffff;
+  border-radius: 60px;
+  padding: 96px 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 72px;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
+}
+
+.outfit-capture__error-text {
+  margin: 0;
+  text-align: center;
+  font-size: 62px;
+  font-weight: 700;
+  line-height: 1.35;
+  color: #333333;
+}
+
+.outfit-capture__error-actions {
+  display: flex;
+  gap: 40px;
+}
+
+.outfit-capture__btn {
+  min-width: 320px;
+  height: 150px;
+  padding: 0 60px;
+  border: none;
+  border-radius: 45px;
+  background: #009fe3;
+  color: #ffffff;
+  font-size: 56px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.outfit-capture__btn--ghost {
+  background: #ffffff;
+  border: 5px solid var(--color-border, #e8e8e8);
+  color: #636363;
+}
+
 /* 헤더/푸터 풀블리드 + 한 화면 고정 (PageBody 기본 패딩/gap 제거) */
 .page-body.outfit-page {
   padding: 0;
