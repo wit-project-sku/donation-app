@@ -6,6 +6,7 @@ import { PartnerBar } from "../components/PartnerBar";
 import { useDonationStore } from "../store/donationStore";
 import { useTheme } from "../theme/ThemeContext";
 import { formatCurrency } from "../utils/format";
+import { getCampaignProgressPercent } from "../utils/campaignProgress";
 import { fetchSchoolById } from "../api/schools";
 import { buildSchoolCampaignFromDto } from "../data/schoolCampaign";
 import "./SchoolDetailPage.css";
@@ -16,11 +17,6 @@ const PROGRAM_SUBTITLES: Record<string, string> = {
   "학교 시설 개선": "더 나은 배움터를 만듭시다.",
   "교복 지원": "후배들에게 교복을 사줍시다.",
 };
-
-/** Figma 5659:87044 · 5591 모금 현황 샘플 지표 */
-const PARTICIPANTS = 50;
-const BENEFICIARIES = 77;
-const FUNDING_PERCENT = 90;
 
 /**
  * 학교 상세 화면 (Figma 5591:40524).
@@ -131,7 +127,7 @@ export function SchoolDetailPage() {
             <div
               className="sd-funding__fill"
               style={{
-                width: `${FUNDING_PERCENT}%`,
+                width: `${getCampaignProgressPercent(selectedCampaign.accumulatedAmount, selectedCampaign.targetAmount)}%`,
                 backgroundColor: theme.primary,
               }}
             />
@@ -144,7 +140,8 @@ export function SchoolDetailPage() {
 
         {/* 참여자·수혜자 — Figma 5659:87044 Regular 70 #636363 */}
         <p className="sd-stats">
-          기부 참여자 : {PARTICIPANTS}명 / 기부 수혜자 : {BENEFICIARIES}명
+          기부 참여자 : {selectedCampaign.participantCount ?? 0}명 / 기부 수혜자
+          : {selectedCampaign.studentCount ?? 0}명
         </p>
       </div>
 

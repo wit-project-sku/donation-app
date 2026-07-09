@@ -8,9 +8,8 @@ import { useDonationStore } from "../store/donationStore";
 import { useTheme } from "../theme/ThemeContext";
 import { finishDonationFlow } from "../config/navigation";
 import { formatCurrency } from "../utils/format";
+import { getCampaignProgressPercent } from "../utils/campaignProgress";
 import "./SchoolCompletePage.css";
-
-const FUNDING_PERCENT = 90;
 
 /**
  * 학교 결제 완료 화면 (Figma 5591:41267).
@@ -88,7 +87,7 @@ export function SchoolCompletePage() {
             <div
               className="sc-funding__fill"
               style={{
-                width: `${FUNDING_PERCENT}%`,
+                width: `${getCampaignProgressPercent(selectedCampaign.accumulatedAmount, selectedCampaign.targetAmount)}%`,
                 backgroundColor: theme.primary,
               }}
             />

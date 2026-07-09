@@ -12,6 +12,7 @@ import { PageBody } from "../components/layout/PageBody";
 import { useDonationStore } from "../store/donationStore";
 import { useTheme } from "../theme/ThemeContext";
 import { formatCurrency } from "../utils/format";
+import { getCampaignProgressPercent } from "../utils/campaignProgress";
 import { isEmbeddedInKiosk } from "../utils/kioskBridge";
 import cameraGuideModal from "../assets/camera-guide-modal.png";
 import "swiper/css";
@@ -20,11 +21,6 @@ import "swiper/css/free-mode";
 import "./OutfitSelectionPage.css";
 
 const PAGE_SIZE = 12;
-
-/** Figma 5659:96268/96270 모금 현황 지표 (샘플) */
-const PARTICIPANTS = 50;
-const BENEFICIARIES = 77;
-const FUNDING_PERCENT = 90;
 
 export function OutfitSelectionPage() {
   const navigate = useAppNavigate();
@@ -259,7 +255,7 @@ export function OutfitSelectionPage() {
               <div
                 className="outfit-funding__fill"
                 style={{
-                  width: `${FUNDING_PERCENT}%`,
+                  width: `${getCampaignProgressPercent(selectedCampaign.accumulatedAmount, selectedCampaign.targetAmount)}%`,
                   backgroundColor: theme.primary,
                 }}
               />
@@ -274,7 +270,8 @@ export function OutfitSelectionPage() {
           </div>
 
           <p className="outfit-donation__stats">
-            기부 참여자 : {PARTICIPANTS}명 / 기부 수혜자 : {BENEFICIARIES}명
+            기부 참여자 : {selectedCampaign.participantCount ?? 0}명 / 기부 수혜자
+            : {selectedCampaign.studentCount ?? 0}명
           </p>
         </div>
       )}

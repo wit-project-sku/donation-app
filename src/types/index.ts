@@ -55,4 +55,7 @@ export interface Campaign {
   /** 홈 하단 배너 문구: bannerTitle=큰 글씨, bannerSubtitle=작은 글씨 */
   bannerTitle?: string | null;
   bannerSubtitle?: string | null;
+  /** 기부 참여자 수 / 수혜(학생) 수 — 학교 캠페인의 모금 현황 지표 */
+  participantCount?: number;
+  studentCount?: number;
 }

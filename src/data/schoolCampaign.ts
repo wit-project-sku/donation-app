@@ -36,7 +36,10 @@ export function buildSchoolCampaignFromDto(school: SchoolDto): Campaign {
       { label: "10만원", amount: 100000 },
     ],
     accumulatedAmount: school.accumulatedAmount ?? 0,
+    // 백엔드 SchoolDto 에 목표액 필드가 없어 임시 목표액을 유지한다(모금 현황 바 계산용).
     targetAmount: 566600000,
+    participantCount: school.participantCount ?? 0,
+    studentCount: school.studentCount ?? 0,
     sections: [],
     programs: SCHOOL_PROGRAMS,
   };

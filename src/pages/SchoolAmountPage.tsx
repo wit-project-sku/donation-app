@@ -7,12 +7,11 @@ import { IconHeart } from "../components/Icon";
 import { useDonationStore } from "../store/donationStore";
 import { useTheme } from "../theme/ThemeContext";
 import { formatCurrency } from "../utils/format";
+import { getCampaignProgressPercent } from "../utils/campaignProgress";
 import "./SchoolAmountPage.css";
 
 /** Figma 5591:41169~41172 기부금 프리셋 */
 const PRESETS = [1000, 2000, 10000, 20000];
-
-const FUNDING_PERCENT = 90;
 
 /**
  * 학교 기부금 선택 화면 (Figma 5535:18164 · 5591:41182).
@@ -92,7 +91,7 @@ export function SchoolAmountPage() {
             <div
               className="sa-funding__fill"
               style={{
-                width: `${FUNDING_PERCENT}%`,
+                width: `${getCampaignProgressPercent(selectedCampaign.accumulatedAmount, selectedCampaign.targetAmount)}%`,
                 backgroundColor: theme.primary,
               }}
             />

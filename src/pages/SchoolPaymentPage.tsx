@@ -1,32 +1,39 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useAppNavigate } from "../hooks/useAppNavigate";
+import { ApiError } from "../api/client";
+import {
+  buildPaymentRequest,
+  cancelPendingPayment,
+  createMerchantUid,
+  processPayment,
+} from "../api/payments";
+import { PaymentStatusOverlay } from "../components/PaymentStatusOverlay";
 import { PageBody } from "../components/layout/PageBody";
 import { AppHeader } from "../components/AppHeader";
 import { AppFooter } from "../components/AppFooter";
 import { IconHeart } from "../components/Icon";
 import { useDonationStore } from "../store/donationStore";
 import { useTheme } from "../theme/ThemeContext";
+import { formatCampaignProgressAmounts } from "../utils/campaignProgress";
 import { formatCurrency } from "../utils/format";
+import type { PaymentMethod } from "../types";
 import cardImg from "../assets/card-credit.png";
-import cardReader from "../assets/school-card-reader.jpg";
 import "./SchoolPaymentPage.css";
-
-const FUNDING_PERCENT = 90;
-/** 카드 인식 대기(모의) 시간 — 이후 결제 완료로 이동 */
-const PROCESSING_MS = 3500;
-const COUNTDOWN_START = 30;
 
 /**
  * 학교 결제 화면 (Figma 5535:18132).
  * 기부금 선택 후 진입 — 학교 배지 + 기부 금액 + 카드 결제수단 + 결제하기.
- * 결제하기 시 결제수단(카드) 확정 후 기부증서로 이동한다.
+ * 결제하기 시 실제 카드 단말기 결제(processPayment)를 진행하고, 완료 후
+ * 학교 기부 완료(/school-complete)로 이동한다. (NGO 결제와 동일한 실결제 흐름)
  */
 export function SchoolPaymentPage() {
   const navigate = useAppNavigate();
   const { theme, organizer } = useTheme();
-  const { selectedCampaign, amount, setPaymentMethod } = useDonationStore();
-  const [processing, setProcessing] = useState(false);
-  const [seconds, setSeconds] = useState(COUNTDOWN_START);
+  const { selectedCampaign, amount, setPaymentMethod, setMerchantUid } =
+    useDonationStore();
+  const [overlay, setOverlay] = useState<"card" | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const merchantUidRef = useRef<string | null>(null);
 
   useEffect(() => {
     if (!selectedCampaign || amount <= 0) {
@@ -34,27 +41,66 @@ export function SchoolPaymentPage() {
     }
   }, [selectedCampaign, amount, navigate]);
 
-  // 결제 진행 모달 — 카운트다운 + 모의 카드 인식 후 결제 완료로 이동
-  useEffect(() => {
-    if (!processing) return;
-    setSeconds(COUNTDOWN_START);
-    const tick = setInterval(
-      () => setSeconds((s) => (s > 0 ? s - 1 : 0)),
-      1000,
-    );
-    const done = setTimeout(() => navigate("/school-complete"), PROCESSING_MS);
-    return () => {
-      clearInterval(tick);
-      clearTimeout(done);
-    };
-  }, [processing, navigate]);
+  const runPayment = useCallback(
+    async (method: PaymentMethod) => {
+      if (!selectedCampaign || !method) {
+        throw new Error("Missing campaign or payment method");
+      }
+      if (!merchantUidRef.current) {
+        merchantUidRef.current = createMerchantUid();
+        setMerchantUid(merchantUidRef.current);
+      }
+      await processPayment(
+        buildPaymentRequest(
+          merchantUidRef.current,
+          selectedCampaign.id,
+          amount,
+          method,
+        ),
+      );
+    },
+    [selectedCampaign, amount, setMerchantUid],
+  );
+
+  const pay = () => {
+    setError(null);
+    setPaymentMethod("card");
+    merchantUidRef.current = createMerchantUid();
+    setMerchantUid(merchantUidRef.current);
+    setOverlay("card");
+  };
+
+  const handlePaymentError = (err: unknown) => {
+    merchantUidRef.current = null;
+    setMerchantUid(null);
+    if (err instanceof ApiError) {
+      const detail = err.errorCode ? ` (${err.errorCode})` : "";
+      setError(`${err.message}${detail}`);
+      return;
+    }
+    setError("결제 처리 중 오류가 발생했습니다");
+  };
+
+  const finishPayment = () => {
+    setOverlay(null);
+    navigate("/school-complete");
+  };
+
+  const cancelPayment = () => {
+    const merchantUid = merchantUidRef.current;
+    merchantUidRef.current = null;
+    setMerchantUid(null);
+    setOverlay(null);
+    if (merchantUid) {
+      void cancelPendingPayment({ merchantUid }).catch(() => {
+        /* 백그라운드 취소 — 실패해도 이미 닫힌 팝업엔 영향 없음 */
+      });
+    }
+  };
 
   if (!selectedCampaign || amount <= 0) return null;
 
-  const pay = () => {
-    setPaymentMethod("card");
-    setProcessing(true);
-  };
+  const progress = formatCampaignProgressAmounts(selectedCampaign);
 
   return (
     <PageBody className="school-payment" scroll={false}>
@@ -67,7 +113,7 @@ export function SchoolPaymentPage() {
           <span className="sp-badge__name">{selectedCampaign.title}</span>
         </div>
 
-        {/* 기부 금액 — Figma 5591:41248 (1299×445, padding 40.56 / gap 20.28) */}
+        {/* 기부 금액 — Figma 5591:41248 */}
         <div className="sp-amount">
           <p className="sp-amount__label">기부 금액</p>
           <div className="sp-amount__gap" aria-hidden />
@@ -89,6 +135,16 @@ export function SchoolPaymentPage() {
           </button>
         </div>
 
+        {error && (
+          <p
+            className="sp-error"
+            role="alert"
+            style={{ color: "#b42318", fontSize: 34, textAlign: "center", margin: "20px 0 0" }}
+          >
+            {error}
+          </p>
+        )}
+
         {/* 결제하기 — Figma 5591:41244 초록 버튼 */}
         <button
           type="button"
@@ -102,7 +158,7 @@ export function SchoolPaymentPage() {
         {/* 캠페인 안내 — Figma 5591:41264 */}
         <p className="sp-partner">이 캠페인은 {organizer.label}와 함께합니다.</p>
 
-        {/* 모금 현황 — Figma 5591:41256 */}
+        {/* 모금 현황 — Figma 5591:41256 (실 누적/목표액 기준) */}
         <div className="sp-funding">
           <p className="sp-funding__label" style={{ color: theme.primary }}>
             모금 현황
@@ -111,56 +167,28 @@ export function SchoolPaymentPage() {
             <div
               className="sp-funding__fill"
               style={{
-                width: `${FUNDING_PERCENT}%`,
+                width: `${progress.percent}%`,
                 backgroundColor: theme.primary,
               }}
             />
           </div>
           <p className="sp-funding__amount" style={{ color: theme.primary }}>
-            {formatCurrency(selectedCampaign.accumulatedAmount)} /{" "}
-            {formatCurrency(selectedCampaign.targetAmount)}원
+            {formatCurrency(progress.accumulated)} /{" "}
+            {formatCurrency(progress.target)}원
           </p>
         </div>
       </div>
 
       <AppFooter />
 
-      {/* 결제 진행 모달 — Figma 5535:18230 카드 투입 안내 */}
-      {processing && (
-        <div className="sp-modal-dim" role="dialog" aria-modal="true">
-          <div className="sp-modal">
-            <span
-              className="sp-modal__timer"
-              style={{ backgroundColor: theme.primary }}
-            >
-              {seconds}초
-            </span>
-            <p className="sp-modal__title">카드를 넣어주세요</p>
-            <p className="sp-modal__desc">
-              기기 하단에 있는 리더기에 카드를 넣어주세요
-            </p>
-            <div className="sp-modal__amount">
-              <p className="sp-modal__amount-label">기부 금액</p>
-              <p className="sp-modal__amount-value">
-                {formatCurrency(amount)}원
-              </p>
-            </div>
-            <img className="sp-modal__reader" src={cardReader} alt="" />
-            <div className="sp-modal__bar">
-              <div
-                className="sp-modal__fill"
-                style={{ backgroundColor: theme.primary }}
-              />
-            </div>
-            <button
-              type="button"
-              className="sp-modal__cancel"
-              onClick={() => setProcessing(false)}
-            >
-              취소
-            </button>
-          </div>
-        </div>
+      {overlay === "card" && (
+        <PaymentStatusOverlay
+          amount={amount}
+          onProcessPayment={() => runPayment("card")}
+          onComplete={finishPayment}
+          onCancel={cancelPayment}
+          onPaymentFailed={handlePaymentError}
+        />
       )}
     </PageBody>
   );
