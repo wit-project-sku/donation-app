@@ -16,7 +16,7 @@ import type { DonationCategory } from "../types";
  * (NGO: 세이브더칠드런 빨강 / 유니세프 파랑 / 굿네이버스 연녹 · 학교: 초록)
  * NGO/학교 구분은 진입·목록 화면에선 색이 아니라 검색·제목·콘텐츠로 한다.
  */
-const LOCATION_COLOR_ROUTES = new Set(["/", "/campaigns"]);
+const LOCATION_COLOR_ROUTES = new Set(["/", "/school", "/campaigns"]);
 
 interface ThemeContextType {
   theme: LocationTheme;

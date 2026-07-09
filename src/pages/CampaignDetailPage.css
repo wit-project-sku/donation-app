@@ -3,14 +3,14 @@
   flex-direction: column;
 }
 
-/* 상세: 헤더가 히어로에 오버레이되도록 풀블리드(PageBody 패딩/gap 제거) + 헤더 absolute */
+/* 상세: 헤더가 히어로에 오버레이되도록 풀블리드(PageBody 패딩/gap 제거) */
 .page-body.campaign-detail {
   position: relative;
   padding: 0;
   gap: 0;
 }
 
-/* 헤더를 다크 히어로 위에 오버레이 (Figma: 헤더·히어로 둘 다 top-0) */
+/* 헤더를 다크 히어로 위에 오버레이 (Figma 5535:17968, light·타이틀 NGO) */
 .cd-header-overlay {
   position: absolute;
   top: 0;
@@ -19,11 +19,11 @@
   z-index: 2;
 }
 
-/* Hero — 다크 풀블리드. 시트가 Figma 기준 ~2092px에서 시작하도록(-120 overlap) 높이 2212 */
+/* Hero — Figma 5535:17967 image284 + 0.2 black dim */
 .cd-hero {
   position: relative;
   flex: 0 0 auto;
-  height: 2212px;
+  height: 1305px;
   overflow: hidden;
 }
 
@@ -40,78 +40,42 @@
   background: rgba(0, 0, 0, 0.2);
 }
 
-/* 누적 기부금액 진행 블록 — 히어로 좌우 170, 바닥 위(Figma: 로고 1620 / 바 1796 / 금액 1903) */
-.cd-progress {
+/* 기부하기 CTA — Figma 5535:17974: 테마색 배경, h210, radius45, 흰 글씨 80, 히어로 하단 플로팅 */
+.cd-hero__cta {
   position: absolute;
   left: 170px;
   right: 170px;
-  bottom: 245px;
-  display: flex;
-  flex-direction: column;
-}
-
-.cd-progress__logo {
-  height: 99px;
-  width: auto;
-  object-fit: contain;
-  align-self: flex-start;
-  margin-bottom: 75px;
-}
-
-.cd-progress__bar {
-  height: 38px;
-  border-radius: 999px;
-  background: #e8e8e8;
-  overflow: hidden;
-}
-
-.cd-progress__fill {
-  height: 100%;
-  border-radius: 999px;
-}
-
-.cd-progress__amount {
-  margin: 70px 0 0;
-  font-size: 64px;
+  bottom: 155px;
+  height: 210px;
+  border: none;
+  border-radius: 45px;
+  box-shadow: 0 4px 4px 7px rgba(0, 0, 0, 0.25);
+  color: #ffffff;
+  font-size: 80px;
   font-weight: 700;
-  text-align: right;
+  cursor: pointer;
 }
 
-/* White sheet — 라운드 코너로 히어로를 덮고 바닥까지 채워 CTA를 하단 고정 */
+/* White sheet — Figma 5535:17969 rounded-top 100, 히어로 위로 살짝 겹침 */
 .cd-body {
   position: relative;
-  margin-top: -120px;
+  z-index: 1;
+  margin-top: -85px;
   background: #fff;
-  border-radius: 80px 80px 0 0;
-  padding: 120px 170px 0;
+  border-radius: 100px 100px 0 0;
+  padding: 130px 170px 0;
   flex: 1 1 auto;
   display: flex;
   flex-direction: column;
 }
 
-/* 시트 좌상단 back 셰브론 (Figma: 얇은 테두리 원, 코너 아래) */
-.cd-back {
-  position: absolute;
-  top: -2px;
-  left: 60px;
-  width: 100px;
-  height: 100px;
-  border-radius: 999px;
-  background: #fff;
-  border: 5px solid currentColor;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-}
-
-/* 제목 + 마감일(우측 정렬, baseline) */
+/* 제목 + 마감일 (Figma 5535:17973 Bold 80 / 5535:17994 Bold 50 테마색) */
 .cd-titlebar {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
   gap: 40px;
-  margin-bottom: 110px;
+  margin-bottom: 100px;
 }
 
 .cd-title {
@@ -123,39 +87,32 @@
 
 .cd-deadline {
   flex: 0 0 auto;
-  font-size: 46px;
+  font-size: 50px;
   font-weight: 700;
 }
 
-.cd-desc {
-  margin: 0 0 150px;
-  font-size: 55px;
-  font-weight: 500;
-  line-height: 1.36;
-  color: var(--color-text-secondary, #636363);
-}
-
-/* 활동영역 카드 3개 */
+/* 활동영역 카드 3개 (Figma 5535:17976: w530/h350, border5 테마색, radius45) */
 .cd-programs {
-  display: flex;
-  gap: 123px;
+  display: grid;
+  grid-template-columns: repeat(3, 530px);
+  justify-content: space-between;
+  margin-bottom: 120px;
 }
 
 .cd-prog {
   box-sizing: border-box;
   position: relative;
-  flex: 1 1 0;
-  height: 210px;
+  height: 350px;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 36px;
+  padding: 0 44px;
   background: #fff;
   border: 5px solid;
   border-radius: 45px;
 }
 
-/* 번호 뱃지 — 카드 상단 테두리에 걸쳐 중앙 배치 */
+/* 번호 뱃지 — 카드 상단 중앙, 테두리에 걸침 (Figma ellipse40 100원, Paperlogy 7Bold 60) */
 .cd-prog__num {
   position: absolute;
   top: -50px;
@@ -168,33 +125,83 @@
   height: 100px;
   border-radius: 999px;
   color: #fff;
-  font-family: "Paperlogy", "Noto Sans KR", sans-serif;
-  font-size: 56px;
+  font-family: var(--font-paperlogy, "Paperlogy"), "Noto Sans KR", sans-serif;
+  font-size: 60px;
   font-weight: 700;
 }
 
+/* 활동명 Figma 5535:17979 Display Bold 60 테마색 */
 .cd-prog__label {
   font-size: 60px;
   font-weight: 700;
-  line-height: 1.2;
+  line-height: 1.25;
   text-align: center;
 }
 
-/* CTA — 흰 버튼, 검은 글자. 시트 내부 하단 고정(Figma: 버튼 3459→3668, 아래 여백 ~172) */
-.cd-cta-wrap {
-  margin-top: auto;
-  padding: 56px 0 172px;
+/* 캠페인 설명 Figma 5535:17971 Noto Sans Medium 55 #636363 */
+.cd-desc {
+  margin: 0 0 90px;
+  font-size: 55px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: #636363;
 }
 
-.cd-cta {
-  width: 100%;
-  height: 210px;
-  border: none;
-  border-radius: 45px;
-  background: #ffffff;
-  color: #000000;
-  box-shadow: 0 4px 4px 7px rgba(0, 0, 0, 0.25);
+/* "이 캠페인은 [로고] 와 함께합니다." Figma 5535:21551 Regular 70 #636363 */
+.cd-partner-line {
+  margin: 0 0 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
   font-size: 70px;
+  font-weight: 400;
+  color: #636363;
+}
+
+.cd-partner-line__logo {
+  height: 70px;
+  width: auto;
+  object-fit: contain;
+}
+
+/* 모금 현황 카드 Figma 5558:18540: 흰 배경, border5 #e8e8e8, radius45, h416 */
+.cd-funding {
+  box-sizing: border-box;
+  min-height: 416px;
+  border: 5px solid #e8e8e8;
+  border-radius: 45px;
+  padding: 60px 70px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 44px;
+  margin-bottom: 100px;
+}
+
+/* 모금 현황 라벨 Figma 5558:18545 Bold 76 테마색 */
+.cd-funding__label {
+  margin: 0;
+  font-size: 76px;
   font-weight: 700;
-  cursor: pointer;
+}
+
+.cd-funding__bar {
+  height: 38px;
+  border-radius: 999px;
+  background: #e8e8e8;
+  overflow: hidden;
+}
+
+.cd-funding__fill {
+  height: 100%;
+  border-radius: 999px;
+}
+
+/* 금액 Figma 5558:18541 Bold 76 테마색, 우측 정렬 */
+.cd-funding__amount {
+  margin: 0;
+  text-align: right;
+  font-size: 76px;
+  font-weight: 700;
 }

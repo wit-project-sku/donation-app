@@ -9,7 +9,7 @@
   gap: 0;
 }
 
-/* 헤드라인 + 서브 (헤더 아래, Figma: 헤드라인 top≈757, 서브 top≈1050) */
+/* 헤드라인 + 서브 (Figma 5535:18556 헤드라인 80/Bold 한 줄, 5535:18547 서브 55/Medium) */
 .entry-page__hero {
   padding: 58px 170px 0;
   text-align: center;
@@ -19,37 +19,36 @@
   margin: 0;
   font-size: 80px;
   font-weight: 700;
-  line-height: 1.36;
+  line-height: normal;
+  white-space: nowrap;
   color: #000000;
 }
 
 .entry-page__sub {
-  margin: 76px 0 0;
+  margin: 24px 0 0;
   font-size: 55px;
   font-weight: 500;
-  color: var(--color-text-secondary, #636363);
+  line-height: normal;
+  color: #636363;
 }
 
-/* 선택 카드 2개 (Figma: 카드 top≈1287, w830/h1158, gap≈180) */
+/* 선택 카드 2개 (Figma 5535:18549/18550: w830/h1360, radius 80, border 5 #e8e8e8, gap 160) */
 .entry-page__cards {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 180px;
-  padding: 166px 170px 0;
+  grid-template-columns: 830px 830px;
+  justify-content: center;
+  gap: 160px;
+  padding: 70px 170px 0;
 }
 
 .entry-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 60px;
-  height: 1158px;
-  padding: 0 60px;
-  border: 5px solid var(--color-border, #e8e8e8);
+  position: relative;
+  box-sizing: border-box;
+  width: 830px;
+  height: 1360px;
+  border: 5px solid #e8e8e8;
   border-radius: 80px;
-  cursor: pointer;
-  text-align: center;
+  overflow: hidden;
 }
 
 .entry-card--ngo {
@@ -58,6 +57,42 @@
 
 .entry-card--school {
   background: #eff4f7;
+}
+
+/* 카드 상단 영역(원형 이미지+라벨+설명) — 클릭 시 해당 카테고리 선택 */
+.entry-card__body {
+  width: 100%;
+  height: 1081px; /* 1360 − 하단 패널 279 */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 60px;
+  padding: 0 60px;
+  border: none;
+  background: none;
+  text-align: center;
+  cursor: pointer;
+}
+
+/* 카드 하단 흰 패널 "기부내역 보기" (Figma 5535:18569 h279, 하단 라운드, border-top 5 #e8e8e8) */
+.entry-card__history {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 279px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-top: 5px solid #e8e8e8;
+  background: #ffffff;
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
+  font-size: 63px;
+  font-weight: 800;
+  color: #636363;
+  cursor: pointer;
 }
 
 .entry-card__icon {
@@ -82,50 +117,98 @@
   height: 53%;
 }
 
+/* 라벨: Figma 5535:18554/18555 Paperlogy 8 ExtraBold 63 #636363 */
 .entry-card__label {
-  font-family: "Paperlogy", "Noto Sans KR", sans-serif;
+  font-family: var(--font-paperlogy, "Paperlogy"), "Noto Sans KR", sans-serif;
   font-size: 63px;
   font-weight: 800;
-  color: var(--color-text-secondary, #636363);
+  color: #636363;
 }
 
+/* 설명: Figma 5535:18553/18552 Noto Sans Medium 50 #636363 */
 .entry-card__desc {
   font-size: 50px;
   font-weight: 500;
-  line-height: 1.4;
-  color: var(--color-text-secondary, #636363);
+  line-height: normal;
+  color: #636363;
 }
 
-/* 기부내역 보기 (Figma: pill w561/h111, radius 55.5, bg #e8e8e8, 글씨 60/medium/검정) */
-.entry-page__history {
-  align-self: center;
-  margin: 84px 0 0;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  height: 111px;
-  padding: 0 75px;
-  background: #e8e8e8;
-  border: none;
-  border-radius: 55.5px;
-  font-size: 60px;
-  font-weight: 500;
-  color: #000000;
-  cursor: pointer;
-}
-
-/* featured 배너 (Figma: top≈2704, w1825/h833, radius 45, 0.2 black dim) */
+/* featured 배너 (Figma 5535:18558: w1825/h833, radius 45, 0.2 black dim) */
 .entry-page__featured {
   position: relative;
-  margin: 64px 170px 0;
+  margin: 200px 170px 0;
   height: 833px;
   border-radius: 45px;
   overflow: hidden;
 }
 
-.entry-page__featured-bg {
+/* Swiper 컨테이너/슬라이드가 배너 영역을 꽉 채움 */
+.entry-featured-swiper {
+  width: 100%;
+  height: 100%;
+  /* 도트 테마 (Figma 5535:18562): 흰색, 비활성 반투명 */
+  --swiper-pagination-color: #ffffff;
+  --swiper-pagination-bottom: 48px;
+  --swiper-pagination-bullet-inactive-color: #ffffff;
+  --swiper-pagination-bullet-inactive-opacity: 0.5;
+  --swiper-pagination-bullet-horizontal-gap: 9px;
+}
+
+.entry-featured-slide {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.entry-page__featured-bg-img {
   position: absolute;
   inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* 도트: 비활성 18원형, 활성 48 pill (Figma) · 어떤 배경에서도 보이도록 그림자 */
+.entry-featured-swiper .swiper-pagination-bullet {
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  transition: width 0.3s ease, opacity 0.3s ease;
+  filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.45));
+}
+
+.entry-featured-swiper .swiper-pagination-bullet-active {
+  width: 48px;
+}
+
+/* 좌우 화살표 (Figma 5535:18570/18571) — Swiper 인스턴스에 직접 연결한 커스텀 버튼 */
+.entry-page__featured-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  width: 60px;
+  height: 90px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  background: none;
+  color: #ffffff;
+  font-size: 72px;
+  font-weight: 300;
+  line-height: 1;
+  cursor: pointer;
+  filter: drop-shadow(0 2px 10px rgba(0, 0, 0, 0.5));
+}
+
+.entry-page__featured-nav--prev {
+  left: 24px;
+}
+
+.entry-page__featured-nav--next {
+  right: 24px;
 }
 
 .entry-page__featured-overlay {
@@ -133,24 +216,29 @@
   inset: 0;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  /* 콘텐츠를 상단·좌측에 배치 (Figma: 아이브로우/타이틀이 배너 위쪽) */
+  justify-content: flex-start;
+  align-items: flex-start;
   gap: 28px;
-  padding: 88px;
+  /* 좌우 패딩을 넉넉히 두어 가장자리 화살표와 타이틀이 겹치지 않게 */
+  padding: 80px 150px;
   background: rgba(0, 0, 0, 0.2);
   color: #fff;
 }
 
+/* 아이브로우 Figma 5535:18560 Noto Sans Medium 48 #fff */
 .entry-page__featured-eyebrow {
   margin: 0;
   font-size: 48px;
   font-weight: 500;
 }
 
+/* 타이틀 Figma 5535:18559 Noto Sans Bold 80, 강조 #fcd869 */
 .entry-page__featured-title {
   margin: 0;
   font-size: 80px;
   font-weight: 700;
-  line-height: 1.3;
+  line-height: normal;
 }
 
 .entry-page__featured-title em {
@@ -158,49 +246,38 @@
   color: #fcd869;
 }
 
+/* 더 알아보기 Figma 5535:18568 흰 테두리 3, radius 55.5, w385/h111 · 5535:18561 텍스트 50 Medium */
 .entry-page__featured-more {
   align-self: flex-start;
   margin-top: 28px;
   display: inline-flex;
   align-items: center;
-  justify-content: center;
+  gap: 14px;
+  width: 385px;
   height: 111px;
-  padding: 0 56px;
+  padding: 0 40px;
+  box-sizing: border-box;
   border: 3px solid #fff;
   border-radius: 55.5px;
+  background: transparent;
+  color: #ffffff;
   font-size: 50px;
   font-weight: 500;
+  cursor: pointer;
 }
 
-/* 캐러셀 도트 인디케이터 (Figma: 하단 중앙) */
-.entry-page__featured-dots {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 56px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 18px;
+.entry-page__featured-more-chevron {
+  font-size: 54px;
+  line-height: 1;
 }
 
-.entry-page__featured-dot {
-  width: 18px;
-  height: 18px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.5);
-}
-
-.entry-page__featured-dot--active {
-  width: 48px;
-  background: #ffffff;
-}
-
-/* 하단 세액공제 안내문 (Figma: 검정 파트너바 없음, 회색 안내문만) */
+/* 하단 세액공제 안내문 (Figma 5535:18551 Noto Sans Medium 55 #999999, w1951 한 줄) */
 .entry-page__note {
-  margin: 177px 170px 77px;
+  margin: 120px 105px 80px;
   text-align: center;
   font-size: 55px;
   font-weight: 500;
-  color: var(--color-text-muted, #999999);
+  line-height: normal;
+  white-space: nowrap;
+  color: #999999;
 }

@@ -1,9 +1,9 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useAppNavigate } from "../hooks/useAppNavigate";
 import { VirtualKeyboard } from "../components/VirtualKeyboard";
 import { AppHeader } from "../components/AppHeader";
 import { AppFooter } from "../components/AppFooter";
-import { IconCamera } from "../components/Icon";
+import { IconCamera, IconCheck } from "../components/Icon";
 import { PageBody } from "../components/layout/PageBody";
 import { useDonationStore } from "../store/donationStore";
 import { useTheme } from "../theme/ThemeContext";
@@ -20,10 +20,7 @@ export function MessagePage() {
     amount,
     paymentMethod,
     donorName,
-    donorPhone,
-    activeField,
     setDonorName,
-    setDonorPhone,
     setActiveField,
     setSkipPhoto,
     setCapturedPhotoUrl,
@@ -40,41 +37,29 @@ export function MessagePage() {
     }
   }, [selectedCampaign, amount, paymentMethod, navigate]);
 
+  // 이 화면은 이름/닉네임만 입력받는다 (Figma 5535:18830).
   useEffect(() => {
-    if (activeField === null) setActiveField("name");
-  }, [activeField, setActiveField]);
+    setActiveField("name");
+  }, [setActiveField]);
 
   const handleKeyPress = useCallback(
     (key: string) => {
-      const field = activeField ?? "name";
-      if (field === "phone") {
-        if (!/^\d$/.test(key)) return;
-        setDonorPhone(donorPhone + key);
-        return;
-      }
       if (key === "\n") return;
       const nextName = appendKeyboardInput(donorName, key);
       if (nextName.length > MAX_DONOR_NAME_LENGTH) return;
       setDonorName(nextName);
     },
-    [activeField, donorName, donorPhone, setDonorName, setDonorPhone],
+    [donorName, setDonorName],
   );
 
   const handleBackspace = useCallback(() => {
-    const field = activeField ?? "name";
-    if (field === "phone") {
-      setDonorPhone(donorPhone.slice(0, -1));
-      return;
-    }
     setDonorName(removeLastHangul(donorName));
-  }, [activeField, donorName, donorPhone, setDonorName, setDonorPhone]);
+  }, [donorName, setDonorName]);
 
   const handleSpace = useCallback(() => {
-    const field = activeField ?? "name";
-    if (field === "phone") return;
     if (donorName.length >= MAX_DONOR_NAME_LENGTH) return;
     setDonorName(donorName + " ");
-  }, [activeField, donorName, setDonorName]);
+  }, [donorName, setDonorName]);
 
   const goNext = useCallback(
     (skipPhoto: boolean) => {
@@ -91,11 +76,12 @@ export function MessagePage() {
     [donorName, navigate, setCapturedPhotoUrl, setSelectedOutfit, setSkipPhoto],
   );
 
+  const [imageConsent, setImageConsent] = useState(false);
+
   if (!selectedCampaign) return null;
 
-  const isNameActive = activeField === "name" || activeField === null;
-  const isPhoneActive = activeField === "phone";
   const canProceed = donorName.trim().length > 0;
+  const canCapture = canProceed && imageConsent;
 
   return (
     <PageBody className="message-page" scroll={false}>
@@ -104,37 +90,18 @@ export function MessagePage() {
       <div className="msg-body">
         <div className="msg-card" style={{ borderColor: theme.primary }}>
           <h2 className="msg-card__title" style={{ color: theme.primary }}>
-            기부증서 발급
+            기부한컷 받기
           </h2>
 
           <div className="msg-field-group">
             <span className="msg-field-label">이름/닉네임 :</span>
             <button
               type="button"
-              className={`msg-field${isNameActive ? " msg-field--active" : ""}`}
+              className="msg-field"
               onClick={() => setActiveField("name")}
-              style={isNameActive ? { borderColor: theme.primary } : undefined}
             >
               {donorName && (
                 <span className="msg-field__value">{donorName}</span>
-              )}
-            </button>
-          </div>
-
-          <div className="msg-field-group">
-            <span className="msg-field-label">전화번호 :</span>
-            <button
-              type="button"
-              className={`msg-field${isPhoneActive ? " msg-field--active" : ""}`}
-              onClick={() => setActiveField("phone")}
-              style={isPhoneActive ? { borderColor: theme.primary } : undefined}
-            >
-              {donorPhone ? (
-                <span className="msg-field__value">{donorPhone}</span>
-              ) : (
-                <span className="msg-field__hint">
-                  모바일 기부증서를 발송해드려요
-                </span>
               )}
             </button>
           </div>
@@ -143,22 +110,36 @@ export function MessagePage() {
         <div className="msg-actions">
           <button
             type="button"
-            className="msg-action msg-action--secondary"
-            onClick={() => goNext(true)}
-            disabled={!canProceed}
+            className="msg-consent"
+            onClick={() => setImageConsent((v) => !v)}
+            aria-pressed={imageConsent}
           >
-            기부증서 바로 발급
+            <span className={`msg-check${imageConsent ? " msg-check--on" : ""}`}>
+              <IconCheck size={44} />
+            </span>
+            <span className="msg-consent__text">
+              서비스 제공을 위해 이용자의 이미지 및 초상권을 수집·활용할 수 있습니다.
+            </span>
           </button>
-          <button
-            type="button"
-            className="msg-action msg-action--primary"
-            onClick={() => goNext(false)}
-            disabled={!canProceed}
-            style={canProceed ? { backgroundColor: theme.primary } : undefined}
-          >
-            <IconCamera size={72} aria-hidden />
-            <span>사진 촬영</span>
-          </button>
+          <div className="msg-buttons">
+            <button
+              type="button"
+              className="msg-action msg-action--secondary"
+              onClick={() => goNext(true)}
+              disabled={!canProceed}
+            >
+              기부증서 바로 발급
+            </button>
+            <button
+              type="button"
+              className="msg-action msg-action--primary"
+              onClick={() => goNext(false)}
+              disabled={!canCapture}
+            >
+              <IconCamera size={72} aria-hidden />
+              <span>사진 촬영</span>
+            </button>
+          </div>
         </div>
       </div>
 

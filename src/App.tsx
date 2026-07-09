@@ -8,7 +8,16 @@ import { KioskShell } from "./components/layout/KioskShell";
 import { AmountPage } from "./pages/AmountPage";
 import { CampaignDetailPage } from "./pages/CampaignDetailPage";
 import { CampaignsPage } from "./pages/CampaignsPage";
+import { SchoolSelectPage } from "./pages/SchoolSelectPage";
+import { SchoolDetailPage } from "./pages/SchoolDetailPage";
+import { SchoolAmountPage } from "./pages/SchoolAmountPage";
+import { SchoolPaymentPage } from "./pages/SchoolPaymentPage";
+import { SchoolCompletePage } from "./pages/SchoolCompletePage";
+import { SchoolRegisterPage } from "./pages/SchoolRegisterPage";
+import { SchoolCertificatePage } from "./pages/SchoolCertificatePage";
+import { SchoolWallPage } from "./pages/SchoolWallPage";
 import { CameraCapturePage } from "./pages/CameraCapturePage";
+import { CertificatePromptPage } from "./pages/CertificatePromptPage";
 import { EntryPage } from "./pages/EntryPage";
 import { DonationCertificatePage } from "./pages/DonationCertificatePage";
 import { MessagePage } from "./pages/MessagePage";
@@ -17,10 +26,12 @@ import { OutfitSelectionPage } from "./pages/OutfitSelectionPage";
 import { PaymentPage } from "./pages/PaymentPage";
 import { WallPage } from "./pages/WallPage";
 import { ThemeProvider } from "./theme/ThemeContext";
+import { useKioskPhotoBridge } from "./hooks/useKioskPhotoBridge";
 
 function LocationAwareApp() {
   const [searchParams] = useSearchParams();
   const location = searchParams.get("location") || "insadong";
+  useKioskPhotoBridge();
 
   return (
     <ThemeProvider location={location}>
@@ -34,10 +45,22 @@ function LocationAwareApp() {
               <Routes>
                 <Route element={<AppLayout />}>
                   <Route path="/" element={<EntryPage />} />
+                  <Route path="/school" element={<SchoolSelectPage />} />
+                  <Route path="/school-detail" element={<SchoolDetailPage />} />
+                  <Route path="/school-amount" element={<SchoolAmountPage />} />
+                  <Route path="/school-payment" element={<SchoolPaymentPage />} />
+                  <Route path="/school-complete" element={<SchoolCompletePage />} />
+                  <Route path="/school-register" element={<SchoolRegisterPage />} />
+                  <Route path="/school-certificate" element={<SchoolCertificatePage />} />
+                  <Route path="/school-wall" element={<SchoolWallPage />} />
                   <Route path="/campaigns" element={<CampaignsPage />} />
                   <Route path="/campaign" element={<CampaignDetailPage />} />
                   <Route path="/amount" element={<AmountPage />} />
                   <Route path="/payment" element={<PaymentPage />} />
+                  <Route
+                    path="/certificate-prompt"
+                    element={<CertificatePromptPage />}
+                  />
                   <Route path="/message" element={<MessagePage />} />
                   <Route path="/outfit" element={<OutfitSelectionPage />} />
                   <Route path="/camera" element={<CameraCapturePage />} />

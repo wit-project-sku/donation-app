@@ -9,182 +9,90 @@
   gap: 0;
 }
 
-/* 증서 카드는 Figma 기준 1300px 고정폭. 좌우 여백을 넉넉히 두어 가운데 정렬. */
 .cert-body {
   flex: 1 0 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 48px 170px 0;
+  padding: 40px 170px 0;
 }
 
-/* Figma: 카드 1300×2137, border 20 #999, radius 45, 흰 배경 */
-.cert-card {
-  box-sizing: border-box;
-  width: 1300px;
+/* 감사 문구 — Figma 5706:13087 Noto Sans Regular 40 #636363, w1036, 사진 위 중앙 */
+.cert-caption {
+  margin: 0 0 56px;
+  width: 1036px;
   max-width: 100%;
-  background: #fff;
-  border: 20px solid var(--color-text-muted, #999999);
-  border-radius: 45px;
-  /* border 안쪽 padding: 위 45 / 좌우 221 / 아래 42 */
-  padding: 45px 221px 42px;
-}
-
-.cert-card__head {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   text-align: center;
-  /* subtitle → photo 간격 47 */
-  margin-bottom: 47px;
-}
-
-/* · 기부증서 · — Paperlogy Medium 70 black */
-.cert-card__title {
-  margin: 0 0 35px;
-  font-family: "Paperlogy", "Noto Sans KR", sans-serif;
-  font-size: 70px;
-  font-weight: 500;
-  color: #000000;
-}
-
-/* - 캠페인명 - — Paperlogy Light 36 #636363 */
-.cert-card__subtitle {
-  margin: 0;
-  font-family: "Paperlogy", "Noto Sans KR", sans-serif;
-  font-size: 36px;
-  font-weight: 300;
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
+  font-size: 40px;
+  font-weight: 400;
+  line-height: 1.3;
   color: #636363;
 }
 
-/* 사진 영역 — Figma 801.66×1425.17, border 5 #999, radius 38 */
-.cert-card__photo {
-  width: 802px;
+/* 사진 카드 — Figma 5706:13089 1058×1881, border 5 #999, radius 38 */
+.cert-photo {
+  box-sizing: border-box;
+  width: 1058px;
   max-width: 100%;
-  height: 1425px;
-  margin: 0 auto;
+  height: 1881px;
   border: 5px solid var(--color-text-muted, #999999);
   border-radius: 38px;
   overflow: hidden;
-  background: #f4f4f4;
+  background: #ffffff;
 }
 
-.cert-card__photo img {
+.cert-photo img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
 }
 
-/* 하트 일러스트(직접 발급) variant: 사진과 동일 박스에 일러스트를 contain 배치 */
-.cert-card__photo--illust {
-  border: none;
-  background: transparent;
-  border-radius: 0;
+/* 사진 미제공(직접 발급) — 일러스트를 카드 안에 contain 배치 */
+.cert-photo--illust {
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.cert-card__photo--illust img {
-  width: 759px;
-  height: 810px;
-  max-width: 100%;
+.cert-photo--illust img {
+  width: 640px;
+  height: 640px;
+  max-width: 80%;
   object-fit: contain;
 }
 
-/* 서명 블록 — photo → name 간격 52 */
-.cert-card__sign {
-  position: relative;
+/* 서명 행 — Figma: 날짜 2026.05.22 · 이름 (50 black) + 좌우 선(240px) */
+.cert-sign {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  margin-top: 52px;
+  justify-content: center;
+  gap: 48px;
+  width: 1058px;
+  max-width: 100%;
+  margin-top: 36px;
 }
 
-/* 후원자 이름 — Noto Sans Medium 50 black */
-.cert-card__name {
-  font-family: "Noto Sans KR", sans-serif;
+.cert-sign__line {
+  flex: 0 0 auto;
+  width: 240px;
+  height: 4px;
+  background: #000000;
+}
+
+.cert-sign__date,
+.cert-sign__name {
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
   font-size: 50px;
   font-weight: 500;
   color: #000000;
-}
-
-/* 구분선 — 584px, name 아래 14px */
-.cert-card__line {
-  width: 584px;
-  max-width: 100%;
-  height: 1px;
-  margin: 14px 0 0;
-  background: var(--color-text-muted, #999999);
-}
-
-/* unicef 로고 + QR 행 — 선 아래 35px */
-.cert-card__sign-row {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 584px;
-  max-width: 100%;
-  margin-top: 35px;
-}
-
-/* unicef 로고 — Figma h 39.48 */
-.cert-card__partner {
-  height: 39.5px;
-  width: auto;
-  object-fit: contain;
-}
-
-/* QR — 153×153 박스, border 3 #636363, radius 25.
-   세로 중심이 구분선 살짝 위(≈ -10px)에 오도록, 우측은 사진/콘텐츠 우단에 정렬 */
-.cert-card__qr {
-  position: absolute;
-  right: 0;
-  bottom: -10px;
-  box-sizing: border-box;
-  width: 153px;
-  height: 153px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #fff;
-  border: 3px solid #636363;
-  border-radius: 25px;
-}
-
-.cert-card__qr svg {
-  width: 100%;
-  height: 100%;
-}
-
-/* 하단 문구 — unicef/QR 행 아래 ~77px */
-.cert-card__foot {
-  text-align: center;
-  margin-top: 77px;
-}
-
-/* 감사 문구 — Noto Sans 30 #636363 */
-.cert-card__caption {
-  margin: 0 0 12px;
-  font-family: "Noto Sans KR", sans-serif;
-  font-size: 30px;
-  line-height: 1.4;
-  color: #636363;
-}
-
-/* 날짜 — Noto Sans 30 black */
-.cert-card__date {
-  display: block;
-  font-family: "Noto Sans KR", sans-serif;
-  font-size: 30px;
-  color: #000000;
+  white-space: nowrap;
 }
 
 .cert-error {
-  margin: 32px 0 0;
-  padding: 28px 36px;
+  margin: 28px 0 0;
+  padding: 24px 36px;
   border-radius: 24px;
   background: #fdecec;
   color: #b42318;
@@ -192,18 +100,142 @@
   text-align: center;
 }
 
-/* CTA — 732×150, radius 45, theme primary 배경, Noto Bold 63 white. 카드 아래 124px */
-.cert-cta {
+/* 액션 행 — Figma 5706:13079 w1740, 좌우 정렬:
+   QR(214) / 화살표(75) / 저장하기(650) / 기부내역보기(650) */
+.cert-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 1740px;
+  max-width: 100%;
+  margin-top: 120px;
+}
+
+/* QR — Figma 5706:13080 214.525 사각, border 4.291 테마색, radius 21.453, 흰 배경 */
+.cert-qr {
+  box-sizing: border-box;
+  flex: 0 0 auto;
+  width: 214.525px;
+  height: 214.525px;
+  padding: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  border: 4.291px solid var(--main-01, #009fe3);
+  border-radius: 21.453px;
+}
+
+.cert-qr svg {
   width: 100%;
-  max-width: 732px;
-  margin: 124px auto 0;
+  height: 100%;
+  display: block;
+}
+
+/* 좌향 화살표 — Figma 5706:13081 Frame487 75.458×85.81 */
+.cert-arrow {
+  flex: 0 0 auto;
+  width: 75.458px;
+  height: 85.81px;
+}
+
+/* 저장하기 / 기부내역보기 — Figma 650×150, radius 42.9, 글씨 #e9e9e9 58 bold */
+.cert-btn {
+  box-sizing: border-box;
+  flex: 0 0 auto;
+  width: 650px;
   height: 150px;
   border: none;
-  border-radius: 45px;
-  box-shadow: 0 4px 4px 7px rgba(0, 0, 0, 0.25);
-  color: #fff;
-  font-family: "Noto Sans KR", sans-serif;
-  font-size: 63px;
+  border-radius: 42.9px;
+  box-shadow: 0 21.45px 42.9px rgba(143, 147, 157, 0.1);
+  color: #e9e9e9;
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
+  font-size: 58px;
   font-weight: 700;
   cursor: pointer;
+}
+
+.cert-btn:disabled {
+  cursor: default;
+  opacity: 0.85;
+}
+
+/* 저장하기 = 테마 강조색 (Figma #009fe3 = 유니세프) */
+.cert-btn--save {
+  background: var(--main-01, #009fe3);
+}
+
+/* 기부내역보기 = 고정 회색 #616161 */
+.cert-btn--history {
+  background: #616161;
+}
+
+/* ── 저장 완료 QR 팝업 모달 ───────────────────────────────── */
+.cert-qr-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.55);
+}
+
+.cert-qr-modal__card {
+  position: relative;
+  box-sizing: border-box;
+  width: 1040px;
+  max-width: 90%;
+  padding: 120px 90px 100px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #ffffff;
+  border-radius: 60px;
+  box-shadow: 0 40px 120px rgba(0, 0, 0, 0.4);
+}
+
+.cert-qr-modal__close {
+  position: absolute;
+  top: 48px;
+  right: 60px;
+  width: 90px;
+  height: 90px;
+  border: none;
+  background: none;
+  color: #999999;
+  font-size: 70px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.cert-qr-modal__title {
+  margin: 0 0 28px;
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
+  font-size: 72px;
+  font-weight: 700;
+  color: #000000;
+  text-align: center;
+}
+
+.cert-qr-modal__desc {
+  margin: 0 0 64px;
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
+  font-size: 42px;
+  font-weight: 400;
+  line-height: 1.4;
+  color: #636363;
+  text-align: center;
+}
+
+.cert-qr-modal__qr {
+  box-sizing: border-box;
+  padding: 40px;
+  background: #ffffff;
+  border: 6px solid var(--main-01, #009fe3);
+  border-radius: 40px;
+}
+
+.cert-qr-modal__qr svg {
+  display: block;
 }

@@ -15,6 +15,7 @@ import { VirtualKeyboard } from "../components/VirtualKeyboard";
 import { WallGiverCard } from "../components/WallGiverCard";
 import { PageBody } from "../components/layout/PageBody";
 import { useDonationStore } from "../store/donationStore";
+import { getKioskBridge } from "../utils/kioskBridge";
 import { useTheme } from "../theme/ThemeContext";
 import { defaultDonationImage } from "../utils/defaultDonationImage";
 import { appendKeyboardInput, removeLastHangul } from "../utils/hangulInput";
@@ -51,18 +52,24 @@ export function WallPage() {
   } = useInfiniteQuery({
     queryKey: [
       "wallEntries",
-      { pageSize: WALL_PAGE_SIZE, keyword: deferredSearch },
+      { pageSize: WALL_PAGE_SIZE, targetType: "CAMPAIGN", donatorName: deferredSearch },
     ],
     initialPageParam: 1,
     queryFn: ({ pageParam }) =>
       fetchWallEntriesPage({
         pageNum: pageParam,
         pageSize: WALL_PAGE_SIZE,
-        keyword: deferredSearch,
+        targetType: "CAMPAIGN",
+        donatorName: deferredSearch,
       }),
     getNextPageParam: (lastPage) =>
       lastPage.last ? undefined : lastPage.pageNum + 1,
   });
+
+  // Reaching the wall (donation complete): play the video on the kiosk's Monitor 2.
+  useEffect(() => {
+    getKioskBridge()?.showVideo();
+  }, []);
 
   useEffect(() => {
     if (!keyboardOpen) return;
@@ -87,6 +94,7 @@ export function WallPage() {
           donorName: donorName.trim(),
           amount: amount || 0,
           campaignName: selectedCampaign.title,
+          targetType: "CAMPAIGN",
           paymentMethod:
             donationType === "regular" ? "정기 후원" : "일시 후원",
           donatedAt: new Date().toISOString(),
@@ -141,39 +149,50 @@ export function WallPage() {
       <div className="wall-body">
         <h2 className="wall-title">함께해주셔서 감사합니다</h2>
 
-        <div
-          className={`wall-search${keyboardOpen ? " wall-search--on" : ""}`}
-          ref={searchRef}
-          style={keyboardOpen ? { borderColor: theme.primary } : undefined}
-        >
-          <input
-            className="wall-search__input"
-            type="text"
-            placeholder="이름으로 검색해보세요!"
-            value={search}
-            onChange={(event) => setSearch(event.target.value)}
-            onFocus={() => setKeyboardOpen(true)}
-            onClick={() => setKeyboardOpen(true)}
-          />
-          {search.length > 0 && (
-            <button
-              type="button"
-              className="wall-search__clear"
-              onClick={(event) => {
-                event.stopPropagation();
-                setSearch("");
-              }}
-              aria-label="검색어 지우기"
-            >
-              지우기
-            </button>
+        <div className="wall-search-area" ref={searchRef}>
+          <div
+            className={`wall-search${keyboardOpen ? " wall-search--on" : ""}`}
+            style={keyboardOpen ? { borderColor: theme.primary } : undefined}
+          >
+            <input
+              className="wall-search__input"
+              type="text"
+              placeholder="이름으로 검색해보세요!"
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+              onFocus={() => setKeyboardOpen(true)}
+              onClick={() => setKeyboardOpen(true)}
+            />
+            {search.length > 0 && (
+              <button
+                type="button"
+                className="wall-search__clear"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  setSearch("");
+                }}
+                aria-label="검색어 지우기"
+              >
+                지우기
+              </button>
+            )}
+            <IconSearch
+              className="wall-search__icon"
+              width={71}
+              height={68}
+              style={{ color: theme.primary }}
+            />
+          </div>
+
+          {keyboardOpen && (
+            <div className="wall-keyboard" ref={keyboardRef}>
+              <VirtualKeyboard
+                onKeyPress={handleKeyPress}
+                onBackspace={() => setSearch((value) => removeLastHangul(value))}
+                onSpace={() => setSearch((value) => `${value} `)}
+              />
+            </div>
           )}
-          <IconSearch
-            className="wall-search__icon"
-            width={71}
-            height={68}
-            style={{ color: theme.primary }}
-          />
         </div>
 
         <section
@@ -227,16 +246,6 @@ export function WallPage() {
       </div>
 
       <AppFooter />
-
-      {keyboardOpen && (
-        <div className="wall-keyboard" ref={keyboardRef}>
-          <VirtualKeyboard
-            onKeyPress={handleKeyPress}
-            onBackspace={() => setSearch((value) => removeLastHangul(value))}
-            onSpace={() => setSearch((value) => `${value} `)}
-          />
-        </div>
-      )}
     </PageBody>
   );
 }

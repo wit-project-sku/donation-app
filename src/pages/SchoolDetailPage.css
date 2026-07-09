@@ -1,0 +1,196 @@
+/* 학교 상세 (Figma 5591:40524) — 히어로 오버레이 + 흰 시트 본문 */
+.school-detail {
+  display: flex;
+  flex-direction: column;
+}
+
+/* 헤더가 히어로에 오버레이되도록 풀블리드 (PageBody 패딩/gap 제거) */
+.page-body.school-detail {
+  position: relative;
+  padding: 0;
+  gap: 0;
+}
+
+.sd-header-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+}
+
+/* Hero — Figma 5591:40527 image284 + 어두운 오버레이 */
+.sd-hero {
+  position: relative;
+  flex: 0 0 auto;
+  height: 1305px;
+  overflow: hidden;
+}
+
+.sd-hero__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.sd-hero__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+}
+
+/* 기부하기 CTA — Figma 5591:40541 초록 배너, h210, radius45, 흰 Bold 80, 히어로 하단 */
+.sd-hero__cta {
+  position: absolute;
+  left: 170px;
+  right: 170px;
+  bottom: 155px;
+  height: 210px;
+  padding: 0 40px;
+  border: none;
+  border-radius: 45px;
+  box-shadow: 0 4px 4px 7px rgba(0, 0, 0, 0.25);
+  color: #ffffff;
+  font-size: 80px;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+/* White sheet — Figma 5591:40530 rounded-top 100, 히어로 위로 살짝 겹침 */
+.sd-body {
+  position: relative;
+  z-index: 1;
+  margin-top: -85px;
+  background: #ffffff;
+  border-radius: 100px 100px 0 0;
+  padding: 130px 170px 0;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 학교명 — Figma 5591:40540 Bold 80 검정 */
+.sd-title {
+  margin: 0 0 130px;
+  font-size: 80px;
+  font-weight: 700;
+  color: #000000;
+}
+
+/* 사용처 카드 3개 — Figma 5591:40607: w529/h350, border5 #00a937, radius45 */
+.sd-programs {
+  display: grid;
+  grid-template-columns: repeat(3, 529px);
+  justify-content: space-between;
+  margin-bottom: 120px;
+  overflow: visible;
+}
+
+.sd-prog {
+  box-sizing: border-box;
+  position: relative;
+  height: 350px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 44px;
+  background: #ffffff;
+  border: 5px solid #00a937;
+  border-radius: 45px;
+  cursor: pointer;
+}
+
+/* 선택 카드 — Figma 5591:40609 연초록 배경 */
+.sd-prog.is-selected {
+  background: #e5ffed;
+}
+
+/* 번호 뱃지 — Figma 5591:40614 초록 원 72px, Paperlogy 7Bold 51, 카드 상단 걸침 */
+.sd-prog__num {
+  position: absolute;
+  top: -36px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 72px;
+  height: 72px;
+  border-radius: 999px;
+  background: #00a937;
+  color: #ffffff;
+  font-family: var(--font-paperlogy, "Paperlogy"), "Noto Sans KR", sans-serif;
+  font-size: 51px;
+  font-weight: 700;
+}
+
+/* 활동명 — Figma 5591:40610 Display Bold 60 #00a937 */
+.sd-prog__label {
+  font-size: 60px;
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: center;
+  color: #00a937;
+}
+
+/* 소개문 — Figma 5591:40690 Noto Sans Medium 55 #636363 */
+.sd-desc {
+  margin: 0 0 90px;
+  font-size: 55px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: #636363;
+}
+
+/* 모금 현황 카드 — Figma 5591:40723 흰 배경, border5 #e8e8e8, radius45, h416 */
+.sd-funding {
+  box-sizing: border-box;
+  min-height: 416px;
+  border: 5px solid #e8e8e8;
+  border-radius: 45px;
+  padding: 60px 70px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 44px;
+  margin-bottom: 60px;
+}
+
+/* 모금 현황 라벨 — Figma 5591:40728 Bold 76 초록 */
+.sd-funding__label {
+  margin: 0;
+  font-size: 76px;
+  font-weight: 700;
+}
+
+/* 진행바 — Figma 5591:40725 */
+.sd-funding__bar {
+  height: 38px;
+  border-radius: 999px;
+  background: #e8e8e8;
+  overflow: hidden;
+}
+
+.sd-funding__fill {
+  height: 100%;
+  border-radius: 999px;
+}
+
+/* 금액 — Figma 5591:40724 Bold 76 초록, 우측 정렬 */
+.sd-funding__amount {
+  margin: 0;
+  text-align: right;
+  font-size: 76px;
+  font-weight: 700;
+}
+
+/* 참여자·수혜자 — Figma 5659:87044 Regular 70 #636363, 중앙 */
+.sd-stats {
+  margin: 0 0 80px;
+  text-align: center;
+  font-size: 70px;
+  font-weight: 400;
+  color: #636363;
+}

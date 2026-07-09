@@ -3,14 +3,14 @@
   flex-direction: column;
 }
 
-/* 캠페인: 헤더가 히어로에 오버레이되도록 풀블리드(PageBody 패딩/gap 제거) + 헤더 absolute */
+/* 캠페인: 헤더가 히어로에 오버레이되도록 풀블리드(PageBody 패딩/gap 제거) */
 .page-body.campaigns-page {
   position: relative;
   padding: 0;
   gap: 0;
 }
 
-/* 헤더를 히어로 위에 오버레이 (Figma: 헤더·히어로 둘 다 top-0) */
+/* 헤더를 히어로 위에 오버레이 (Figma 5535:18406, light 변형·타이틀 NGO) */
 .campaigns-header-overlay {
   position: absolute;
   top: 0;
@@ -19,11 +19,11 @@
   z-index: 2;
 }
 
-/* Hero — 헤더 오버레이형, 시트가 Figma 기준 ~2032px(53%)에서 시작하도록 풀높이 */
+/* Hero — Figma 5535:18397 image282 h1305 + 0.4 black dim, 헤더 오버레이형 */
 .campaigns-hero {
   position: relative;
   flex: 0 0 auto;
-  height: 2150px;
+  height: 1305px;
   overflow: hidden;
 }
 
@@ -37,17 +37,14 @@
 .campaigns-hero__overlay {
   position: absolute;
   inset: 0;
-  /* Figma: full-bleed 0.2 black dim + bottom fade-to-#c4c4c4 (584px) */
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, #c4c4c4 100%) bottom /
-      100% 584px no-repeat,
-    rgba(0, 0, 0, 0.2);
+  background: rgba(0, 0, 0, 0.4);
 }
 
+/* 히어로 헤드라인 Figma 5535:18405 Noto Sans Black 128 흰색, 2줄 */
 .campaigns-hero__headline {
   position: absolute;
   left: 170px;
-  bottom: 190px;
+  bottom: 210px;
   margin: 0;
   width: 1276px;
   color: #fff;
@@ -56,34 +53,28 @@
   line-height: 1.18;
 }
 
-/* White sheet — 바닥까지 채워서 CTA를 하단에 고정 (Figma: 시트 2032→3840) */
+/* White sheet — Figma 5535:21535 rounded-top 100, 히어로 위로 살짝 겹침 */
 .campaigns-body {
   position: relative;
-  margin-top: -120px;
+  z-index: 1;
+  margin-top: -85px;
   background: #fff;
-  padding: 150px 170px 0;
+  border-radius: 100px 100px 0 0;
+  padding: 130px 170px 0;
   flex: 1 1 auto;
   display: flex;
   flex-direction: column;
 }
 
-/* 세금 안내문 — 히어로 바로 아래(라벨 위), 흰 배경 (Figma 4997:98377) */
-.campaigns-note {
-  margin: 0 0 120px;
-  font-size: 55px;
-  font-weight: 500;
-  line-height: 1.4;
-  color: var(--color-text-muted, #999999);
-}
-
+/* 섹션 타이틀 Figma 5535:18381 Noto Sans Bold 70 검정 */
 .campaigns-body__label {
-  margin: 0 0 56px;
+  margin: 0 0 64px;
   font-size: 70px;
   font-weight: 700;
   color: #000000;
 }
 
-/* School search */
+/* 학교 검색창 */
 .campaigns-search {
   display: flex;
   align-items: center;
@@ -111,22 +102,23 @@
   flex: 0 0 auto;
 }
 
-/* Card carousel */
+/* 3열 카드 그리드 (Figma: 카드 w550/h629, 열간격 85, 행간격 85) */
 .campaigns-grid {
-  display: flex;
-  gap: 85px;
-  overflow-x: auto;
-  padding-bottom: 32px;
+  display: grid;
+  grid-template-columns: repeat(3, 550px);
+  justify-content: space-between;
+  row-gap: 85px;
 }
 
+/* 카드 Figma 5535:18382: w550/h629, radius 45, shadow 0 4 4 3 / 0.1 */
 .campaign-card {
   box-sizing: border-box;
-  flex: 0 0 550px;
+  width: 550px;
+  height: 629px;
   display: flex;
   flex-direction: column;
-  height: 630px;
   background: #fff;
-  border: 7px solid transparent;
+  border: none;
   border-radius: 45px;
   box-shadow: 0 4px 4px 3px rgba(0, 0, 0, 0.1);
   overflow: hidden;
@@ -134,13 +126,13 @@
   cursor: pointer;
 }
 
+/* 이미지 영역 h529, 상단만 라운드 45 */
 .campaign-card__visual {
   position: relative;
   display: block;
-  flex: 0 0 530px;
-  height: 530px;
-  border-top-left-radius: 45px;
-  border-top-right-radius: 45px;
+  flex: 0 0 529px;
+  height: 529px;
+  border-radius: 45px 45px 0 0;
   overflow: hidden;
 }
 
@@ -151,19 +143,39 @@
   display: block;
 }
 
+/* 로고·타이틀 가독성을 위한 딤 (Figma: 이미지 위 #7d7d7d) */
+.campaign-card__scrim {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.28);
+}
+
+/* 주최단체 로고 — 좌상단, 흰색 (Figma image286 h39) */
+.campaign-card__logo {
+  position: absolute;
+  left: 34px;
+  top: 30px;
+  height: 44px;
+  width: auto;
+  max-width: 300px;
+  object-fit: contain;
+  /* Show original NGO logo colors (backend organization.name -> logo mapping). */
+  filter: none;
+}
+
+/* 캠페인명 — 좌하단, 흰색 Bold 48 (Figma 5535:18391) */
 .campaign-card__title {
   position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  padding: 36px 36px;
-  background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.5));
+  left: 34px;
+  right: 34px;
+  bottom: 34px;
   color: #fff;
   font-size: 48px;
   font-weight: 700;
   text-align: left;
 }
 
+/* 기부하기 스트립 — 흰 배경, #999 SemiBold 50 (Figma 5535:18388) */
 .campaign-card__action {
   flex: 1 1 auto;
   display: flex;
@@ -176,34 +188,21 @@
 }
 
 .campaigns-grid__empty {
+  grid-column: 1 / -1;
   padding: 80px;
+  text-align: center;
   font-size: 50px;
   color: var(--color-text-muted, #999999);
 }
 
-/* CTA — white button, black text. 시트 내부 하단에 고정(Figma: 버튼 3455→3669, 아래 여백 ~171) */
-.campaigns-cta-wrap {
-  margin-top: auto;
-  padding: 56px 0 171px;
-}
-
-.campaigns-cta {
-  width: 100%;
-  height: 210px;
-  border: none;
-  border-radius: 45px;
-  background: #ffffff;
-  color: #000000;
-  box-shadow: 0 4px 4px 7px rgba(0, 0, 0, 0.25);
-  font-size: 70px;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.campaigns-cta:disabled {
-  background: var(--color-disabled, #c0b8b0);
-  color: #fff;
-  box-shadow: none;
+/* 그리드 하단 안내문 Figma 5535:18401 Noto Sans Medium 55 #999, 중앙 */
+.campaigns-note {
+  margin: 90px 0 100px;
+  text-align: center;
+  font-size: 55px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: #999999;
 }
 
 /* States */

@@ -1,23 +1,73 @@
+import { useRef, type ReactNode } from "react";
+import type { Swiper as SwiperClass } from "swiper";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Autoplay, Pagination } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/pagination";
 import { useAppNavigate } from "../hooks/useAppNavigate";
 import { useDonationStore } from "../store/donationStore";
 import { exitDonationApp } from "../config/navigation";
 import { PageBody } from "../components/layout/PageBody";
 import { AppHeader } from "../components/AppHeader";
-import { PlaceholderAsset } from "../components/PlaceholderAsset";
 import type { DonationCategory } from "../types";
 import ngoIcon from "../assets/entry-ngo.png";
 import schoolIcon from "../assets/entry-school.png";
+import bannerBg from "../assets/featured-banner.png";
 import "./EntryPage.css";
+
+/** 하단 featured 캐러셀 슬라이드 (Figma 5535:18557 배너 · 강조 텍스트 #fcd869) */
+interface FeaturedBanner {
+  id: number;
+  eyebrow: string;
+  title: ReactNode;
+}
+
+const FEATURED_BANNERS: FeaturedBanner[] = [
+  {
+    id: 1,
+    eyebrow: "오늘도 도움이 필요한 아이들이 있습니다",
+    title: (
+      <>
+        매일 어린이 <em>1,200명</em>이
+        <br />
+        <em>말라리아</em>로 인해 사망합니다.
+      </>
+    ),
+  },
+  {
+    id: 2,
+    eyebrow: "당신의 작은 나눔이 큰 힘이 됩니다",
+    title: (
+      <>
+        커피 한 잔 값 <em>5,000원</em>으로
+        <br />
+        한 아이의 <em>하루</em>를 지킬 수 있습니다.
+      </>
+    ),
+  },
+  {
+    id: 3,
+    eyebrow: "함께하면 더 멀리 갈 수 있습니다",
+    title: (
+      <>
+        지금까지 <em>12,480명</em>이
+        <br />
+        나눔에 <em>동참</em>했습니다.
+      </>
+    ),
+  },
+];
 
 export function EntryPage() {
   const navigate = useAppNavigate();
+  const featuredSwiper = useRef<SwiperClass | null>(null);
   const setDonationCategory = useDonationStore(
     (state) => state.setDonationCategory,
   );
 
   const choose = (category: Exclude<DonationCategory, "none">) => {
     setDonationCategory(category);
-    navigate("/campaigns");
+    navigate(category === "school" ? "/school" : "/campaigns");
   };
 
   return (
@@ -26,87 +76,124 @@ export function EntryPage() {
 
       <div className="entry-page__hero">
         <h2 className="entry-page__headline">
-          당신의 따뜻한 마음이
-          <br />
-          누군가의 희망이 됩니다
+          당신의 따뜻한 마음이 누군가의 희망이 됩니다
         </h2>
         <p className="entry-page__sub">기부할 대상을 선택해주세요</p>
       </div>
 
       <div className="entry-page__cards">
-        <button
-          type="button"
-          className="entry-card entry-card--ngo"
-          onClick={() => choose("ngo")}
-        >
-          <span className="entry-card__icon">
-            <img src={ngoIcon} alt="" className="entry-card__icon-img" />
-          </span>
-          <span className="entry-card__label">NGO</span>
-          <span className="entry-card__desc">
-            국내외 다양한 단체를 통해
-            <br />
-            도움이 필요한 곳에 기부합니다.
-          </span>
-        </button>
+        <div className="entry-card entry-card--ngo">
+          <button
+            type="button"
+            className="entry-card__body"
+            onClick={() => choose("ngo")}
+          >
+            <span className="entry-card__icon">
+              <img src={ngoIcon} alt="" className="entry-card__icon-img" />
+            </span>
+            <span className="entry-card__label">NGO</span>
+            <span className="entry-card__desc">
+              국내외 다양한 단체를 통해
+              <br />
+              도움이 필요한 곳에 기부합니다.
+            </span>
+          </button>
+          <button
+            type="button"
+            className="entry-card__history"
+            onClick={() => navigate("/wall")}
+          >
+            기부내역 보기
+          </button>
+        </div>
 
-        <button
-          type="button"
-          className="entry-card entry-card--school"
-          onClick={() => choose("school")}
-        >
-          <span className="entry-card__icon">
-            <img
-              src={schoolIcon}
-              alt=""
-              className="entry-card__icon-img entry-card__icon-img--school"
-            />
-          </span>
-          <span className="entry-card__label">학교</span>
-          <span className="entry-card__desc">
-            학교를 통해 우리 주변의
-            <br />
-            이웃을 함께 돕습니다
-          </span>
-        </button>
+        <div className="entry-card entry-card--school">
+          <button
+            type="button"
+            className="entry-card__body"
+            onClick={() => choose("school")}
+          >
+            <span className="entry-card__icon">
+              <img
+                src={schoolIcon}
+                alt=""
+                className="entry-card__icon-img entry-card__icon-img--school"
+              />
+            </span>
+            <span className="entry-card__label">학교</span>
+            <span className="entry-card__desc">
+              학교를 통해 우리 주변의
+              <br />
+              이웃을 함께 돕습니다
+            </span>
+          </button>
+          <button
+            type="button"
+            className="entry-card__history"
+            onClick={() => navigate("/school-wall")}
+          >
+            기부내역 보기
+          </button>
+        </div>
       </div>
 
-      <button
-        type="button"
-        className="entry-page__history"
-        onClick={() => navigate("/wall")}
-      >
-        기부내역 보기
-      </button>
-
       <div className="entry-page__featured">
-        <PlaceholderAsset
-          label="featured 배너 이미지"
-          height="100%"
-          radius={0}
-          className="entry-page__featured-bg"
-        />
-        <div className="entry-page__featured-overlay">
-          <p className="entry-page__featured-eyebrow">
-            오늘도 도움이 필요한 아이들이 있습니다
-          </p>
-          <p className="entry-page__featured-title">
-            매일 어린이 <em>1,200명</em>이
-            <br />
-            <em>말라리아</em>로 인해 사망합니다.
-          </p>
-          <span className="entry-page__featured-more">더 알아보기</span>
-        </div>
-        <div className="entry-page__featured-dots" aria-hidden>
-          <span className="entry-page__featured-dot entry-page__featured-dot--active" />
-          <span className="entry-page__featured-dot" />
-          <span className="entry-page__featured-dot" />
-          <span className="entry-page__featured-dot" />
-        </div>
+        <Swiper
+          className="entry-featured-swiper"
+          modules={[Autoplay, Pagination]}
+          onSwiper={(swiper) => {
+            featuredSwiper.current = swiper;
+          }}
+          slidesPerView={1}
+          rewind
+          speed={600}
+          autoplay={{ delay: 5000, disableOnInteraction: false }}
+          pagination={{ clickable: true }}
+        >
+          {FEATURED_BANNERS.map((banner) => (
+            <SwiperSlide key={banner.id} className="entry-featured-slide">
+              <img
+                src={bannerBg}
+                alt=""
+                className="entry-page__featured-bg-img"
+              />
+              <div className="entry-page__featured-overlay">
+                <p className="entry-page__featured-eyebrow">{banner.eyebrow}</p>
+                <p className="entry-page__featured-title">{banner.title}</p>
+                <button
+                  type="button"
+                  className="entry-page__featured-more"
+                  onClick={() => navigate("/campaigns")}
+                >
+                  더 알아보기
+                  <span className="entry-page__featured-more-chevron" aria-hidden>
+                    ›
+                  </span>
+                </button>
+              </div>
+            </SwiperSlide>
+          ))}
+        </Swiper>
+        <button
+          type="button"
+          className="entry-page__featured-nav entry-page__featured-nav--prev"
+          onClick={() => featuredSwiper.current?.slidePrev()}
+          aria-label="이전 배너"
+        >
+          ‹
+        </button>
+        <button
+          type="button"
+          className="entry-page__featured-nav entry-page__featured-nav--next"
+          onClick={() => featuredSwiper.current?.slideNext()}
+          aria-label="다음 배너"
+        >
+          ›
+        </button>
       </div>
 
       <p className="entry-page__note">
-        기부금 전액이 현장 지원에 사용되며, 법정 기부금으로서 세액공제 혜택이 적용됩니다
+        우리가 함께하지 않으면 아무것도 바뀌지 않습니다.
       </p>
     </PageBody>
   );

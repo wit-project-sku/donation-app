@@ -1,7 +1,7 @@
 .app-header {
   flex: 0 0 auto;
-  /* Figma: 헤더 0→~675 (location 112, 버튼행 281–506, 부제 ~540, 칩 675) */
-  padding: 112px 170px 50px;
+  /* Figma 5535:18545 Component 29: pt125 / px170 / pb80, 총 높이 699 */
+  padding: 125px 170px 80px;
 }
 
 .app-header__meta {
@@ -13,10 +13,17 @@
 .app-header__location {
   display: inline-flex;
   align-items: center;
-  gap: 16px;
+  gap: 26px;
   font-size: 68px;
   font-weight: 700;
   letter-spacing: 0.02em;
+}
+
+/* 위치 핀 63×82 — SVG, fill=theme.primary (동적 채색) */
+.app-header__location-icon {
+  width: 63px;
+  height: 82px;
+  display: block;
 }
 
 .app-header__date {
@@ -27,25 +34,30 @@
 
 .app-header__bar {
   display: grid;
-  grid-template-columns: 225px 1fr 225px;
+  grid-template-columns: 175px 1fr 175px;
   align-items: center;
-  margin-top: 56px;
+  /* Figma 5535:18545 위치/날짜행 → 타이틀행 간격 105 */
+  margin-top: 105px;
 }
 
+/* Figma 5535:18545 홈/뒤로 아이콘 175×175 */
 .app-header__home,
 .app-header__back,
 .app-header__spacer {
-  width: 225px;
-  height: 225px;
+  width: 175px;
+  height: 175px;
   border-radius: 999px;
 }
 
+/* 홈/뒤로 버튼 — 색상별 실 에셋(ico_home*.png / Group 310*.png)이 원형까지 포함 */
 .app-header__home,
 .app-header__back {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  padding: 0;
   border: none;
+  background: none;
   cursor: pointer;
 }
 
@@ -55,8 +67,13 @@
 
 .app-header__back {
   justify-self: end;
-  background: #fff;
-  border: 6px solid currentColor;
+}
+
+.app-header__icon-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
 }
 
 .app-header__title {
@@ -68,7 +85,8 @@
 }
 
 .app-header__subtitle {
-  margin: 40px 0 0;
+  /* Figma 5535:18545 타이틀행 → 부제 간격 65 */
+  margin: 65px 0 0;
   text-align: center;
   font-size: 60px;
   font-weight: 400;

@@ -41,7 +41,3 @@ export async function fetchOutfitsPage(
     content: data.content.map(mapOutfitDto),
   };
 }
-
-export function getOutfitCategories(outfits: Outfit[]): string[] {
-  return [...new Set(outfits.map((o) => o.category).filter(Boolean))];
-}

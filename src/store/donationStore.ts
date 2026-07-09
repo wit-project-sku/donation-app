@@ -19,6 +19,8 @@ interface DonationState {
   message: string;
   donorName: string;
   donorPhone: string;
+  /** 학교 흐름 졸업연도 (기부한컷 등록 시 입력) */
+  graduationYear: number | null;
   activeField: "phone" | "name" | null;
   skipPhoto: boolean;
   selectedOutfit: Outfit | null;
@@ -39,6 +41,7 @@ interface DonationState {
   setMessage: (message: string) => void;
   setDonorName: (name: string) => void;
   setDonorPhone: (phone: string) => void;
+  setGraduationYear: (year: number | null) => void;
   setActiveField: (field: "phone" | "name" | null) => void;
   setSkipPhoto: (skip: boolean) => void;
   setSelectedOutfit: (outfit: Outfit | null) => void;
@@ -58,6 +61,7 @@ const initialState = {
   message: "",
   donorName: "",
   donorPhone: "",
+  graduationYear: null as number | null,
   activeField: null as "phone" | "name" | null,
   skipPhoto: false,
   selectedOutfit: null as Outfit | null,
@@ -97,6 +101,7 @@ export const useDonationStore = create<DonationState>()(
       setMessage: (message) => set({ message }),
       setDonorName: (name) => set({ donorName: name }),
       setDonorPhone: (phone) => set({ donorPhone: phone }),
+      setGraduationYear: (year) => set({ graduationYear: year }),
       setActiveField: (field) => set({ activeField: field }),
       setSkipPhoto: (skip) => set({ skipPhoto: skip }),
       setSelectedOutfit: (outfit) => set({ selectedOutfit: outfit }),
@@ -117,6 +122,7 @@ export const useDonationStore = create<DonationState>()(
         message: state.message,
         donorName: state.donorName,
         donorPhone: state.donorPhone,
+        graduationYear: state.graduationYear,
         skipPhoto: state.skipPhoto,
         selectedOutfit: state.selectedOutfit,
         capturedPhotoUrl: state.capturedPhotoUrl,

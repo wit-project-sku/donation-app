@@ -1,0 +1,215 @@
+/* 학교 기부증서/기부한컷 결과 (Figma 5659:96278) */
+.school-certificate {
+  display: flex;
+  flex-direction: column;
+}
+
+.page-body.school-certificate {
+  padding: 0;
+  gap: 0;
+}
+
+.sc2-body {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 170px 0;
+}
+
+/* 감사문 — Figma 5535:19842 Regular 40 #636363 */
+.sc2-thanks {
+  margin: 0 0 40px;
+  text-align: center;
+  font-size: 40px;
+  font-weight: 400;
+  color: #636363;
+}
+
+/* 합성 사진 카드 — Figma 5535:19844 border5 #999, radius 38, 1058×1881 */
+.sc2-photo {
+  position: relative;
+  width: 1058px;
+  height: 1881px;
+  border: 5px solid #999999;
+  border-radius: 38px;
+  overflow: hidden;
+}
+
+.sc2-photo__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* 학교 엠블럼 — 좌상단 원형 */
+.sc2-photo__emblem {
+  position: absolute;
+  top: 40px;
+  left: 40px;
+  width: 214px;
+  height: 214px;
+  border-radius: 50%;
+  object-fit: contain;
+  background: rgba(255, 255, 255, 0.85);
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+/* 졸업 문구 — Figma 5597:42141 흰 Medium 50, 사진 하단 */
+.sc2-photo__grad {
+  position: absolute;
+  right: 44px;
+  bottom: 40px;
+  font-size: 50px;
+  font-weight: 500;
+  color: #ffffff;
+  text-align: right;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+/* 날짜 · 이름 — Figma 5535:19843/19845 */
+.sc2-meta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+  margin: 40px 0;
+}
+
+.sc2-meta__line {
+  width: 240px;
+  height: 5px;
+  background: #d0d0d0;
+}
+
+.sc2-meta__date,
+.sc2-meta__name {
+  font-size: 50px;
+  font-weight: 500;
+  color: #000000;
+  white-space: nowrap;
+}
+
+/* QR + 액션 — Figma 5659:95750 */
+.sc2-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+  width: 100%;
+}
+
+.sc2-qr {
+  box-sizing: border-box;
+  flex: 0 0 auto;
+  width: 214px;
+  height: 214px;
+  padding: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  border: 4.29px solid #30b95c;
+  border-radius: 21.45px;
+  cursor: pointer;
+}
+
+.sc2-qr svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* QR 크게 보기 팝업 */
+.sc2-qr-dim {
+  position: absolute;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  background: rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+}
+
+.sc2-qr-modal {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+  width: 1100px;
+  padding: 90px;
+  background: #ffffff;
+  border-radius: 60px;
+  box-shadow: 0 60px 80px rgba(0, 0, 0, 0.35);
+  cursor: default;
+}
+
+.sc2-qr-modal__title {
+  margin: 0;
+  font-size: 80px;
+  font-weight: 700;
+  color: #232323;
+}
+
+.sc2-qr-modal__desc {
+  margin: 0;
+  text-align: center;
+  font-size: 48px;
+  font-weight: 400;
+  color: #636363;
+}
+
+.sc2-qr-modal__code {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 30px;
+  background: #ffffff;
+  border: 5px solid #e8e8e8;
+  border-radius: 30px;
+}
+
+.sc2-qr-modal__close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 500px;
+  height: 150px;
+  border-radius: 45px;
+  color: #ffffff;
+  font-size: 58px;
+  font-weight: 700;
+}
+
+.sc2-arrow {
+  flex: 0 0 auto;
+  font-size: 80px;
+  line-height: 1;
+}
+
+/* 저장하기(초록) / 기부내역보기(#616161) — Figma 5659:95754/95756 */
+.sc2-action {
+  flex: 0 0 auto;
+  width: 650px;
+  height: 150px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 42.9px;
+  box-shadow: 0 21.45px 42.9px rgba(143, 147, 157, 0.1);
+  color: #e9e9e9;
+  font-size: 58px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.sc2-action--history {
+  background: #616161;
+}

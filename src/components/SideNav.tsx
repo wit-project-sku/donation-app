@@ -8,12 +8,12 @@ import {
   finishDonationFlow,
   getBackRoute,
 } from "../config/navigation";
-import { IconBack, IconHome } from "./Icon";
+import { IconHomeCircle, IconBackCircle } from "./Icon";
 import "./SideNav.css";
 
 /**
- * 좌측 중앙에 세로로 쌓인 홈 + 뒤로가기 네비게이션 (Figma 5262:28306 등).
- * 모든 키오스크 페이지에 공통으로 떠 있으며, 색은 활성 테마(coral/NGO/학교)를 따른다.
+ * 좌측 중앙에 세로로 쌓인 홈 + 뒤로가기 네비게이션 (Figma 5535:18546).
+ * 헤더와 동일하게 아이콘 색이 활성 테마(theme.primary)를 따라간다.
  */
 export function SideNav() {
   const { theme } = useTheme();
@@ -38,20 +38,18 @@ export function SideNav() {
         type="button"
         className="side-nav__home"
         onClick={handleHome}
-        style={{ backgroundColor: theme.primary }}
         aria-label="처음으로"
       >
-        <IconHome size={54} color="#fff" />
+        <IconHomeCircle color={theme.primary} className="side-nav__icon-img" />
       </button>
       {showBack && (
         <button
           type="button"
           className="side-nav__back"
           onClick={handleBack}
-          style={{ borderColor: theme.primary, color: theme.primary }}
           aria-label="뒤로"
         >
-          <IconBack size={54} />
+          <IconBackCircle color={theme.primary} className="side-nav__icon-img" />
         </button>
       )}
     </div>

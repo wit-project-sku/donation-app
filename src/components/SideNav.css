@@ -1,28 +1,31 @@
-/* Figma: 좌측 가장자리, 세로 중앙 (스택 y≈1968–2250, 버튼 112px, 간격 ~57) */
+/* Figma 5535:18546: 좌측 가장자리, 세로 중앙 (버튼 85px, 간격 35) */
 .side-nav {
   position: absolute;
   left: 30px;
-  top: 1968px;
+  top: 2010px;
   z-index: 30;
   display: flex;
   flex-direction: column;
-  gap: 57px;
+  gap: 35px;
 }
 
+/* 홈/뒤로 — 색상별 실 에셋(원형 포함) */
 .side-nav__home,
 .side-nav__back {
-  width: 112px;
-  height: 112px;
-  border-radius: 999px;
+  width: 85px;
+  height: 85px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   border: none;
+  background: none;
   cursor: pointer;
   padding: 0;
 }
 
-.side-nav__back {
-  background: #fff;
-  border: 5px solid currentColor;
+.side-nav__icon-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
 }

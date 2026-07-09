@@ -1,10 +1,24 @@
 import { apiGet } from "./client";
-import type { CampaignDto, PageParams, PaginatedData } from "./types";
+import type { CampaignDto, CampaignListParams, PaginatedData } from "./types";
 import type { Campaign } from "../types";
 
 const CAMPAIGNS_PATH = "/api/donations/campaigns";
+const DEFAULT_NGO_ORGANIZATION_ID = 2;
 
 function mapCampaignDto(dto: CampaignDto): Campaign {
+  const effectPrograms = (dto.effects ?? []).map((effect) => ({
+    title: effect,
+    desc: "",
+  }));
+  const programDtos = dto.programs ?? [];
+  const programs =
+    programDtos.length > 0
+      ? programDtos.map((program) => ({
+          title: program.title,
+          desc: program.desc,
+        }))
+      : effectPrograms;
+
   return {
     id: String(dto.id),
     title: dto.name,
@@ -18,7 +32,7 @@ function mapCampaignDto(dto: CampaignDto): Campaign {
         }
       : undefined,
     amountOptions: (dto.amountOptions ?? []).map((option) => ({
-      label: option.label,
+      label: option.label ?? `${option.amount.toLocaleString()}원`,
       amount: option.amount,
     })),
     accumulatedAmount: dto.accumulatedAmount ?? 0,
@@ -33,21 +47,23 @@ function mapCampaignDto(dto: CampaignDto): Campaign {
       desc: section.desc,
       img: section.img,
     })),
-    programs: (dto.programs ?? []).map((program) => ({
-      title: program.title,
-      desc: program.desc,
-    })),
+    programs,
     status: dto.status,
     createdAt: dto.createdAt,
   };
 }
 
 export async function fetchCampaignsPage(
-  params: PageParams = {},
+  params: CampaignListParams = {},
 ): Promise<PaginatedData<Campaign>> {
+  const organizationId = params.organizationId ?? DEFAULT_NGO_ORGANIZATION_ID;
+
   const data = await apiGet<PaginatedData<CampaignDto>>(CAMPAIGNS_PATH, {
     pageNum: params.pageNum ?? 1,
     pageSize: params.pageSize ?? 20,
+    type: params.type ?? "NGO",
+    organizationId,
+    includeInactive: params.includeInactive ?? false,
   });
 
   return {
@@ -56,4 +72,11 @@ export async function fetchCampaignsPage(
       .filter((campaign) => campaign.status === "ACTIVE")
       .map(mapCampaignDto),
   };
+}
+
+export async function fetchCampaignById(
+  id: string | number,
+): Promise<Campaign> {
+  const data = await apiGet<CampaignDto>(`${CAMPAIGNS_PATH}/${id}`);
+  return mapCampaignDto(data);
 }

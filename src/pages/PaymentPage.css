@@ -3,26 +3,29 @@
   flex-direction: column;
 }
 
-/* 헤더/푸터 풀블리드 + 한 화면 고정 (PageBody 기본 패딩/gap 제거) — AmountPage와 동일 */
+/* 헤더/푸터 풀블리드 (PageBody 기본 패딩/gap 제거) */
 .page-body.payment-page {
   padding: 0;
   gap: 0;
 }
 
-/* Figma: 본문 좌우 170px, 헤더 바로 아래 ~20px 에서 칩 시작 */
+/* 본문 — 좌우 170px */
 .payment-page__body {
   display: flex;
   flex-direction: column;
   flex: 1 0 auto;
-  padding: 20px 170px 0;
+  padding: 0 170px;
 }
 
 /* 캠페인 칩 — AmountPage와 동일 (1270×180, r45, theme.primary, 흰 글씨 80px) */
 .pay-chip {
   display: inline-flex;
   align-items: center;
+  justify-content: flex-start;
   gap: 38px;
   align-self: flex-start;
+  width: 1270px;
+  max-width: 100%;
   height: 180px;
   padding: 0 64px;
   border: none;
@@ -30,59 +33,32 @@
   color: #fff;
   font-size: 80px;
   font-weight: 700;
+  text-align: left;
   cursor: pointer;
 }
 
-/* 진행 블록 — Figma: 칩 아래 unicef 로고 → 진행바 → 누적라벨 → 구분선 */
-.pay-progress {
-  display: flex;
-  flex-direction: column;
-  margin: 130px 0 0;
-}
-
-.pay-progress__logo {
-  height: 105px;
-  width: auto;
+.pay-chip__heart {
+  width: 74px;
+  height: 66px;
   object-fit: contain;
-  align-self: flex-start;
 }
 
-.pay-progress__bar {
-  height: 20px;
-  margin-top: 72px;
-  border-radius: 999px;
-  background: #e8e8e8;
-  overflow: hidden;
-}
-
-.pay-progress__fill {
-  height: 100%;
-  border-radius: 999px;
-}
-
-.pay-progress__label {
-  margin: 50px 0 0;
-  align-self: flex-end;
-  font-size: 76px;
-  font-weight: 700;
-}
-
-/* 구분선 — AmountPage와 동일 (2px, 124 위 / 112 아래) */
-.pay-divider {
-  height: 0;
-  border: none;
-  border-top: 2px solid #e8e8e8;
-  margin: 124px 0 112px;
-}
-
-/* 금액 카드 — Figma: 1299×445, r35.49, border 5 #e8e8e8, pt/px 40.56, gap 20.28 */
+/* 기부 금액 카드 — Figma 5535:18087: 1299×445, r35.49, border5 테마색(인라인) */
 .pay-amount-card {
+  box-sizing: border-box;
   width: 1299px;
   max-width: 100%;
-  margin: 0 auto;
-  border: 5px solid var(--color-border, #e8e8e8);
+  min-height: 445px;
+  margin: 64px auto 0;
+  border: 5px solid #009fe3;
   border-radius: 35.49px;
-  padding: 40.56px 40.56px 0;
+  box-shadow: 0 4px 4px 3px rgba(0, 0, 0, 0.1);
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
   text-align: center;
 }
 
@@ -90,81 +66,55 @@
   margin: 0;
   font-size: 70px;
   font-weight: 400;
-  line-height: 76.05px;
-  color: var(--color-text-secondary, #636363);
+  color: #636363;
 }
 
 .pay-amount-card__value {
-  margin: 20.28px 0 0;
-  font-family: "Paperlogy", "Noto Sans KR", sans-serif;
+  margin: 0;
+  font-family: var(--font-paperlogy, "Paperlogy"), "Noto Sans KR", sans-serif;
   font-size: 100px;
   font-weight: 700;
-  line-height: 136.89px;
-  color: var(--color-text-secondary, #636363);
+  color: #636363;
 }
 
-/* 카드 안내 — Figma: 금액카드 바로 아래 "카드"(63px #6d6d6d) + 안내(50px #999) */
+/* "카드" 라벨 — Figma 5535:18068 Display Bold 63 #6d6d6d */
 .pay-method-title {
-  margin: 0;
+  margin: 64px 0 40px;
   font-size: 63px;
   font-weight: 700;
   color: #6d6d6d;
 }
 
-.pay-method-desc {
-  margin: 30px 0 0;
-  font-size: 50px;
-  font-weight: 400;
-  color: var(--color-text-muted, #999999);
-}
-
-/* 카드 박스 — Figma: 400×400, r45, border 5 #e8e8e8 */
+/* 결제수단 카드 — Figma 5535:18070: 400×400, r45, shadow.
+   미선택: 중립 회색 테두리(#e8e8e8) · 선택 시 테마색(인라인) */
 .pay-card {
   display: inline-flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 28px;
+  gap: 20px;
   align-self: flex-start;
   width: 400px;
   height: 400px;
-  margin-top: 72px;
-  border: 5px solid var(--color-border, #e8e8e8);
+  border: 5px solid #e8e8e8;
   border-radius: 45px;
   background: #fff;
   box-shadow: 0 4px 4px 3px rgba(0, 0, 0, 0.25);
   cursor: pointer;
 }
 
+/* 신용카드 아이콘 (Figma image273, public/icons) */
 .pay-card__icon {
   width: 235px;
   height: auto;
   object-fit: contain;
 }
 
+/* 신용/체크카드 라벨 — 미선택 중립 회색, 선택 시 테마색(인라인) */
 .pay-card__label {
   font-size: 48px;
   font-weight: 400;
-  color: var(--color-text-secondary, #636363);
-}
-
-/* 파트너 안내 — Figma: 중앙 정렬, 70px #636363, unicef 로고 인라인 */
-.pay-partner {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 24px;
-  margin: 158px 0 0;
-  font-size: 70px;
-  font-weight: 400;
-  color: var(--color-text-secondary, #636363);
-}
-
-.pay-partner__logo {
-  height: 70px;
-  width: auto;
-  object-fit: contain;
+  color: #999999;
 }
 
 .pay-error {
@@ -177,16 +127,73 @@
   text-align: center;
 }
 
-/* 결제하기 — AmountPage CTA와 동일 (1820×208, r45, 비활성 #999, 선택 시 theme.primary) */
+/* 결제하기 — Figma 5535:18074: 1820×208, r45, 비활성 #999, 선택 시 theme.primary */
 .pay-cta {
   width: 100%;
-  margin: auto 0 107px;
+  margin: 90px 0 0;
   height: 208px;
   border: none;
   border-radius: 45px;
   background: #999999;
   color: #fff;
-  font-size: 70px;
+  font-size: 80px;
   font-weight: 700;
   cursor: pointer;
+}
+
+/* "이 캠페인은 [로고] 와 함께합니다." Figma 5558:18562 Regular 70 #636363, 중앙 */
+.pay-partner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+  margin: 90px 0;
+  font-size: 70px;
+  font-weight: 400;
+  color: #636363;
+}
+
+.pay-partner__logo {
+  height: 70px;
+  width: auto;
+  object-fit: contain;
+}
+
+/* 모금 현황 카드 Figma 5558:18565: 흰 배경, border5 #e8e8e8, radius45, h416 */
+.pay-funding {
+  box-sizing: border-box;
+  min-height: 416px;
+  border: 5px solid #e8e8e8;
+  border-radius: 45px;
+  padding: 60px 70px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 44px;
+  margin-bottom: 100px;
+}
+
+.pay-funding__label {
+  margin: 0;
+  font-size: 76px;
+  font-weight: 700;
+}
+
+.pay-funding__bar {
+  height: 38px;
+  border-radius: 999px;
+  background: #e8e8e8;
+  overflow: hidden;
+}
+
+.pay-funding__fill {
+  height: 100%;
+  border-radius: 999px;
+}
+
+.pay-funding__amount {
+  margin: 0;
+  text-align: right;
+  font-size: 76px;
+  font-weight: 700;
 }

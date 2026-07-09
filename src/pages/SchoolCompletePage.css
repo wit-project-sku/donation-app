@@ -1,0 +1,188 @@
+/* 학교 결제 완료 (Figma 5591:41267) */
+.school-complete {
+  display: flex;
+  flex-direction: column;
+}
+
+.page-body.school-complete {
+  padding: 0;
+  gap: 0;
+}
+
+.sc-body {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 50px 170px 0;
+}
+
+/* 학교 배지 — Figma 5591:41280 초록 pill 고정폭 1270, 좌측 정렬 */
+.sc-badge {
+  align-self: flex-start;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  gap: 30px;
+  width: 1270px;
+  height: 180px;
+  padding: 0 70px;
+  border-radius: 45px;
+  color: #ffffff;
+  margin-bottom: 40px;
+  overflow: hidden;
+}
+
+.sc-badge__name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sc-badge__name {
+  font-size: 80px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* 완료 체크 원 — Figma 5591:41654 301px 초록 */
+.sc-check {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 301px;
+  height: 301px;
+  border-radius: 50%;
+  color: #ffffff;
+  margin-bottom: 40px;
+}
+
+/* 결제 완료 — Display Medium 96 #636363 */
+.sc-title {
+  margin: 0 0 16px;
+  font-size: 96px;
+  font-weight: 500;
+  color: #636363;
+}
+
+/* 당신의 마음이 필요한 곳에 전해집니다 — Regular 50 #8b7355 */
+.sc-subtitle {
+  margin: 0 0 50px;
+  font-size: 50px;
+  font-weight: 400;
+  color: #8b7355;
+}
+
+/* 기부 금액 박스 — Figma 5591:41649: 1299×445, padding 40.56 40.56 0, gap 20.28 */
+.sc-amount {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 1299px;
+  height: 445px;
+  padding: 40.56px 40.56px 0;
+  gap: 20.28px;
+  border: 5px solid #e8e8e8;
+  border-radius: 35.49px;
+  margin-bottom: 60px;
+}
+
+.sc-amount__label {
+  margin: 0;
+  width: 100%;
+  text-align: center;
+  font-size: 70px;
+  font-weight: 400;
+  line-height: 76px;
+  color: #636363;
+}
+
+/* Figma 5591:41652 빈 문단(간격) */
+.sc-amount__gap {
+  flex: 0 0 auto;
+  height: 63px;
+}
+
+.sc-amount__value {
+  margin: 0;
+  width: 100%;
+  text-align: center;
+  font-family: var(--font-paperlogy, "Paperlogy"), "Noto Sans KR", sans-serif;
+  font-size: 100px;
+  font-weight: 700;
+  line-height: 137px;
+  color: #636363;
+}
+
+/* 액션 버튼 2종 — Figma 5591:41270(초록)/41271(회색): 732×150, radius45 */
+.sc-actions {
+  display: flex;
+  justify-content: center;
+  gap: 104px;
+  width: 100%;
+  margin-bottom: 60px;
+}
+
+.sc-action {
+  width: 732px;
+  height: 150px;
+  border: none;
+  border-radius: 45px;
+  color: #ffffff;
+  font-size: 63px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.sc-action--secondary {
+  background: #999999;
+  font-weight: 500;
+}
+
+/* 캠페인 안내 — Regular 70 #636363 중앙 */
+.sc-partner {
+  margin: 0 0 46px;
+  text-align: center;
+  font-size: 70px;
+  font-weight: 400;
+  color: #636363;
+}
+
+/* 모금 현황 카드 */
+.sc-funding {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 416px;
+  border: 5px solid #e8e8e8;
+  border-radius: 45px;
+  padding: 60px 70px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 44px;
+}
+
+.sc-funding__label {
+  margin: 0;
+  font-size: 76px;
+  font-weight: 700;
+}
+
+.sc-funding__bar {
+  height: 38px;
+  border-radius: 999px;
+  background: #e8e8e8;
+  overflow: hidden;
+}
+
+.sc-funding__fill {
+  height: 100%;
+  border-radius: 999px;
+}
+
+.sc-funding__amount {
+  margin: 0;
+  text-align: right;
+  font-size: 76px;
+  font-weight: 700;
+}

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useTheme } from "../theme/ThemeContext";
 import { ApiError } from "../api/client";
 import { IconCheck } from "./Icon";
-import cardReader from "../assets/card-reader.png";
+import cardReader from "../assets/card-reader-illust.png";
 import errComm from "../assets/error-comm.png";
 import errTimeout from "../assets/error-timeout.png";
 import errInsufficient from "../assets/error-insufficient.png";
@@ -64,7 +64,7 @@ function classifyError(error: unknown): ErrorKind {
 /**
  * Card payment overlay — visual states from the Figma mockups
  * (insert → processing → success, plus comm/timeout/insufficient errors) with a
- * 30s timer badge. Drop-in for CardPaymentOverlay (same props). The payment API
+ * 30s timer badge. The payment API
  * calls live in PaymentPage; this only drives the presentation.
  */
 export function PaymentStatusOverlay({
@@ -158,13 +158,30 @@ export function PaymentStatusOverlay({
     </div>
   );
 
+  const closable = step !== "success";
+  const handleBackdrop = (event: React.MouseEvent<HTMLDivElement>) => {
+    // 카드(모달) 바깥(백드롭)을 눌렀을 때만 닫기 — 성공 화면은 자동 전환이라 유지
+    if (closable && event.target === event.currentTarget) handleCancel();
+  };
+
   return (
     <div
       className={`pso${inline ? " pso--inline" : ""}`}
       role="dialog"
       aria-modal={!inline}
+      onClick={handleBackdrop}
     >
       <div className={`pso__card${isError ? " pso__card--error" : ""}`}>
+        {closable && (
+          <button
+            type="button"
+            className="pso__close"
+            onClick={handleCancel}
+            aria-label="닫기"
+          >
+            ✕
+          </button>
+        )}
         {!isError && (
           <span className="pso__timer" style={{ backgroundColor: theme.primary }}>
             {timer}초

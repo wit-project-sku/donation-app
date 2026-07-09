@@ -50,7 +50,8 @@ function mapPaymentToWallEntry(item: PaymentHistoryDto): WallEntry {
     id: String(item.id),
     donorName: item.donatorName?.trim() ?? "",
     amount: item.totalAmount,
-    campaignName: item.campaignName,
+    campaignName: item.targetName?.trim() ?? "",
+    targetType: item.targetType,
     paymentMethod: formatPaymentMethod(item.paymentMethod),
     donatedAt: item.donatedAt,
     timeAgo: formatTimeAgo(item.donatedAt),
@@ -65,14 +66,17 @@ export async function fetchPaymentHistoryPage(
 ): Promise<PaginatedData<WallEntry>> {
   const pageNum = params.pageNum ?? 1;
   const pageSize = params.pageSize ?? 10;
-  const keyword = params.keyword?.trim();
+  const donatorName = params.donatorName?.trim();
+  const targetName = params.targetName?.trim();
 
   const data = await apiGet<PaginatedData<PaymentHistoryDto>>(
     PAYMENT_HISTORY_PATH,
     {
       pageNum,
       pageSize,
-      ...(keyword ? { keyword } : {}),
+      ...(params.targetType ? { targetType: params.targetType } : {}),
+      ...(donatorName ? { donatorName } : {}),
+      ...(targetName ? { targetName } : {}),
     },
   );
 

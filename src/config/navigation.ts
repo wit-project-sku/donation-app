@@ -1,9 +1,20 @@
-/** Call when the user finishes the kiosk flow — returns to entry screen */
+import { getKioskBridge } from "../utils/kioskBridge";
+
+/**
+ * Call when the user taps the home icon / finishes the flow.
+ * Embedded in the kiosk → reset and exit the webview back to the kiosk home.
+ * Standalone browser → reset and return to the donation entry screen.
+ */
 export function finishDonationFlow(
   navigate: (path: string, options?: { replace?: boolean }) => void,
   resetSession: () => void,
 ) {
   resetSession();
+  const bridge = getKioskBridge();
+  if (bridge) {
+    bridge.goKioskHome();
+    return;
+  }
   navigate("/", { replace: true });
 }
 
@@ -16,6 +27,11 @@ export const ENTRY_ROUTE = "/";
  * (Unity 전용 '메뉴로 나가기' 브리지가 생기면 이 함수만 교체하면 된다.)
  */
 export function exitDonationApp() {
+  const bridge = getKioskBridge();
+  if (bridge) {
+    bridge.goKioskHome();
+    return;
+  }
   window.history.back();
 }
 
@@ -23,16 +39,25 @@ export function exitDonationApp() {
  * Explicit previous-step per route for the kiosk header back chevron.
  * HashRouter inside a WebView has no reliable browser history, so map it
  * explicitly. Pages may override by passing an explicit target to AppHeader.
- * Routes absent from this map (entry "/", "/message", "/certificate", "/wall")
+ * Routes absent from this map (entry "/", "/certificate")
  * are forward-only / terminal and show no back chevron by default.
  */
 const BACK_ROUTES: Record<string, string> = {
+  "/school": "/",
+  "/school-detail": "/school",
+  "/school-amount": "/outfit",
+  "/school-payment": "/school-amount",
+  "/school-register": "/school-complete",
+  "/school-certificate": "/school-register",
+  "/school-wall": "/school-certificate",
   "/campaigns": "/",
   "/campaign": "/campaigns",
   "/amount": "/campaign",
   "/payment": "/amount",
+  "/message": "/certificate-prompt",
   "/outfit": "/message",
   "/camera": "/outfit",
+  "/wall": "/certificate",
 };
 
 export function getBackRoute(pathname: string): string | null {

@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useMemo } from "react";
+import { useEffect, useState } from "react";
 import { useAppNavigate } from "../hooks/useAppNavigate";
 import { QRCodeSVG } from "qrcode.react";
 import { ApiError } from "../api/client";
@@ -7,6 +7,7 @@ import { AppHeader } from "../components/AppHeader";
 import { AppFooter } from "../components/AppFooter";
 import { PageBody } from "../components/layout/PageBody";
 import { submitCurrentDonation } from "../utils/buildSubmitPayload";
+import { buildMobileCertificateUrl } from "../utils/mobileCertificateUrl";
 import { useDonationStore } from "../store/donationStore";
 import { useTheme } from "../theme/ThemeContext";
 import heartIllustration from "../assets/donated.png";
@@ -25,43 +26,30 @@ function isAlreadySavedError(error: unknown) {
   );
 }
 
-const QR_PHOTO_URL_MAX_LENGTH = 120;
-
-function buildMobileCertificateUrl(params: {
-  amount: number;
-  date: string;
-  name: string;
-  phone?: string;
-  photoUrl?: string | null;
-}) {
-  const publicAppUrl = import.meta.env.VITE_PUBLIC_APP_URL?.replace(/\/$/, "");
-  const basePath =
-    publicAppUrl ?? `${window.location.origin}${window.location.pathname}`;
-  const search = new URLSearchParams({
-    a: String(params.amount),
-    d: params.date,
-    n: params.name,
-  });
-
-  const phoneDigits = params.phone?.replace(/\D/g, "") ?? "";
-  if (phoneDigits) search.set("ph", phoneDigits);
-
-  const photoUrl = params.photoUrl?.trim();
-  if (
-    photoUrl &&
-    !photoUrl.startsWith("data:") &&
-    !photoUrl.startsWith("blob:") &&
-    photoUrl.length <= QR_PHOTO_URL_MAX_LENGTH
-  ) {
-    search.set("p", photoUrl);
-  }
-
-  return `${basePath}#/mobile-certificate?${search.toString()}`;
+/** 저장하기 옆 좌향 화살표 (Figma 5706:13081 Frame487) — 테마색 채색 */
+function ArrowLeft({ color }: { color: string }) {
+  return (
+    <svg
+      className="cert-arrow"
+      viewBox="0 0 75 86"
+      fill="none"
+      aria-hidden
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M67 43H10M10 43L34 18M10 43L34 68"
+        stroke={color}
+        strokeWidth="9"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
 }
 
 export function DonationCertificatePage() {
   const navigate = useAppNavigate();
-  const { theme, category, organizer } = useTheme();
+  const { theme } = useTheme();
   const queryClient = useQueryClient();
   const {
     selectedCampaign,
@@ -99,8 +87,25 @@ export function DonationCertificatePage() {
     }
   }, [selectedCampaign, paymentMethod, amount, navigate]);
 
-  const handleNext = () => {
-    if (submittedRecordId != null || submitMutation.isSuccess) {
+  const [qrOpen, setQrOpen] = useState(false);
+  const isSaved = submittedRecordId != null || submitMutation.isSuccess;
+
+  const handleSave = () => {
+    if (submitMutation.isPending) return;
+    if (isSaved) {
+      setQrOpen(true);
+      return;
+    }
+    submitMutation.mutate(undefined, {
+      onSuccess: () => setQrOpen(true),
+      onError: (error) => {
+        if (isAlreadySavedError(error)) setQrOpen(true);
+      },
+    });
+  };
+
+  const handleHistory = () => {
+    if (isSaved) {
       navigate("/wall");
       return;
     }
@@ -112,12 +117,6 @@ export function DonationCertificatePage() {
     });
   };
 
-  const campaignSubtitle = useMemo(() => {
-    const fallback = category === "school" ? "아이들의 배움" : "소중한 나눔";
-    const label = selectedCampaign?.title.trim() || fallback;
-    return `- ${label} -`;
-  }, [selectedCampaign, category]);
-
   if (!selectedCampaign) return null;
 
   const displayName = donorName.trim() || "후원자";
@@ -125,81 +124,115 @@ export function DonationCertificatePage() {
   const photoSrc = capturedPhotoUrl || heartIllustration;
 
   const today = new Date();
-  const dateLabel = `${today.getFullYear()}년 ${today.getMonth() + 1}월 ${today.getDate()}일`;
-  const qrDateLabel = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+  const dateLabel = `${today.getFullYear()}.${String(today.getMonth() + 1).padStart(2, "0")}.${String(today.getDate()).padStart(2, "0")}`;
   const qrValue = buildMobileCertificateUrl({
     amount,
-    date: qrDateLabel,
+    date: dateLabel.replace(/\./g, "-"),
     name: displayName,
     phone: donorPhone,
     photoUrl: capturedPhotoUrl,
   });
 
   return (
-    <PageBody className="cert-page">
+    <PageBody className="cert-page" scroll={false}>
       <AppHeader />
 
       <div className="cert-body">
-        <article className="cert-card">
-          <div className="cert-card__head">
-            <h2 className="cert-card__title">· 기부증서 ·</h2>
-            <p className="cert-card__subtitle">{campaignSubtitle}</p>
-          </div>
+        <p className="cert-caption">
+          귀하의 따뜻한 마음과 의미 있는 기여에 깊은 감사를 전합니다
+        </p>
 
-          <div
-            className={`cert-card__photo${hasPhoto ? "" : " cert-card__photo--illust"}`}
-          >
-            <img src={photoSrc} alt="" loading="lazy" />
-          </div>
+        <div className={`cert-photo${hasPhoto ? "" : " cert-photo--illust"}`}>
+          <img src={photoSrc} alt="" loading="lazy" />
+        </div>
 
-          <div className="cert-card__sign">
-            <span className="cert-card__name">{displayName}</span>
-            <span className="cert-card__line" aria-hidden />
-            <div className="cert-card__sign-row">
-              <img
-                className="cert-card__partner"
-                src={organizer.logo}
-                alt={organizer.label}
-              />
-              <div className="cert-card__qr" aria-label="모바일 증서 QR">
-                <QRCodeSVG
-                  value={qrValue}
-                  size={140}
-                  bgColor="#FFFFFF"
-                  fgColor="#000000"
-                  level="M"
-                  marginSize={1}
-                />
-              </div>
-            </div>
-          </div>
+        <div className="cert-sign">
+          <span className="cert-sign__line" aria-hidden />
+          <span className="cert-sign__date">{dateLabel}</span>
+          <span className="cert-sign__name">{displayName}</span>
+          <span className="cert-sign__line" aria-hidden />
+        </div>
 
-          <div className="cert-card__foot">
-            <p className="cert-card__caption">
-              귀하의 따뜻한 마음과 의미 있는 기여에
-              <br />
-              깊은 감사를 전합니다
-            </p>
-            <span className="cert-card__date">{dateLabel}</span>
-          </div>
-        </article>
-
-        {submitMutation.isError && (
+        {submitMutation.isError && !isSaved && (
           <p className="cert-error" role="alert">
             기부 내역을 저장하지 못했습니다. 다시 시도해 주세요.
           </p>
         )}
 
-        <button
-          type="button"
-          className="cert-cta"
-          onClick={handleNext}
-          disabled={submitMutation.isPending}
-          style={{ backgroundColor: theme.primary }}
-        >
-          {submitMutation.isPending ? "저장 중..." : "기부내역 보기"}
-        </button>
+        <div className="cert-actions">
+          <div className="cert-qr" aria-label="모바일 증서 QR">
+            <QRCodeSVG
+              value={qrValue}
+              size={143}
+              bgColor="#FFFFFF"
+              fgColor="#000000"
+              level="M"
+              marginSize={0}
+            />
+          </div>
+
+          <ArrowLeft color={theme.primary} />
+
+          <button
+            type="button"
+            className="cert-btn cert-btn--save"
+            onClick={handleSave}
+            disabled={submitMutation.isPending}
+            style={{ backgroundColor: theme.primary }}
+          >
+            {submitMutation.isPending ? "저장 중..." : "저장하기"}
+          </button>
+
+          <button
+            type="button"
+            className="cert-btn cert-btn--history"
+            onClick={handleHistory}
+            disabled={submitMutation.isPending}
+          >
+            기부내역보기
+          </button>
+        </div>
       </div>
+
+      {qrOpen && (
+        <div
+          className="cert-qr-modal"
+          role="dialog"
+          aria-modal="true"
+          aria-label="모바일 기부증서 QR"
+          onClick={() => setQrOpen(false)}
+        >
+          <div
+            className="cert-qr-modal__card"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <button
+              type="button"
+              className="cert-qr-modal__close"
+              onClick={() => setQrOpen(false)}
+              aria-label="닫기"
+            >
+              ✕
+            </button>
+            <h3 className="cert-qr-modal__title">모바일 기부증서</h3>
+            <p className="cert-qr-modal__desc">
+              휴대폰 카메라로 QR 코드를 스캔하면
+              <br />
+              기부증서를 저장할 수 있습니다
+            </p>
+            <div className="cert-qr-modal__qr">
+              <QRCodeSVG
+                value={qrValue}
+                size={620}
+                bgColor="#FFFFFF"
+                fgColor="#000000"
+                level="M"
+                marginSize={0}
+              />
+            </div>
+          </div>
+        </div>
+      )}
 
       <AppFooter note />
     </PageBody>

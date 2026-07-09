@@ -88,6 +88,16 @@
   border-radius: 14px;
   background: #f4f4f4;
   overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 사진 없는 기본 이미지: 사각 프레임 대신 원형 (border-radius 50%) */
+.wall-giver-card__photo-wrap:has(.wall-giver-card__photo--default) {
+  border: none;
+  background: transparent;
+  overflow: visible;
 }
 
 .wall-giver-card__photo {
@@ -99,9 +109,13 @@
 }
 
 .wall-giver-card__photo--default {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1 / 1;
   object-fit: cover;
   object-position: center;
-  background: linear-gradient(180deg, #fff5f8 0%, #ffeef4 100%);
+  border-radius: 50%;
+  background: transparent;
 }
 
 /* Signature — name + line + (partner logo · QR) */

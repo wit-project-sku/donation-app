@@ -6,7 +6,8 @@
   align-items: center;
   justify-content: center;
   padding: 96px;
-  background: var(--color-card-overlay, rgba(0, 0, 0, 0.5));
+  /* Figma 5535:18630 딤 0.2 */
+  background: rgba(0, 0, 0, 0.2);
 }
 
 /* 모달 — Figma Container: 1500×2000, r60, shadow 0 75 75 rgba(0,0,0,.25) */
@@ -30,6 +31,24 @@
 .pso__card--error {
   min-height: 0;
   padding-bottom: 120px;
+}
+
+/* 닫기(✕) 버튼 — 모달 좌상단 */
+.pso__close {
+  position: absolute;
+  top: 44px;
+  left: 60px;
+  width: 96px;
+  height: 96px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: none;
+  color: #999999;
+  font-size: 66px;
+  line-height: 1;
+  cursor: pointer;
 }
 
 /* 타이머 배지 — Figma: left 1293, top 51, h75, px30, #009fe3, 36px */
@@ -164,7 +183,7 @@
   align-items: center;
   justify-content: center;
   margin: 199px 0 0;
-  background: var(--color-text-muted, #999);
+  background: var(--main-01, #009fe3);
 }
 
 /* 자동 전환 안내 — Figma: 1258×180, r45, #999 회색, 63px, 체크 아래 330px */

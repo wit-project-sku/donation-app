@@ -1,0 +1,308 @@
+/* 학교 결제 (Figma 5535:18132) */
+.school-payment {
+  display: flex;
+  flex-direction: column;
+}
+
+.page-body.school-payment {
+  padding: 0;
+  gap: 0;
+}
+
+.sp-body {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  padding: 60px 170px 0;
+}
+
+/* 학교 배지 — Figma 5535:18139 초록 pill 고정폭 1270, 하트 + 학교명 */
+.sp-badge {
+  align-self: flex-start;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  gap: 30px;
+  width: 1270px;
+  height: 180px;
+  padding: 0 70px;
+  border-radius: 45px;
+  color: #ffffff;
+  margin-bottom: 50px;
+  overflow: hidden;
+}
+
+.sp-badge__name {
+  font-size: 80px;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 기부 금액 박스 — Figma 5591:41248: 1299×445, padding 40.56 40.56 0, gap 20.28 */
+.sp-amount {
+  box-sizing: border-box;
+  align-self: center;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 20.28px;
+  width: 1299px;
+  height: 445px;
+  padding: 40.56px 40.56px 0;
+  border: 5px solid #e8e8e8;
+  border-radius: 35.49px;
+  margin-bottom: 60px;
+}
+
+.sp-amount__label {
+  margin: 0;
+  width: 100%;
+  text-align: center;
+  font-size: 70px;
+  font-weight: 400;
+  line-height: 76px;
+  color: #636363;
+}
+
+/* Figma 5591:41251 빈 문단(간격) */
+.sp-amount__gap {
+  flex: 0 0 auto;
+  height: 63px;
+}
+
+.sp-amount__value {
+  margin: 0;
+  width: 100%;
+  text-align: center;
+  font-family: var(--font-paperlogy, "Paperlogy"), "Noto Sans KR", sans-serif;
+  font-size: 100px;
+  font-weight: 700;
+  line-height: 137px;
+  color: #636363;
+}
+
+/* Figma 5591:41242 — Noto Sans Bold 63 #6d6d6d */
+.sp-method-label {
+  margin: 0 0 30px;
+  font-size: 63px;
+  font-weight: 700;
+  color: #6d6d6d;
+}
+
+.sp-methods {
+  display: flex;
+  gap: 40px;
+  margin-bottom: 90px;
+}
+
+/* 카드 결제수단 — Figma 5591:41243 400×400, border5, radius45, shadow */
+.sp-method {
+  box-sizing: border-box;
+  width: 400px;
+  height: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  padding: 40px;
+  background: #ffffff;
+  border: 5px solid #e8e8e8;
+  border-radius: 45px;
+  box-shadow: 0 4px 4px 3px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+}
+
+.sp-method__img {
+  width: 235px;
+  height: 235px;
+  object-fit: contain;
+}
+
+/* Figma 5591:41245 — Noto Sans Regular 48 초록 */
+.sp-method__name {
+  font-size: 48px;
+  font-weight: 400;
+}
+
+/* 결제하기 — Figma 5591:41244 초록 버튼 h208 */
+.sp-pay {
+  height: 208px;
+  border: none;
+  border-radius: 45px;
+  color: #ffffff;
+  font-size: 80px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-bottom: 90px;
+}
+
+/* Figma 5591:41264 — Noto Sans Regular 70 #636363 중앙 */
+.sp-partner {
+  margin: 0 0 46px;
+  text-align: center;
+  font-size: 70px;
+  font-weight: 400;
+  color: #636363;
+}
+
+/* 모금 현황 카드 — Figma 5591:41257 */
+.sp-funding {
+  box-sizing: border-box;
+  min-height: 416px;
+  border: 5px solid #e8e8e8;
+  border-radius: 45px;
+  padding: 60px 70px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 44px;
+}
+
+.sp-funding__label {
+  margin: 0;
+  font-size: 76px;
+  font-weight: 700;
+}
+
+.sp-funding__bar {
+  height: 38px;
+  border-radius: 999px;
+  background: #e8e8e8;
+  overflow: hidden;
+}
+
+.sp-funding__fill {
+  height: 100%;
+  border-radius: 999px;
+}
+
+.sp-funding__amount {
+  margin: 0;
+  text-align: right;
+  font-size: 76px;
+  font-weight: 700;
+}
+
+/* 결제 진행 모달 — Figma 5535:18253/18262 딤 + 흰 카드 */
+.sp-modal-dim {
+  position: absolute;
+  inset: 0;
+  z-index: 60;
+  background: rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sp-modal {
+  position: relative;
+  box-sizing: border-box;
+  width: 1500px;
+  padding: 120px 100px 100px;
+  background: #ffffff;
+  border-radius: 60px;
+  box-shadow: 0 75px 75px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 50px;
+}
+
+/* 30초 카운트다운 배지 — Figma 5535:18271 초록 pill 우상단 */
+.sp-modal__timer {
+  position: absolute;
+  top: 51px;
+  right: 51px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 22px 30px;
+  border-radius: 999px;
+  color: #ffffff;
+  font-size: 36px;
+  font-weight: 400;
+  line-height: 1;
+}
+
+/* 카드를 넣어주세요 — Display Medium 96 #636363 */
+.sp-modal__title {
+  margin: 0;
+  font-size: 96px;
+  font-weight: 500;
+  color: #636363;
+  text-align: center;
+}
+
+.sp-modal__desc {
+  margin: -20px 0 0;
+  font-size: 45px;
+  font-weight: 400;
+  color: #636363;
+  text-align: center;
+}
+
+/* 기부 금액 박스 — Figma 5535:18275 border5 #e8e8e8, radius 35 */
+.sp-modal__amount {
+  box-sizing: border-box;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 44px 40px;
+  border: 5px solid #e8e8e8;
+  border-radius: 35px;
+}
+
+.sp-modal__amount-label {
+  margin: 0;
+  font-size: 70px;
+  font-weight: 400;
+  color: #636363;
+}
+
+.sp-modal__amount-value {
+  margin: 0;
+  font-family: var(--font-paperlogy, "Paperlogy"), "Noto Sans KR", sans-serif;
+  font-size: 100px;
+  font-weight: 700;
+  color: #636363;
+}
+
+/* 카드 리더 일러스트 — Figma 5535:18274 */
+.sp-modal__reader {
+  width: 752px;
+  height: auto;
+  object-fit: contain;
+}
+
+/* 진행바 — Figma 5535:18267/18268 (트랙 회색 + 초록 채움 ~75%) */
+.sp-modal__bar {
+  width: 1258px;
+  height: 24px;
+  border-radius: 999px;
+  background: #e5e5e5;
+  overflow: hidden;
+}
+
+.sp-modal__fill {
+  width: 75%;
+  height: 100%;
+  border-radius: 999px;
+}
+
+/* 취소 — Figma 5535:18269 회색 버튼 */
+.sp-modal__cancel {
+  width: 1258px;
+  height: 180px;
+  border: none;
+  border-radius: 45px;
+  background: #999999;
+  color: #fbfbfb;
+  font-size: 56px;
+  font-weight: 700;
+  cursor: pointer;
+}

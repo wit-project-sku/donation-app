@@ -11,6 +11,7 @@ import photoGuide from "../assets/photo-guide.png";
 import { useDonationStore } from "../store/donationStore";
 import { useTheme } from "../theme/ThemeContext";
 import { submitCurrentDonation } from "../utils/buildSubmitPayload";
+import { getKioskBridge } from "../utils/kioskBridge";
 import "./CameraCapturePage.css";
 
 const DEFAULT_BORDER = "#D0D0D0";
@@ -93,7 +94,8 @@ function getCameraErrorMessage(error: unknown): string {
 
 export function CameraCapturePage() {
   const navigate = useAppNavigate();
-  const { theme } = useTheme();
+  const { theme, category } = useTheme();
+  const isSchool = category === "school";
   const [searchParams] = useSearchParams();
   const { selectedOutfit, merchantUid, setCapturedPhotoUrl, setSubmittedRecordId } = useDonationStore();
   const isGreetingMode = searchParams.get("mode") === "greeting";
@@ -111,6 +113,12 @@ export function CameraCapturePage() {
   const [, setCameraDevices] = useState<MediaDeviceInfo[]>([]);
   const [selectedCameraDeviceId, setSelectedCameraDeviceId] = useState<string | null>(null);
   const [, setActiveCameraLabel] = useState("");
+
+  // When embedded in the kiosk, the camera + AI run on the kiosk's Monitor 2 via
+  // the bridge instead of the in-webview getUserMedia pipeline below.
+  const kioskBridge = getKioskBridge();
+  const isEmbedded = kioskBridge != null;
+  const [countdown, setCountdown] = useState<number | null>(null);
 
   const support = useMemo(
     () => ({
@@ -155,9 +163,60 @@ export function CameraCapturePage() {
   }, []);
 
   useEffect(() => {
+    if (isEmbedded) return;
+    // Enumerate cameras on mount (external-system sync, not derived state).
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     refreshDevices();
     return () => stopStream();
-  }, [refreshDevices, stopStream]);
+  }, [refreshDevices, stopStream, isEmbedded]);
+
+  // Kick off / retake a Monitor-2 capture on the kiosk.
+  const startKioskCapture = useCallback(() => {
+    if (!kioskBridge?.takePhoto) return;
+    setStatus("requesting");
+    setErrorMsg("");
+    setResultImageUrl(null);
+    setCountdown(null);
+    kioskBridge.takePhoto({
+      mode: isGreetingMode ? "together" : "solo",
+      clothingKey: selectedOutfit?.outfitCode ?? "",
+    });
+  }, [kioskBridge, isGreetingMode, selectedOutfit]);
+
+  // Bridge event subscription: kiosk countdown/generating progress + final result.
+  useEffect(() => {
+    if (!kioskBridge?.on) return;
+    const offProgress = kioskBridge.on("photoProgress", (payload) => {
+      const p = payload as { phase?: string; countdown?: number | null };
+      if (p.phase === "generating") {
+        setStatus("uploading");
+        setCountdown(null);
+        // School flow: don't wait for AI here — proceed to amount/payment while it
+        // generates; the result lands at the certificate via the app-level bridge.
+        if (isSchool) navigate("/school-amount");
+      } else if (p.phase === "countdown") {
+        setStatus("requesting");
+        setCountdown(p.countdown ?? null);
+      }
+    });
+    const offResult = kioskBridge.on("photoResult", (payload) => {
+      const url = (payload as { url?: string }).url;
+      if (!url) return;
+      setResultImageUrl(url);
+      setCapturedPhotoUrl(url);
+      setStatus("done");
+    });
+    const offError = kioskBridge.on("photoError", (payload) => {
+      const message = (payload as { message?: string }).message;
+      setErrorMsg(message || "AI 이미지 생성에 실패했습니다. 다시 시도해 주세요.");
+      setStatus("error");
+    });
+    return () => {
+      offProgress();
+      offResult();
+      offError();
+    };
+  }, [kioskBridge, setCapturedPhotoUrl, isSchool, navigate]);
 
   const startCamera = useCallback(async () => {
     if (!support.mediaDevices || !support.getUserMedia) {
@@ -334,6 +393,11 @@ export function CameraCapturePage() {
 
   const confirm = async () => {
     stopStream();
+    // 학교 흐름: 촬영 후 기부금 선택 → 결제 순서. 여기선 아직 제출하지 않는다.
+    if (isSchool) {
+      navigate("/school-amount");
+      return;
+    }
     setIsSubmitting(true);
     try {
       const state = useDonationStore.getState();
@@ -349,6 +413,146 @@ export function CameraCapturePage() {
     }
     navigate("/certificate");
   };
+
+  const cameraPageStyle = {
+    backgroundColor: theme.background,
+    ["--camera-primary" as string]: theme.primary,
+    ["--camera-on-primary" as string]: theme.text.onPrimary,
+    ["--camera-text-primary" as string]: theme.text.primary,
+    ["--camera-text-secondary" as string]: theme.text.secondary,
+    ["--camera-card-bg" as string]: theme.card.background,
+    ["--camera-page-bg" as string]: theme.background,
+  };
+
+  // Embedded (kiosk) flow: camera + AI run on Monitor 2; this screen only guides
+  // the user, shows generation progress, then the returned AI result.
+  if (isEmbedded) {
+    const primaryStyle = {
+      backgroundColor: theme.primary,
+      borderColor: theme.primary,
+      color: theme.text.onPrimary,
+    };
+    return (
+      <PageBody className="camera-page" scroll={false} style={cameraPageStyle}>
+        <AppHeader
+          onBack={() => {
+            kioskBridge?.cancelPhoto?.();
+            navigate("/outfit");
+          }}
+        />
+        <div className="camera-page__surface">
+          {status === "done" && resultImageUrl && (
+            <img className="camera-page__preview" src={resultImageUrl} alt="촬영 결과" />
+          )}
+
+          {(status === "idle" || status === "requesting") && (
+            <div
+              className="camera-page__center-state"
+              style={{ backgroundColor: theme.background, color: theme.text.primary }}
+            >
+              <img className="camera-page__guide-img" src={photoGuide} alt="" />
+              <h1
+                className="camera-page__center-title"
+                style={{ color: theme.primary }}
+              >
+                {status === "requesting"
+                  ? countdown != null
+                    ? `${countdown}`
+                    : "곧 촬영이 시작됩니다"
+                  : "촬영을 시작해 주세요"}
+              </h1>
+              <p className="camera-page__center-desc">
+                <span className="camera-page__center-star" aria-hidden>
+                  ★
+                </span>
+                <span>
+                  옆 화면의 카메라를 바라봐 주세요. 준비되면 아래 버튼을 눌러주세요.
+                </span>
+              </p>
+            </div>
+          )}
+
+          {status === "uploading" && (
+            <div className="camera-page__processing">
+              <div className="camera-page__spinner" aria-hidden />
+              <h1>AI 이미지 생성 중입니다</h1>
+            </div>
+          )}
+
+          {status === "error" && (
+            <div
+              className="camera-page__center-state camera-page__center-state--error"
+              style={{ backgroundColor: theme.background, color: theme.text.primary }}
+            >
+              <div className="camera-page__center-icon" aria-hidden>
+                <IconCamera size={96} strokeWidth={2} />
+              </div>
+              <h1 style={{ color: theme.text.primary }}>촬영에 실패했습니다</h1>
+              <p>{errorMsg}</p>
+            </div>
+          )}
+
+          {status === "done" && (
+            <div
+              className="camera-page__result-badge"
+              style={{
+                backgroundColor: theme.primary,
+                borderColor: theme.primary,
+                color: theme.text.onPrimary,
+              }}
+            >
+              <IconCheck size={40} strokeWidth={2.5} aria-hidden />
+              <span>완료되었습니다</span>
+            </div>
+          )}
+
+          <div className="camera-page__controls">
+            {(status === "idle" || status === "error") && (
+              <button
+                type="button"
+                className="camera-page__control camera-page__control--primary"
+                onClick={startKioskCapture}
+                style={primaryStyle}
+              >
+                <IconCamera size={72} strokeWidth={2.2} aria-hidden />
+                촬영 시작
+              </button>
+            )}
+
+            {status === "done" && (
+              <>
+                <button
+                  type="button"
+                  className="camera-page__control camera-page__control--secondary"
+                  onClick={startKioskCapture}
+                  disabled={isSubmitting}
+                  style={{
+                    backgroundColor: theme.card.background,
+                    borderColor: DEFAULT_BORDER,
+                    color: theme.text.primary,
+                  }}
+                >
+                  <IconReset size={64} strokeWidth={2.2} aria-hidden />
+                  다시 촬영
+                </button>
+                <button
+                  type="button"
+                  className="camera-page__control camera-page__control--primary"
+                  onClick={confirm}
+                  disabled={isSubmitting}
+                  style={primaryStyle}
+                >
+                  <IconCheck size={64} strokeWidth={2.5} aria-hidden />
+                  {isSubmitting ? "저장 중..." : "다음으로"}
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+        <AppFooter />
+      </PageBody>
+    );
+  }
 
   const previewSrc = resultImageUrl ?? capturedDataUrl;
   const isLive = status === "streaming" || status === "requesting";

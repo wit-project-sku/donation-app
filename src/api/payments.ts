@@ -13,6 +13,22 @@ const PAYMENT_TIMEOUT_MS = 180_000;
 
 
 
+/** 테스트용: VITE_MOCK_PAYMENT=true 이면 실제 단말기 대신 성공을 가짜로 반환한다. */
+
+const MOCK_PAYMENT =
+
+  String(import.meta.env.VITE_MOCK_PAYMENT ?? "").toLowerCase() === "true";
+
+
+
+function delay(ms: number): Promise<void> {
+
+  return new Promise((resolve) => window.setTimeout(resolve, ms));
+
+}
+
+
+
 const PAYMENTS_PATH = "/api/donations/payments";
 
 const CANCEL_PENDING_PATH = "/api/donations/payments/cancel-pending";
@@ -308,6 +324,11 @@ export function createMerchantUid(): string {
 export async function processPayment(
   payload: ProcessPaymentRequest,
 ): Promise<ProcessPaymentResponse> {
+  if (MOCK_PAYMENT) {
+    // 단말기 대기(카드 삽입 → 승인)를 흉내내는 지연 후 성공 반환
+    await delay(2500);
+    return { message: "MOCK_PAYMENT_OK" };
+  }
   return paymentFetch<ProcessPaymentResponse>(PAYMENTS_PATH, payload);
 }
 
@@ -316,6 +337,10 @@ export async function processPayment(
 export async function cancelPendingPayment(
   payload: CancelPendingPaymentRequest,
 ): Promise<CancelPendingPaymentResponse> {
+  if (MOCK_PAYMENT) {
+    await delay(150);
+    return { message: "MOCK_CANCELLED" };
+  }
   return paymentFetch<CancelPendingPaymentResponse>(
     CANCEL_PENDING_PATH,
     payload,
@@ -353,14 +378,5 @@ export function buildPaymentRequest(
 
 
 
-export function formatPaymentError(err: unknown): string {
-
-  const error = toPaymentApiError(err);
-
-  const detail = error.errorCode ? ` (${error.errorCode})` : "";
-
-  return `${error.message}${detail}`;
-
-}
 
 

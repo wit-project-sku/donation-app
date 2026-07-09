@@ -1,0 +1,202 @@
+.cert-prompt {
+  display: flex;
+  flex-direction: column;
+}
+
+/* 헤더/푸터 풀블리드 (PageBody 기본 패딩/gap 제거) */
+.page-body.cert-prompt {
+  padding: 0;
+  gap: 0;
+}
+
+.cert-prompt__body {
+  display: flex;
+  flex-direction: column;
+  flex: 1 0 auto;
+  padding: 0 170px;
+}
+
+/* 캠페인 칩 — 1270×180, r45, theme.primary, 흰 글씨 80px */
+.cert-prompt__chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 38px;
+  align-self: flex-start;
+  width: 1270px;
+  max-width: 100%;
+  height: 180px;
+  padding: 0 64px;
+  border-radius: 45px;
+  color: #fff;
+  font-size: 80px;
+  font-weight: 700;
+}
+
+.cert-prompt__heart {
+  width: 74px;
+  height: 66px;
+  object-fit: contain;
+}
+
+/* 결제 완료 블록 — 체크 아이콘 + 결제 완료 + 안내 + 기부 금액 카드 (중앙) */
+.cert-prompt__complete {
+  margin: 100px 0 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+/* 파란 원 + 흰 체크 (실 에셋) — Figma 301×301 */
+.cert-prompt__check {
+  width: 301px;
+  height: 301px;
+  object-fit: contain;
+}
+
+.cert-prompt__complete-title {
+  margin: 40px 0 0;
+  font-size: 90px;
+  font-weight: 700;
+  color: #636363;
+}
+
+.cert-prompt__complete-desc {
+  margin: 24px 0 0;
+  font-size: 50px;
+  font-weight: 400;
+  color: #999999;
+}
+
+/* 기부 금액 카드 — Figma CardPaymentModal 정확값 */
+.cert-prompt__amount-card {
+  box-sizing: border-box;
+  display: flex;
+  width: 1299px;
+  max-width: 100%;
+  height: 445px;
+  padding: 40.56px 40.56px 0 40.56px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 20.28px;
+  margin: 60px 0 0;
+  border: 5px solid #e8e8e8;
+  border-radius: 35.49px;
+}
+
+.cert-prompt__amount-label {
+  width: 100%;
+  margin: 0;
+  text-align: center;
+  font-size: 70px;
+  font-weight: 400;
+  line-height: 76.05px;
+  color: #636363;
+}
+
+/* Figma: 라벨과 금액 사이 빈 단락(h63) */
+.cert-prompt__amount-spacer {
+  height: 63px;
+  flex: 0 0 auto;
+}
+
+.cert-prompt__amount-value {
+  width: 100%;
+  margin: 0;
+  text-align: center;
+  font-family: var(--font-paperlogy, "Paperlogy"), "Noto Sans KR", sans-serif;
+  font-size: 100px;
+  font-weight: 700;
+  line-height: 136.89px;
+  color: #636363;
+}
+
+/* 발급 여부 버튼 2개 — Figma 5581:29574/29575: 각 732×150, r45, shadow */
+.cert-prompt__actions {
+  margin-top: auto;
+  display: flex;
+  justify-content: center;
+  gap: 200px;
+}
+
+.cert-prompt__decline,
+.cert-prompt__issue {
+  width: 732px;
+  max-width: 100%;
+  height: 150px;
+  border: none;
+  border-radius: 45px;
+  box-shadow: 0 4px 4px 7px rgba(0, 0, 0, 0.25);
+  color: #fff;
+  font-size: 63px;
+  cursor: pointer;
+}
+
+/* 아니요 — 회색 #999, medium */
+.cert-prompt__decline {
+  background: #999999;
+  font-weight: 500;
+}
+
+/* 기부증서 발급 — theme.primary(인라인), bold */
+.cert-prompt__issue {
+  font-weight: 700;
+}
+
+/* "이 캠페인은 [로고] 와 함께합니다." Regular 70 #636363, 중앙 */
+.cert-prompt__partner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+  margin: 90px 0;
+  font-size: 70px;
+  font-weight: 400;
+  color: #636363;
+}
+
+.cert-prompt__partner-logo {
+  height: 70px;
+  width: auto;
+  object-fit: contain;
+}
+
+/* 모금 현황 카드 — 흰 배경, border5 #e8e8e8, radius45, h416 */
+.cert-prompt__funding {
+  box-sizing: border-box;
+  min-height: 416px;
+  border: 5px solid #e8e8e8;
+  border-radius: 45px;
+  padding: 60px 70px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 44px;
+  margin-bottom: 100px;
+}
+
+.cert-prompt__funding-label {
+  margin: 0;
+  font-size: 76px;
+  font-weight: 700;
+}
+
+.cert-prompt__funding-bar {
+  height: 38px;
+  border-radius: 999px;
+  background: #e8e8e8;
+  overflow: hidden;
+}
+
+.cert-prompt__funding-fill {
+  height: 100%;
+  border-radius: 999px;
+}
+
+.cert-prompt__funding-amount {
+  margin: 0;
+  text-align: right;
+  font-size: 76px;
+  font-weight: 700;
+}

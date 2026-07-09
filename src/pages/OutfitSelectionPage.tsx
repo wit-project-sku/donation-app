@@ -11,6 +11,9 @@ import { IconCamera } from "../components/Icon";
 import { PageBody } from "../components/layout/PageBody";
 import { useDonationStore } from "../store/donationStore";
 import { useTheme } from "../theme/ThemeContext";
+import { formatCurrency } from "../utils/format";
+import { isEmbeddedInKiosk } from "../utils/kioskBridge";
+import cameraGuideModal from "../assets/camera-guide-modal.png";
 import "swiper/css";
 import "swiper/css/grid";
 import "swiper/css/free-mode";
@@ -18,9 +21,15 @@ import "./OutfitSelectionPage.css";
 
 const PAGE_SIZE = 12;
 
+/** Figma 5659:96268/96270 모금 현황 지표 (샘플) */
+const PARTICIPANTS = 50;
+const BENEFICIARIES = 77;
+const FUNDING_PERCENT = 90;
+
 export function OutfitSelectionPage() {
   const navigate = useAppNavigate();
-  const { theme } = useTheme();
+  const { theme, organizer, category } = useTheme();
+  const isSchool = category === "school";
   const swiperRef = useRef<SwiperClass | null>(null);
   const {
     selectedCampaign,
@@ -33,6 +42,8 @@ export function OutfitSelectionPage() {
   } = useDonationStore();
 
   const [selected, setSelected] = useState<Outfit | null>(null);
+  const [guideOpen, setGuideOpen] = useState(false);
+  const [greetingMode, setGreetingMode] = useState(false);
 
   const {
     data,
@@ -64,7 +75,13 @@ export function OutfitSelectionPage() {
   );
 
   useEffect(() => {
-    if (!selectedCampaign || !paymentMethod) {
+    if (!selectedCampaign) {
+      navigate("/", { replace: true });
+      return;
+    }
+    // 학교 흐름은 촬영을 먼저 하고 결제/이름은 이후 단계에서 받으므로 사전 가드 생략
+    if (isSchool) return;
+    if (!paymentMethod) {
       navigate("/payment", { replace: true });
       return;
     }
@@ -75,7 +92,7 @@ export function OutfitSelectionPage() {
     if (!donorName.trim()) {
       navigate("/message", { replace: true });
     }
-  }, [selectedCampaign, paymentMethod, skipPhoto, donorName, navigate]);
+  }, [selectedCampaign, paymentMethod, skipPhoto, donorName, isSchool, navigate]);
 
   useEffect(() => {
     swiperRef.current?.update();
@@ -93,29 +110,39 @@ export function OutfitSelectionPage() {
 
   const handlePhoto = useCallback(
     (withGreeting = false) => {
-      if (!selected) return;
       setSelectedOutfit(selected);
       setSkipPhoto(false);
       setCapturedPhotoUrl(null);
-      navigate(
-        withGreeting ? "/camera?ai=true&mode=greeting" : "/camera?ai=false",
-      );
+      setGreetingMode(withGreeting);
+      // 촬영 안내 팝업을 띄운다 (Figma 5535:18720) → 탭하면 카메라로 진행
+      setGuideOpen(true);
     },
-    [navigate, selected, setCapturedPhotoUrl, setSelectedOutfit, setSkipPhoto],
+    [selected, setCapturedPhotoUrl, setSelectedOutfit, setSkipPhoto],
   );
+
+  const startCamera = useCallback(() => {
+    setGuideOpen(false);
+    navigate(greetingMode ? "/camera?mode=greeting" : "/camera");
+  }, [greetingMode, navigate]);
 
   if (!selectedCampaign) return null;
 
-  const canTakePhoto = Boolean(selected) && !isLoading && !isError;
+  // 학교 흐름은 교복(실 촬영)으로 진행하므로 의상 미선택이어도 촬영 버튼 활성화
+  const canTakePhoto = isSchool || (Boolean(selected) && !isLoading && !isError);
 
   return (
-    <PageBody className="outfit-page" scroll={false}>
-      <AppHeader />
+    <PageBody
+      className={`outfit-page${isSchool ? " outfit-page--school" : ""}${guideOpen ? " outfit-page--modal" : ""}`}
+      scroll={false}
+    >
+      <AppHeader backTo={isSchool ? "/school-detail" : undefined} />
 
       <div className="outfit-body">
         <div className="outfit-intro">
           <h2 className="outfit-intro__title" style={{ color: theme.primary }}>
-            기부 참여자에게만 제공되는 특별 의상을 착용해보세요!
+            {isSchool
+              ? "나의 고등학교 교복을 착용해보세요!"
+              : "기부 참여자에게만 제공되는 특별 의상을 착용해보세요!"}
           </h2>
           <p className="outfit-intro__desc">
             <span className="outfit-intro__star" aria-hidden>
@@ -147,7 +174,7 @@ export function OutfitSelectionPage() {
               onReachEnd={loadMoreIfNeeded}
               onProgress={loadMoreIfNeeded}
               slidesPerView="auto"
-              grid={{ rows: 2, fill: "row" }}
+              grid={{ rows: isSchool ? 1 : 2, fill: "row" }}
               spaceBetween={104}
               freeMode={{ enabled: true, momentum: true, momentumRatio: 0.85 }}
               simulateTouch
@@ -168,9 +195,6 @@ export function OutfitSelectionPage() {
                       role="listitem"
                       onClick={() => setSelected(isSelected ? null : outfit)}
                       aria-pressed={isSelected}
-                      style={
-                        isSelected ? { borderColor: theme.primary } : undefined
-                      }
                     >
                       <img
                         className="outfit-card__img"
@@ -203,7 +227,6 @@ export function OutfitSelectionPage() {
           className="outfit-action"
           onClick={() => handlePhoto(false)}
           disabled={!canTakePhoto}
-          style={canTakePhoto ? { backgroundColor: theme.primary } : undefined}
         >
           <IconCamera size={68} aria-hidden />
           <span>혼자 찍기</span>
@@ -213,14 +236,63 @@ export function OutfitSelectionPage() {
           className="outfit-action"
           onClick={() => handlePhoto(true)}
           disabled={!canTakePhoto}
-          style={canTakePhoto ? { backgroundColor: theme.primary } : undefined}
         >
           <IconCamera size={68} aria-hidden />
           <span>WITH &lsquo;인사&rsquo;</span>
         </button>
       </div>
 
+      {/* 모금 현황 — Figma 5659:96261~96270 (학교 흐름: 촬영 대기 중 기부 정보 노출) */}
+      {isSchool && (
+        <div className="outfit-donation">
+          <p className="outfit-donation__partner">
+            이 캠페인은 {organizer.label}와 함께합니다.
+          </p>
+
+          <div className="outfit-funding">
+            <p className="outfit-funding__label" style={{ color: theme.primary }}>
+              모금 현황
+            </p>
+            <div className="outfit-funding__bar">
+              <div
+                className="outfit-funding__fill"
+                style={{
+                  width: `${FUNDING_PERCENT}%`,
+                  backgroundColor: theme.primary,
+                }}
+              />
+            </div>
+            <p
+              className="outfit-funding__amount"
+              style={{ color: theme.primary }}
+            >
+              {formatCurrency(selectedCampaign.accumulatedAmount)} /{" "}
+              {formatCurrency(selectedCampaign.targetAmount)}원
+            </p>
+          </div>
+
+          <p className="outfit-donation__stats">
+            기부 참여자 : {PARTICIPANTS}명 / 기부 수혜자 : {BENEFICIARIES}명
+          </p>
+        </div>
+      )}
+
       <AppFooter />
+
+      {guideOpen && (
+        <div
+          className="outfit-guide"
+          role="dialog"
+          aria-modal="true"
+          onClick={isSchool || isEmbeddedInKiosk() ? startCamera : () => setGuideOpen(false)}
+        >
+          <img
+            className="outfit-guide__img"
+            src={cameraGuideModal}
+            alt="왼쪽 화면을 먼저보시고 화면사이 카메라를 봐주세요."
+          />
+        </div>
+      )}
     </PageBody>
   );
 }

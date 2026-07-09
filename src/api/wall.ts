@@ -9,6 +9,8 @@ export async function fetchWallEntriesPage(
   return fetchPaymentHistoryPage({
     pageNum: params.pageNum ?? 1,
     pageSize: params.pageSize ?? 6,
-    keyword: params.keyword ?? "",
+    targetType: params.targetType,
+    donatorName: params.donatorName,
+    targetName: params.targetName,
   });
 }

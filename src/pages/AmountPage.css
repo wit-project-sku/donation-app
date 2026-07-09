@@ -9,20 +9,23 @@
   gap: 0;
 }
 
-/* 본문 — 좌우 170px (Figma: chip/divider/CTA 기준), 헤더 바로 아래 20px */
+/* 본문 — 좌우 170px, 헤더 아래 */
 .amount-page__body {
   display: flex;
   flex-direction: column;
   flex: 1 0 auto;
-  padding: 20px 170px 0;
+  padding: 0 170px;
 }
 
-/* 선택 캠페인 칩 (Figma: 1270×180, radius45, 좌패딩64, 아이콘↔텍스트 38) */
+/* 선택 캠페인 칩 (Figma 5535:18003: bg 테마색, w1270/h180, radius45, 좌측정렬) */
 .amount-chip {
   display: inline-flex;
   align-items: center;
+  justify-content: flex-start;
   gap: 38px;
   align-self: flex-start;
+  width: 1270px;
+  max-width: 100%;
   height: 180px;
   padding: 0 64px;
   border: none;
@@ -30,69 +33,32 @@
   color: #fff;
   font-size: 80px;
   font-weight: 700;
+  text-align: left;
   cursor: pointer;
 }
 
-/* 진행 블록 (Figma: chip 아래 130, 로고 105 → 바 20 → 라벨) */
-.amount-progress {
-  display: flex;
-  flex-direction: column;
-  margin: 130px 0 0;
-}
-
-.amount-progress__logo {
-  height: 105px;
-  width: auto;
+.amount-chip__heart {
+  width: 74px;
+  height: 66px;
   object-fit: contain;
-  align-self: flex-start;
 }
 
-.amount-progress__bar {
-  height: 20px;
-  margin-top: 72px;
-  border-radius: 999px;
-  background: #e8e8e8;
-  overflow: hidden;
-}
-
-.amount-progress__fill {
-  height: 100%;
-  border-radius: 999px;
-}
-
-.amount-progress__label {
-  margin: 50px 0 0;
-  align-self: flex-end;
-  font-size: 76px;
-  font-weight: 700;
-}
-
-/* 진행 블록과 라벨 사이 전폭 구분선 (Figma Line 65) */
-.amount-divider {
-  height: 0;
-  margin: 124px 0 112px;
-  border: none;
-  border-top: 2px solid #e8e8e8;
-}
-
-/* "기부금을 선택해 주세요" — 프리셋 그리드와 같은 인셋(170+123=293) */
+/* "기부금을 선택해 주세요" Figma 5535:18009 Regular 66 #636363, 그리드와 같은 123 인셋 */
 .amount-page__label {
-  margin: 0 0 38px 123px;
+  margin: 64px 0 40px 123px;
   font-size: 66px;
   font-weight: 400;
   text-align: left;
   color: #636363;
 }
 
-/* 금액 프리셋 그리드 — 2×2, 본문 안쪽 123px 인셋(max-width 1574 중앙) */
+/* 금액 프리셋 그리드 — 2×2 (Figma 5535:18011: w772/h350, col-gap30, 중앙 1574) */
 .amount-grid {
   display: grid;
-  grid-template-columns: 772px 772px;
+  grid-template-columns: repeat(2, 772px);
+  justify-content: center;
   column-gap: 30px;
-  row-gap: 63px;
-  width: 100%;
-  max-width: 1574px;
-  margin: 0 auto;
+  row-gap: 60px;
 }
 
 .amount-opt {
@@ -103,7 +69,7 @@
   border: 5px solid #e8e8e8;
   border-radius: 45px;
   background: #fff;
-  font-family: "Paperlogy", "Noto Sans KR", sans-serif;
+  font-family: var(--font-paperlogy, "Paperlogy"), "Noto Sans KR", sans-serif;
   font-size: 90px;
   font-weight: 700;
   color: #636363;
@@ -117,30 +83,27 @@
   padding: 80px 0;
 }
 
-/* 세금 안내 불릿 (Figma: 그리드 아래 46, 55px, #999, ms 82.5) */
-.amount-note {
-  margin: 46px 0 0;
-  padding-left: 82px;
-  font-size: 55px;
-  font-weight: 400;
-  line-height: 1.18;
-  color: #999999;
-  text-align: left;
-  list-style: disc;
+/* CTA — 전폭(1820), h208, radius45, 비활성 #999 · 선택 시 테마색(인라인) (Figma 5535:18004) */
+.amount-cta {
+  width: 100%;
+  margin: 90px 0 0;
+  height: 208px;
+  border: none;
+  border-radius: 45px;
+  background: #999999;
+  color: #fff;
+  font-size: 80px;
+  font-weight: 700;
+  cursor: pointer;
 }
 
-.amount-note li {
-  display: list-item;
-}
-
-/* "이 캠페인은 unicef 와 함께합니다." (Figma: 노트 아래 158, 70px #636363, 중앙) */
+/* "이 캠페인은 [로고] 와 함께합니다." Figma 5535:18010 Regular 70 #636363, 중앙 */
 .amount-partner {
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-wrap: wrap;
-  gap: 24px;
-  margin: 158px 0 0;
+  gap: 30px;
+  margin: 90px 0;
   font-size: 70px;
   font-weight: 400;
   color: #636363;
@@ -152,16 +115,43 @@
   object-fit: contain;
 }
 
-/* CTA — 전폭(1820), h208, radius45, 비활성 #999 (Figma) */
-.amount-cta {
-  width: 100%;
-  margin: auto 0 107px;
-  height: 208px;
-  border: none;
+/* 모금 현황 카드 Figma 5535:21564: 흰 배경, border5 #e8e8e8, radius45, h416 */
+.amount-funding {
+  box-sizing: border-box;
+  min-height: 416px;
+  border: 5px solid #e8e8e8;
   border-radius: 45px;
-  background: #999999;
-  color: #fff;
-  font-size: 70px;
+  padding: 60px 70px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 44px;
+  margin-bottom: 100px;
+}
+
+/* 모금 현황 라벨 Figma 5535:21562 Bold 76 테마색 */
+.amount-funding__label {
+  margin: 0;
+  font-size: 76px;
   font-weight: 700;
-  cursor: pointer;
+}
+
+.amount-funding__bar {
+  height: 38px;
+  border-radius: 999px;
+  background: #e8e8e8;
+  overflow: hidden;
+}
+
+.amount-funding__fill {
+  height: 100%;
+  border-radius: 999px;
+}
+
+/* 금액 Figma 5535:21554 Bold 76 테마색, 우측 정렬 */
+.amount-funding__amount {
+  margin: 0;
+  text-align: right;
+  font-size: 76px;
+  font-weight: 700;
 }

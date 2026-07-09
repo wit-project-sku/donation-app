@@ -1,6 +1,34 @@
 .outfit-page {
+  position: relative;
   display: flex;
   flex-direction: column;
+}
+
+/* 모달 열림 시 페이지를 SideNav 위로 올려 딤이 좌측 네비까지 덮게 한다 */
+.outfit-page--modal {
+  z-index: 100;
+}
+
+/* 촬영 안내 팝업 (Figma 5535:18720) — 이 화면 위에 딤 + 중앙 이미지 */
+.outfit-guide {
+  position: absolute;
+  inset: 0;
+  z-index: 60;
+  background: rgba(0, 0, 0, 0.45);
+}
+
+/* Figma 5535:18751: 1173x2382, 라운드 80, 상단 780, 가로 중앙 (좌 494) */
+.outfit-guide__img {
+  position: absolute;
+  top: 780px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 1173px;
+  height: 2382px;
+  border-radius: 80px;
+  object-fit: cover;
+  object-position: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
 }
 
 /* 헤더/푸터 풀블리드 + 한 화면 고정 (PageBody 기본 패딩/gap 제거) */
@@ -9,13 +37,13 @@
   gap: 0;
 }
 
-/* Figma: 좌우 페이지 패딩 172(좌)/170(우) — 버튼·설명문 기준 */
+/* Figma 좌표 그대로: 헤더(699) 아래 61 여백, 좌우 패딩 170.
+   flex 로 늘이지 않고 고정 흐름 → 카드/간격이 Figma 픽셀과 1:1. */
 .outfit-body {
-  flex: 1 1 auto;
-  min-height: 0;
+  flex: 0 0 auto;
   display: flex;
   flex-direction: column;
-  padding: 61px 170px 0 172px;
+  padding: 61px 170px 0 170px;
 }
 
 /* Intro — 좌측 정렬 (Figma: 헤딩 x=309, 설명 x=172) */
@@ -25,12 +53,17 @@
   text-align: left;
 }
 
+/* 학교 흐름은 하단에 모금 현황 블록이 추가되므로 간격을 좁혀 한 화면에 맞춘다 */
+.outfit-page--school .outfit-intro {
+  margin-bottom: 80px;
+}
+
 .outfit-intro__title {
-  /* Figma 헤딩 좌측 x=309 = 본문패딩 172 + 137 */
+  /* Figma 5535:18762: 좌측 x=307 (본문패딩 170 + 137), 박스높이 93 (68*1.37) */
   margin: 0 0 17px 137px;
   font-size: 68px;
   font-weight: 700;
-  line-height: 1.15;
+  line-height: 1.37;
   white-space: nowrap;
 }
 
@@ -40,9 +73,11 @@
   gap: 20px;
   /* Figma: 설명 프레임 내부 별이 x=212 (본문패딩 172 + 40) */
   margin: 0 0 0 40px;
-  font-size: 40px;
-  font-weight: 500;
+  /* Figma 5535:18786 — Noto Sans Bold 50px #999, 한 줄 */
+  font-size: 50px;
+  font-weight: 700;
   line-height: 1.4;
+  white-space: nowrap;
   color: var(--color-text-muted, #999999);
 }
 
@@ -55,15 +90,26 @@
   color: var(--color-text-muted, #999999);
 }
 
-/* Grid — Figma 그리드 프레임 좌우 +71 인셋(폭 1678 = 787*2 + 104) */
+/* Grid — Figma 5535:18763 프레임: x+71 인셋(폭 1678 = 787*2 + 104),
+   높이 1660 = 806*2 + 48 (고정, 늘이지 않음) */
 .outfit-swiper-wrap {
-  flex: 1 1 auto;
-  min-height: 0;
+  flex: 0 0 auto;
+  height: 1660px;
   margin: 0 71px;
 }
 
+/* 학교 흐름은 1행(교복 카드)만 노출 → 높이 축소 */
+.outfit-page--school .outfit-swiper-wrap,
+.outfit-page--school .outfit-swiper {
+  height: 806px;
+}
+
 .outfit-swiper {
-  height: 100%;
+  height: 1660px;
+  /* 하단 행 카드의 테두리/그림자/선택 링이 잘리지 않도록:
+     좌우 슬라이드는 계속 클립하되 30px 잉크 블리드 허용 */
+  overflow: clip;
+  overflow-clip-margin: 30px;
 }
 
 .outfit-slide {
@@ -77,6 +123,7 @@
   margin-top: 48px !important;
 }
 
+/* 기본: 평범한 회색 테두리 + 그림자 */
 .outfit-card {
   box-sizing: border-box;
   display: block;
@@ -89,6 +136,12 @@
   overflow: hidden;
   background: #fff;
   cursor: pointer;
+}
+
+/* 선택 시: 테두리를 primary 색으로, 그림자는 제거 */
+.outfit-card--on {
+  border-color: var(--color-primary, #009fe3);
+  box-shadow: none;
 }
 
 .outfit-card__img {
@@ -123,13 +176,82 @@
   color: #b42318;
 }
 
-/* Buttons — Figma: 815x150, gap 190, 본문패딩 172/170, 위 171 / 아래 212 */
+/* Buttons — Figma 5535:18772/18778: 815x150, gap 190, 좌우 170, 위 171 / 아래 212 */
 .outfit-actions {
   flex: 0 0 auto;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 190px;
-  padding: 171px 170px 212px 172px;
+  padding: 171px 170px 212px 170px;
+}
+
+/* 학교 흐름은 하단 모금 현황을 위해 버튼 상하 여백 축소 */
+.outfit-page--school .outfit-actions {
+  padding: 110px 170px 90px 170px;
+}
+
+/* 모금 현황 블록 — Figma 5659:96261~96270 (촬영 대기 중 기부 정보) */
+.outfit-donation {
+  flex: 0 0 auto;
+  padding: 0 170px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* "이 캠페인은 ○○와 함께합니다." — Regular 70 #636363 중앙 */
+.outfit-donation__partner {
+  margin: 0 0 46px;
+  text-align: center;
+  font-size: 70px;
+  font-weight: 400;
+  color: #636363;
+}
+
+/* 모금 현황 카드 — 흰 배경, border5 #e8e8e8, radius45, h416 */
+.outfit-funding {
+  box-sizing: border-box;
+  min-height: 416px;
+  border: 5px solid #e8e8e8;
+  border-radius: 45px;
+  padding: 60px 70px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 44px;
+}
+
+.outfit-funding__label {
+  margin: 0;
+  font-size: 76px;
+  font-weight: 700;
+}
+
+.outfit-funding__bar {
+  height: 38px;
+  border-radius: 999px;
+  background: #e8e8e8;
+  overflow: hidden;
+}
+
+.outfit-funding__fill {
+  height: 100%;
+  border-radius: 999px;
+}
+
+.outfit-funding__amount {
+  margin: 0;
+  text-align: right;
+  font-size: 76px;
+  font-weight: 700;
+}
+
+/* 참여자·수혜자 — Regular 70 #636363 중앙 */
+.outfit-donation__stats {
+  margin: 46px 0 0;
+  text-align: center;
+  font-size: 70px;
+  font-weight: 400;
+  color: #636363;
 }
 
 .outfit-action {
@@ -143,7 +265,8 @@
   padding: 40px 50px;
   border: 5px solid var(--color-border, #e8e8e8);
   border-radius: 45px;
-  background: #999999;
+  /* 선택 완료 시 활성 = 조직 테마 강조색 */
+  background: var(--main-01, #009fe3);
   color: #fff;
   font-size: 58px;
   font-weight: 700;
@@ -151,6 +274,7 @@
   cursor: pointer;
 }
 
+/* Figma 5535:18772 — 미선택(기본) 상태 = #999 회색 */
 .outfit-action:disabled {
-  background: var(--color-disabled, #c0b8b0);
+  background: #999999;
 }

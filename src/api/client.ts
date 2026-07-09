@@ -23,7 +23,7 @@ export class ApiError extends Error {
 
 export function buildUrl(
   path: string,
-  params?: Record<string, string | number | undefined>,
+  params?: Record<string, string | number | boolean | undefined>,
 ): string {
   const normalizedPath = path.startsWith("/") ? path : `/${path}`;
   const url = API_BASE
@@ -43,7 +43,7 @@ export function buildUrl(
 
 export async function apiGet<T>(
   path: string,
-  params?: Record<string, string | number | undefined>,
+  params?: Record<string, string | number | boolean | undefined>,
 ): Promise<T> {
   const url = buildUrl(path, params);
   const response = await fetch(url, {
@@ -69,64 +69,4 @@ export async function apiGet<T>(
   }
 
   return body.data;
-}
-
-export async function apiPost<T, B = unknown>(
-  path: string,
-  body: B,
-): Promise<T> {
-  const normalizedPath = path.startsWith("/") ? path : `/${path}`;
-  const url = API_BASE
-    ? new URL(`${API_BASE}${normalizedPath}`)
-    : new URL(normalizedPath, window.location.origin);
-
-  const response = await fetch(url.toString(), {
-    method: "POST",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(body),
-  });
-
-  const envelope = (await response.json()) as ApiResponse<T> & {
-    errorCode?: string;
-  };
-
-  if (!response.ok || !envelope.success) {
-    throw new ApiError(
-      envelope.message || `Request failed (${response.status})`,
-      response.status,
-      envelope.code,
-      envelope.errorCode,
-    );
-  }
-
-  return envelope.data;
-}
-
-export async function apiPostForm<T>(
-  path: string,
-  form: FormData,
-): Promise<T> {
-  const response = await fetch(buildUrl(path), {
-    method: "POST",
-    headers: { Accept: "application/json" },
-    body: form,
-  });
-
-  const envelope = (await response.json()) as ApiResponse<T> & {
-    errorCode?: string;
-  };
-
-  if (!response.ok || !envelope.success) {
-    throw new ApiError(
-      envelope.message || `Request failed (${response.status})`,
-      response.status,
-      envelope.code,
-      envelope.errorCode,
-    );
-  }
-
-  return envelope.data;
 }
