@@ -40,8 +40,18 @@ export function buildSubmitPayload(
 async function recoverBlob(url: string): Promise<Blob | null> {
   try {
     const res = await fetch(url);
-    return await res.blob();
-  } catch {
+    if (!res.ok) {
+      console.warn(`[submitDonation] photo fetch failed: ${res.status} ${url}`);
+      return null;
+    }
+    const blob = await res.blob();
+    if (blob.size === 0) {
+      console.warn(`[submitDonation] photo blob is empty: ${url}`);
+      return null;
+    }
+    return blob;
+  } catch (err) {
+    console.warn(`[submitDonation] photo fetch threw for ${url}`, err);
     return null;
   }
 }
@@ -49,12 +59,23 @@ async function recoverBlob(url: string): Promise<Blob | null> {
 export async function submitCurrentDonation(state: SubmitSessionSlice) {
   const payload = buildSubmitPayload(state);
 
-  // If the AR server returned raw binary, capturedPhotoUrl is a blob: URL.
-  // Recover the in-memory blob so we can send it as the `photo` multipart part.
-  // The backend uploads it to S3 and sets photoUrl on the record.
+  // The AI photo is produced on Monitor 2 and delivered to this renderer as a
+  // URL string via the kiosk/Unity bridge — it can never be an in-renderer
+  // blob: URL (those can't cross processes). Two cases:
+  //   • http(s): the kiosk already uploaded it to the witteria photo host, so
+  //     it's an "already uploaded shared URL" — pass it straight through as
+  //     data.imageUrl. No re-fetch, no CORS risk, no double upload.
+  //   • blob:/data:/file: an in-renderer/local capture — fetch it into a Blob
+  //     and send it as the binary `photo` part; the backend sniffs the real
+  //     bytes and converts to WebP.
+  const url = state.capturedPhotoUrl;
   let photoBlob: Blob | null = null;
-  if (state.capturedPhotoUrl?.startsWith("blob:")) {
-    photoBlob = await recoverBlob(state.capturedPhotoUrl);
+  if (url) {
+    if (/^https?:/i.test(url)) {
+      payload.imageUrl = url;
+    } else {
+      photoBlob = await recoverBlob(url);
+    }
   }
 
   return submitDonation(payload, photoBlob);
