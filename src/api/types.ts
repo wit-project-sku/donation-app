@@ -106,12 +106,6 @@ export interface SubmitDonationDetailsPayload {
   donatorName: string;
   /** 학교 흐름 졸업연도. NGO 흐름은 없으므로 null. */
   graduationYear: number | null;
-  /**
-   * 인증샷을 이미 업로드된 공유 URL 로 전달할 때 사용. `photo` 바이너리 파트 대신
-   * 이 값 하나로 전달할 수 있다. 키오스크 AI 사진은 witteria 호스트에 먼저 업로드되어
-   * https URL 로 도착하므로 이 경로를 사용한다.
-   */
-  imageUrl?: string | null;
 }
 
 /** Response data from POST /api/donations/details */

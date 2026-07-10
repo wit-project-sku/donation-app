@@ -62,6 +62,7 @@
   border-radius: 100px 100px 0 0;
   padding: 130px 170px 0;
   flex: 1 1 auto;
+  min-height: 0;
   display: flex;
   flex-direction: column;
 }
@@ -103,12 +104,45 @@
 }
 
 /* 전체 캠페인을 3열 그리드로 세로 나열 (Figma 카드 w550/h629, 간격 85).
-   개수 제한 없이 행이 늘어나며 페이지가 세로 스크롤된다. */
+   페이지 전체가 아니라 이 카드 영역만 세로 스크롤된다. */
 .campaigns-grid {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
   display: grid;
   grid-template-columns: repeat(3, 550px);
   justify-content: space-between;
   gap: 85px;
+  /* 스크롤바가 카드를 가리지 않도록 우측 여백(거터) 확보 */
+  padding-right: 28px;
+  padding-bottom: 24px;
+  /* Firefox */
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--color-text-muted, #999999) 55%, transparent)
+    transparent;
+  overscroll-behavior: contain;
+}
+
+/* 컴팩트 스크롤바 — 캠페인 페이지 톤(흰 시트 + #999)에 맞춘 얇은 회색 필 */
+.campaigns-grid::-webkit-scrollbar {
+  width: 22px;
+}
+
+.campaigns-grid::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.campaigns-grid::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--color-text-muted, #999999) 55%, transparent);
+  border-radius: 999px;
+  /* 투명 테두리 + padding-box 로 얇은 필처럼 보이게 (실제 두께 ~10px) */
+  border: 6px solid transparent;
+  background-clip: padding-box;
+}
+
+.campaigns-grid::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in srgb, var(--color-text-muted, #999999) 78%, transparent);
+  background-clip: padding-box;
 }
 
 /* 카드 Figma 5535:18382: w550/h629, radius 45, shadow 0 4 4 3 / 0.1 */

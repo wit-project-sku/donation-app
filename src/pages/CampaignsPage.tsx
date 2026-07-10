@@ -82,7 +82,7 @@ export function CampaignsPage() {
   }
 
   return (
-    <PageBody className="campaigns-page">
+    <PageBody className="campaigns-page" scroll={false}>
       {heroCampaign && (
         <div className="campaigns-hero">
           <img

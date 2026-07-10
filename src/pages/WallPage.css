@@ -87,8 +87,9 @@
 
 .wall-grid {
   display: grid;
-  grid-template-columns: repeat(3, 485px);
-  gap: 202px 120px;
+  grid-template-columns: repeat(3, 444px);
+  column-gap: 152px;
+  row-gap: 60px;
   justify-content: center;
   justify-items: center;
 }

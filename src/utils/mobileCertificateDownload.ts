@@ -19,14 +19,16 @@ function roundRectPath(
 function loadImage(src: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
     const img = new Image();
+    // Must load CORS-anonymous: the image is drawn onto a canvas that we then
+    // export with canvas.toBlob(). A non-CORS load taints the canvas and makes
+    // toBlob() throw a SecurityError — which would hard-fail the whole download.
+    // So on error we reject (no non-CORS fallback); the caller catches this and
+    // draws a placeholder box, still producing a downloadable certificate.
+    // NOTE: this means the photo only appears in the download if the image host
+    // sends CORS headers (Access-Control-Allow-Origin).
     img.crossOrigin = "anonymous";
     img.onload = () => resolve(img);
-    img.onerror = () => {
-      const fallback = new Image();
-      fallback.onload = () => resolve(fallback);
-      fallback.onerror = () => reject(new Error("Image load failed"));
-      fallback.src = src;
-    };
+    img.onerror = () => reject(new Error("Image load failed"));
     img.src = src;
   });
 }

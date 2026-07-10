@@ -58,6 +58,7 @@ export function DonationCertificatePage() {
     donorName,
     donorPhone,
     capturedPhotoUrl,
+    sharePhotoUrl,
     photoStatus,
     submittedRecordId,
     setSubmittedRecordId,
@@ -134,7 +135,10 @@ export function DonationCertificatePage() {
     date: dateLabel.replace(/\./g, "-"),
     name: displayName,
     phone: donorPhone,
-    photoUrl: capturedPhotoUrl,
+    // Prefer the public share URL for the QR (a phone can't open the data: URL in
+    // capturedPhotoUrl); after save, capturedPhotoUrl becomes the backend's public
+    // imageUrl, so it's a valid fallback.
+    photoUrl: sharePhotoUrl ?? capturedPhotoUrl,
   });
 
   return (

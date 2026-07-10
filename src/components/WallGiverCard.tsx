@@ -1,8 +1,4 @@
-import { QRCodeSVG } from "qrcode.react";
-import {
-  resolveCertificatePhotoUrl,
-  resolveDonationPhotoUrl,
-} from "../utils/defaultDonationImage";
+import { resolveDonationPhotoUrl } from "../utils/defaultDonationImage";
 import { formatDonationDate } from "../utils/format";
 import unicefLogo from "../assets/logo-unicef.png";
 import "./WallGiverCard.css";
@@ -17,9 +13,12 @@ interface WallGiverCardProps {
   isNew?: boolean;
 }
 
+/**
+ * NGO 기부자의 벽 카드. 학교 기부한컷 카드(SchoolWallPage `.sw-card`)와 동일한
+ * 사진 타일 스타일: 사진 + 좌상단 로고 + 하단 캠페인명, 그 아래 날짜·이름.
+ */
 export function WallGiverCard({
   donorName,
-  amount,
   campaignName,
   campaignImageUrl,
   photoUrl,
@@ -27,72 +26,36 @@ export function WallGiverCard({
   isNew,
 }: WallGiverCardProps) {
   const dateLabel = donatedAt ? formatDonationDate(donatedAt) : "";
-  const hasPhoto = Boolean(photoUrl?.trim());
-  const imageUrl = hasPhoto
-    ? resolveDonationPhotoUrl(photoUrl, campaignImageUrl)
-    : resolveCertificatePhotoUrl(null);
-  const subtitle = `- ${campaignName.trim() || "소중한 나눔"} -`;
-
-  const qrValue = [donorName.trim(), amount, dateLabel]
-    .filter(Boolean)
-    .join("|");
+  const imageUrl = resolveDonationPhotoUrl(photoUrl, campaignImageUrl);
+  const label = campaignName.trim() || "소중한 나눔";
 
   return (
     <article
       className={`wall-giver-card${isNew ? " wall-giver-card--new" : ""}`}
       aria-label="기부 증서"
     >
-      <header className="wall-giver-card__head">
-        <h3 className="wall-giver-card__title">· 기부증서 ·</h3>
-        <p className="wall-giver-card__subtitle">{subtitle}</p>
-        {isNew ? (
-          <span className="wall-giver-card__badge">방금 참여</span>
-        ) : null}
-      </header>
-
-      <div className="wall-giver-card__photo-wrap">
+      <span className="wall-giver-card__photo">
         <img
-          className={`wall-giver-card__photo${hasPhoto ? "" : " wall-giver-card__photo--default"}`}
+          className="wall-giver-card__img"
           src={imageUrl}
           alt=""
           loading="lazy"
         />
-      </div>
-
-      <div className="wall-giver-card__sign">
-        {donorName ? (
-          <span className="wall-giver-card__name">{donorName}</span>
+        <img className="wall-giver-card__emblem" src={unicefLogo} alt="" />
+        <span className="wall-giver-card__label">{label}</span>
+        {isNew ? (
+          <span className="wall-giver-card__badge">방금 참여</span>
         ) : null}
-        <span className="wall-giver-card__line" aria-hidden />
-        <div className="wall-giver-card__sign-row">
-          <img
-            className="wall-giver-card__partner"
-            src={unicefLogo}
-            alt="unicef"
-          />
-          <div className="wall-giver-card__qr" aria-label="모바일 증서 QR">
-            <QRCodeSVG
-              value={qrValue || "donation"}
-              size={48}
-              bgColor="#FFFFFF"
-              fgColor="#000000"
-              level="M"
-              marginSize={1}
-            />
-          </div>
-        </div>
-      </div>
+      </span>
 
-      <footer className="wall-giver-card__foot">
-        <p className="wall-giver-card__message">
-          귀하의 따뜻한 마음과 의미 있는 기여에
-          <br />
-          깊은 감사를 전합니다
-        </p>
+      <span className="wall-giver-card__meta">
         {dateLabel ? (
           <span className="wall-giver-card__date">{dateLabel}</span>
         ) : null}
-      </footer>
+        {donorName ? (
+          <span className="wall-giver-card__name">{donorName}</span>
+        ) : null}
+      </span>
     </article>
   );
 }

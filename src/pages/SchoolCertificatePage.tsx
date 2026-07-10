@@ -50,6 +50,7 @@ export function SchoolCertificatePage() {
     donorPhone,
     graduationYear,
     capturedPhotoUrl,
+    sharePhotoUrl,
     photoStatus,
     submittedRecordId,
     setSubmittedRecordId,
@@ -120,7 +121,9 @@ export function SchoolCertificatePage() {
     date: formatDot(new Date()).replace(/\./g, "-"),
     name: displayName,
     phone: donorPhone,
-    photoUrl: capturedPhotoUrl,
+    // Public share URL for the QR (the phone can't open the data: URL); after
+    // save, capturedPhotoUrl becomes the backend's public imageUrl fallback.
+    photoUrl: sharePhotoUrl ?? capturedPhotoUrl,
   });
 
   return (

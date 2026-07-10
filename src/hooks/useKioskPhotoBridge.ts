@@ -12,6 +12,7 @@ import { useDonationStore } from "../store/donationStore";
  */
 export function useKioskPhotoBridge(): void {
   const setCapturedPhotoUrl = useDonationStore((s) => s.setCapturedPhotoUrl);
+  const setSharePhotoUrl = useDonationStore((s) => s.setSharePhotoUrl);
   const setPhotoStatus = useDonationStore((s) => s.setPhotoStatus);
 
   useEffect(() => {
@@ -23,9 +24,12 @@ export function useKioskPhotoBridge(): void {
       if (phase === "generating") setPhotoStatus("generating");
     });
     const offResult = bridge.on("photoResult", (payload) => {
-      const url = (payload as { url?: string }).url;
+      const { url, shareUrl } = payload as { url?: string; shareUrl?: string };
       if (url) {
+        // url = image bytes (data:) → blob → donation backend storage.
+        // shareUrl = public URL → mobile-certificate QR (phone view/download).
         setCapturedPhotoUrl(url);
+        setSharePhotoUrl(shareUrl ?? null);
         setPhotoStatus("ready");
       }
     });
@@ -36,5 +40,5 @@ export function useKioskPhotoBridge(): void {
       offResult();
       offError();
     };
-  }, [setCapturedPhotoUrl, setPhotoStatus]);
+  }, [setCapturedPhotoUrl, setSharePhotoUrl, setPhotoStatus]);
 }

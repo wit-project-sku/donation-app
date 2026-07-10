@@ -59,23 +59,13 @@ async function recoverBlob(url: string): Promise<Blob | null> {
 export async function submitCurrentDonation(state: SubmitSessionSlice) {
   const payload = buildSubmitPayload(state);
 
-  // The AI photo is produced on Monitor 2 and delivered to this renderer as a
-  // URL string via the kiosk/Unity bridge — it can never be an in-renderer
-  // blob: URL (those can't cross processes). Two cases:
-  //   • http(s): the kiosk already uploaded it to the witteria photo host, so
-  //     it's an "already uploaded shared URL" — pass it straight through as
-  //     data.imageUrl. No re-fetch, no CORS risk, no double upload.
-  //   • blob:/data:/file: an in-renderer/local capture — fetch it into a Blob
-  //     and send it as the binary `photo` part; the backend sniffs the real
-  //     bytes and converts to WebP.
-  const url = state.capturedPhotoUrl;
+  // The AI photo is delivered from the kiosk (Monitor 2) as image bytes in a
+  // data: URL. Recover it into a Blob and send it as the binary `photo`
+  // multipart part; the backend sniffs the real bytes, converts to WebP and
+  // stores it in its own storage. No public/shared URL is involved.
   let photoBlob: Blob | null = null;
-  if (url) {
-    if (/^https?:/i.test(url)) {
-      payload.imageUrl = url;
-    } else {
-      photoBlob = await recoverBlob(url);
-    }
+  if (state.capturedPhotoUrl) {
+    photoBlob = await recoverBlob(state.capturedPhotoUrl);
   }
 
   return submitDonation(payload, photoBlob);
