@@ -19,11 +19,11 @@
   z-index: 2;
 }
 
-/* Hero — Figma 5535:17967 image284 + 0.2 black dim */
+/* Hero — Figma 5535:17967 image284 h1242 + 0.2 black dim */
 .cd-hero {
   position: relative;
   flex: 0 0 auto;
-  height: 1305px;
+  height: 1242px;
   overflow: hidden;
 }
 
@@ -40,33 +40,31 @@
   background: rgba(0, 0, 0, 0.2);
 }
 
-/* 기부하기 CTA — Figma 5535:17974: 테마색 배경, h210, radius45, 흰 글씨 80, 히어로 하단 플로팅 */
-.cd-hero__cta {
-  position: absolute;
-  left: 170px;
-  right: 170px;
-  bottom: 155px;
-  height: 210px;
-  border: none;
-  border-radius: 45px;
-  box-shadow: 0 4px 4px 7px rgba(0, 0, 0, 0.25);
-  color: #ffffff;
-  font-size: 80px;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-/* White sheet — Figma 5535:17969 rounded-top 100, 히어로 위로 살짝 겹침 */
+/* White sheet — Figma 5535:17969 rounded-top 100, 히어로 위로 겹침(≈254).
+   시트 상단 y≈987, 히어로 이미지 1242 → 겹침 255. */
 .cd-body {
   position: relative;
   z-index: 1;
-  margin-top: -85px;
+  margin-top: -255px;
   background: #fff;
   border-radius: 100px 100px 0 0;
   padding: 130px 170px 0;
   flex: 1 1 auto;
   display: flex;
   flex-direction: column;
+}
+
+/* 기부하기 — Figma 5535:17974: 모금 현황 아래 전체폭 버튼(테마색, h210, radius45, 흰 80) */
+.cd-cta {
+  flex: 0 0 auto;
+  height: 210px;
+  margin-bottom: 100px;
+  border: none;
+  border-radius: 45px;
+  color: #ffffff;
+  font-size: 80px;
+  font-weight: 700;
+  cursor: pointer;
 }
 
 /* 제목 + 마감일 (Figma 5535:17973 Bold 80 / 5535:17994 Bold 50 테마색) */
@@ -78,11 +76,17 @@
   margin-bottom: 100px;
 }
 
+/* Figma 5535:17973: 불릿 리스트 항목(list-disc) + Bold 80 검정 */
 .cd-title {
   margin: 0;
   font-size: 80px;
   font-weight: 700;
   color: #000000;
+}
+
+.cd-title::before {
+  content: "•";
+  margin-right: 34px;
 }
 
 .cd-deadline {
@@ -102,11 +106,11 @@
 .cd-prog {
   box-sizing: border-box;
   position: relative;
-  height: 350px;
+  height: 297px;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 44px;
+  padding: 0 40px;
   background: #fff;
   border: 5px solid;
   border-radius: 45px;
@@ -130,9 +134,9 @@
   font-weight: 700;
 }
 
-/* 활동명 Figma 5535:17979 Display Bold 60 테마색 */
+/* 활동명 Figma 5535:17979 Display Bold 55 테마색 */
 .cd-prog__label {
-  font-size: 60px;
+  font-size: 55px;
   font-weight: 700;
   line-height: 1.25;
   text-align: center;
@@ -179,15 +183,20 @@
   margin-bottom: 100px;
 }
 
-/* 모금 현황 라벨 Figma 5558:18545 Bold 76 테마색 */
+/* 모금 현황 라벨 Figma 5558:18545 불릿 리스트(list-disc) + Bold 76 테마색 */
 .cd-funding__label {
   margin: 0;
   font-size: 76px;
   font-weight: 700;
 }
 
+.cd-funding__label::before {
+  content: "•";
+  margin-right: 30px;
+}
+
 .cd-funding__bar {
-  height: 38px;
+  height: 24px;
   border-radius: 999px;
   background: #e8e8e8;
   overflow: hidden;

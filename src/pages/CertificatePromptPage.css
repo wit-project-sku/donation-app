@@ -39,7 +39,7 @@
   object-fit: contain;
 }
 
-/* 결제 완료 블록 — 체크 아이콘 + 결제 완료 + 안내 + 기부 금액 카드 (중앙) */
+/* 결제 완료 블록 — 체크 아이콘 + 결제 완료 + 안내 + 기부 금액(결제액) 카드 (중앙) */
 .cert-prompt__complete {
   margin: 100px 0 0;
   display: flex;
@@ -48,7 +48,7 @@
   text-align: center;
 }
 
-/* 파란 원 + 흰 체크 (실 에셋) — Figma 301×301 */
+/* 파란 원 + 흰 체크 */
 .cert-prompt__check {
   width: 301px;
   height: 301px;
@@ -69,7 +69,7 @@
   color: #999999;
 }
 
-/* 기부 금액 카드 — Figma CardPaymentModal 정확값 */
+/* 기부 금액(결제액) 카드 — Figma CardPaymentModal 정확값 */
 .cert-prompt__amount-card {
   box-sizing: border-box;
   display: flex;
@@ -112,22 +112,21 @@
   color: #636363;
 }
 
-/* 발급 여부 버튼 2개 — Figma 5581:29574/29575: 각 732×150, r45, shadow */
+/* 발급 여부 버튼 2개 — Figma 5581:29573/74/75: 각 731×150, r45, 간격 204, 평면(그림자 없음). */
 .cert-prompt__actions {
-  margin-top: auto;
+  margin-top: 60px;
   display: flex;
   justify-content: center;
-  gap: 200px;
+  gap: 204px;
 }
 
 .cert-prompt__decline,
 .cert-prompt__issue {
-  width: 732px;
+  width: 731px;
   max-width: 100%;
   height: 150px;
   border: none;
   border-radius: 45px;
-  box-shadow: 0 4px 4px 7px rgba(0, 0, 0, 0.25);
   color: #fff;
   font-size: 63px;
   cursor: pointer;
@@ -183,7 +182,7 @@
 }
 
 .cert-prompt__funding-bar {
-  height: 38px;
+  height: 24px;
   border-radius: 999px;
   background: #e8e8e8;
   overflow: hidden;

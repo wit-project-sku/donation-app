@@ -61,6 +61,12 @@
   cursor: pointer;
 }
 
+/* 증서 화면 등: 뒤로 버튼을 동일하게 보이되 클릭만 막는다(외형 변화 없음). */
+.app-header__back--static {
+  pointer-events: none;
+  cursor: default;
+}
+
 .app-header__home {
   justify-self: start;
 }

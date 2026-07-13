@@ -29,3 +29,9 @@
   object-fit: contain;
   display: block;
 }
+
+/* 증서 화면: 뒤로 버튼 외형은 유지하고 클릭만 막는다. */
+.side-nav__back--static {
+  pointer-events: none;
+  cursor: default;
+}

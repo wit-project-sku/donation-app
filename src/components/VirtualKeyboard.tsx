@@ -7,7 +7,7 @@ type KeyboardLayout = "korean" | "english";
 const ROW1 = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"];
 const KO_ROW2 = ["ㅂ", "ㅈ", "ㄷ", "ㄱ", "ㅅ", "ㅛ", "ㅕ", "ㅑ", "ㅐ", "ㅔ"];
 const KO_ROW3 = ["ㅁ", "ㄴ", "ㅇ", "ㄹ", "ㅎ", "ㅗ", "ㅓ", "ㅏ", "ㅣ"];
-const KO_ROW4 = ["ㅋ", "ㅌ", "ㅊ", "ㅍ", "ㅠ", "ㅜ", "ㅡ", "-"];
+const KO_ROW4 = ["ㅋ", "ㅌ", "ㅊ", "ㅍ", "ㅠ", "ㅜ", "ㅡ"];
 const EN_ROW2 = ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"];
 const EN_ROW3 = ["a", "s", "d", "f", "g", "h", "j", "k", "l"];
 const EN_ROW4 = ["z", "x", "c", "v", "b", "n", "m", ",", "."];
@@ -68,7 +68,7 @@ export function VirtualKeyboard({
           onClick={onBackspace}
           aria-label="삭제"
         >
-          <IconDelete size={30} />
+          <IconDelete size={72} strokeWidth={2.4} />
         </button>
       </div>
 
@@ -114,7 +114,7 @@ export function VirtualKeyboard({
           aria-label={layout === "english" ? "대소문자 전환" : "자판 전환"}
           aria-pressed={layout === "english" ? shift : undefined}
         >
-          <IconShift size={30} />
+          <IconShift size={68} strokeWidth={2.4} />
         </button>
         {row4.map((key) => (
           <button
@@ -136,7 +136,7 @@ export function VirtualKeyboard({
           aria-label={layout === "korean" ? "영문 자판으로 전환" : "한글 자판으로 전환"}
           aria-pressed={layout === "english"}
         >
-          <IconGlobe size={28} />
+          <IconGlobe size={60} strokeWidth={2.4} />
           <span className="virtual-keyboard__layout-label">
             {layout === "korean" ? "한" : "En"}
           </span>

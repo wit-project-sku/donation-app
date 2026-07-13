@@ -32,6 +32,7 @@
 
 /* 사진 카드 — Figma 5706:13089 1058×1881, border 5 #999, radius 38 */
 .cert-photo {
+  position: relative;
   box-sizing: border-box;
   width: 1058px;
   max-width: 100%;
@@ -56,11 +57,51 @@
   justify-content: center;
 }
 
+/* 기본(사진 없음) 이미지 — 원형(border-radius 50%) */
 .cert-photo--illust img {
   width: 640px;
   height: 640px;
   max-width: 80%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+/* 하단 오버레이 — 주최단체 로고 + 이름 (Figma 5776:25584: rgba0,0,0,.5 h161) */
+.cert-photo__overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 161px;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  padding: 0 40px;
+}
+
+/* 사진 없음(직접 발급) 상태에선 오버레이 숨김 */
+.cert-photo--illust .cert-photo__overlay {
+  display: none;
+}
+
+/* 주최단체 로고 — 오버레이 안 (.cert-photo img 전체규칙보다 우선) */
+.cert-photo__overlay .cert-photo__logo {
+  flex: 0 0 auto;
+  width: auto;
+  height: 66px;
   object-fit: contain;
+}
+
+.cert-photo__caption {
+  font-size: 50px;
+  font-weight: 500;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* Monitor-2 AI 이미지 생성 대기 — 사진 카드 안 중앙 스피너 + 안내 */

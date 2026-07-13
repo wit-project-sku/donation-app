@@ -10,8 +10,10 @@
 }
 
 /* 헤드라인 + 서브 (Figma 5535:18556 헤드라인 80/Bold 한 줄, 5535:18547 서브 55/Medium) */
+/* 헤드라인 영역 — 헤더(pb 80)와 카드(pt 90) 사이에서 상하 여백을 동일하게 맞춤
+   위 여백 = 80(header) + 40 = 120, 아래 여백 = 30 + 90(cards) = 120 */
 .entry-page__hero {
-  padding: 58px 170px 0;
+  padding: 40px 170px 30px;
   text-align: center;
 }
 
@@ -24,31 +26,37 @@
   color: #000000;
 }
 
-.entry-page__sub {
-  margin: 24px 0 0;
-  font-size: 55px;
-  font-weight: 500;
-  line-height: normal;
-  color: #636363;
-}
-
-/* 선택 카드 2개 (Figma 5535:18549/18550: w830/h1360, radius 80, border 5 #e8e8e8, gap 160) */
+/* 선택 카드 영역 — 각 컬럼 = [메인 카드] + gap + [기부내역 박스] (Figma 5535:21503/21502)
+   메인 카드 854×1064 radius80, 기부내역 854×279 radius78, 둘 사이 gap 42, 컬럼 간격 150, 좌우 156 */
 .entry-page__cards {
   display: grid;
-  grid-template-columns: 830px 830px;
+  grid-template-columns: 854px 854px;
   justify-content: center;
-  gap: 160px;
-  padding: 70px 170px 0;
+  gap: 150px;
+  padding: 90px 156px 0;
 }
 
+.entry-col {
+  display: flex;
+  flex-direction: column;
+  gap: 42px;
+}
+
+/* 메인 카드 (Figma 5535:18549/18550): tint 배경, radius 80, 테두리 없음 */
 .entry-card {
-  position: relative;
   box-sizing: border-box;
-  width: 830px;
-  height: 1360px;
-  border: 5px solid #e8e8e8;
+  width: 854px;
+  height: 1064px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0;
+  padding: 160px 60px 0;
+  border: none;
   border-radius: 80px;
-  overflow: hidden;
+  text-align: center;
+  cursor: pointer;
 }
 
 .entry-card--ngo {
@@ -59,77 +67,69 @@
   background: #eff4f7;
 }
 
-/* 카드 상단 영역(원형 이미지+라벨+설명) — 클릭 시 해당 카테고리 선택 */
-.entry-card__body {
-  width: 100%;
-  height: 1081px; /* 1360 − 하단 패널 279 */
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 60px;
-  padding: 0 60px;
-  border: none;
-  background: none;
-  text-align: center;
-  cursor: pointer;
-}
-
-/* 카드 하단 흰 패널 "기부내역 보기" (Figma 5535:18569 h279, 하단 라운드, border-top 5 #e8e8e8) */
-.entry-card__history {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
+/* 기부내역 보기 박스 (Figma 5535:18569/5707:13651): 카드와 같은 tint, radius 78, 별도 박스 */
+.entry-history {
+  box-sizing: border-box;
+  width: 854px;
   height: 279px;
   display: flex;
   align-items: center;
   justify-content: center;
   border: none;
-  border-top: 5px solid #e8e8e8;
-  background: #ffffff;
+  border-radius: 78px;
   font-family: "Noto Sans", "Noto Sans KR", sans-serif;
   font-size: 63px;
-  font-weight: 800;
+  font-weight: 700;
   color: #636363;
   cursor: pointer;
 }
 
+.entry-history--ngo {
+  background: #f6faf2;
+}
+
+.entry-history--school {
+  background: #eff4f7;
+}
+
+/* 아이콘 흰 원 (Figma image289 / ellipse48 ~480) */
 .entry-card__icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 540px;
-  height: 540px;
+  width: 480px;
+  height: 480px;
   border-radius: 999px;
   background: #ffffff;
   overflow: hidden;
 }
 
 .entry-card__icon-img {
-  width: 100%;
-  height: 100%;
+  width: 62%;
+  height: 62%;
   object-fit: contain;
 }
 
 .entry-card__icon-img--school {
-  width: 53%;
-  height: 53%;
+  width: 54%;
+  height: 54%;
 }
 
 /* 라벨: Figma 5535:18554/18555 Paperlogy 8 ExtraBold 63 #636363 */
 .entry-card__label {
+  margin-top: 100px;
   font-family: var(--font-paperlogy, "Paperlogy"), "Noto Sans KR", sans-serif;
   font-size: 63px;
-  font-weight: 800;
+  font-weight: 700;
   color: #636363;
 }
 
 /* 설명: Figma 5535:18553/18552 Noto Sans Medium 50 #636363 */
 .entry-card__desc {
+  margin-top: 40px;
   font-size: 50px;
   font-weight: 500;
-  line-height: normal;
+  line-height: 1.35;
   color: #636363;
 }
 
@@ -200,11 +200,12 @@
 /* 좌우 화살표 (Figma 5535:18570/18571) — Swiper 인스턴스에 직접 연결한 커스텀 버튼 */
 .entry-page__featured-nav {
   position: absolute;
-  top: 50%;
+  /* 화살표를 중앙보다 살짝 아래로 (Figma) */
+  top: 57%;
   transform: translateY(-50%);
   z-index: 10;
-  width: 60px;
-  height: 90px;
+  width: 74px;
+  height: 112px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -212,7 +213,7 @@
   border: none;
   background: none;
   color: #ffffff;
-  font-size: 72px;
+  font-size: 96px;
   font-weight: 300;
   line-height: 1;
   cursor: pointer;
@@ -265,7 +266,8 @@
 /* 더 알아보기 Figma 5535:18568 흰 테두리 3, radius 55.5, w385/h111 · 5535:18561 텍스트 50 Medium */
 .entry-page__featured-more {
   align-self: flex-start;
-  margin-top: 28px;
+  /* 타이틀 아래로 내리되, 좌우 화살표(중앙 약간 아래)와 비슷한 높이에 오도록 */
+  margin-top: 24px;
   display: inline-flex;
   align-items: center;
   gap: 14px;

@@ -14,43 +14,44 @@
   padding: 0 246px;
 }
 
+/* Figma 5535:18849: 카드 1668×658, border 15 강조색(인라인), radius 80.
+   내부 절대좌표(카드 상단 기준): 제목 top88, 라벨 top258, 입력 top375. */
 .msg-card {
+  box-sizing: border-box;
+  height: 658px;
   border: 15px solid var(--color-border, #e8e8e8);
   border-radius: 80px;
-  padding: 88px 193px 133px;
+  padding: 88px 193px 103px;
   background: #fff;
 }
 
+/* 제목 "기부증서 발급" — Figma 5535:18850 Medium 68 강조색, 중앙. top88 → 라벨258 간격 77 */
 .msg-card__title {
-  margin: 0 0 91px;
+  margin: 0 0 77px;
   text-align: center;
   font-size: 68px;
   font-weight: 500;
-}
-
-/* Figma: 카드 안에 이름/닉네임 한 필드만 → 하단 패딩 축소로 카드 높이 균형 */
-.message-page .msg-card {
-  padding-bottom: 88px;
+  line-height: 93px;
 }
 
 .msg-field-group {
-  margin-bottom: 136px;
-}
-
-.msg-field-group:last-child {
   margin-bottom: 0;
 }
 
+/* 라벨 "이름/닉네임 :" — Figma 5535:18854 Regular 60 #636363. →입력 간격 45 */
 .msg-field-label {
   display: block;
-  margin-bottom: 48px;
+  margin-bottom: 45px;
   font-size: 60px;
   font-weight: 400;
+  line-height: 72px;
   color: var(--color-text-secondary, #636363);
 }
 
+/* 입력칸 — Figma 5535:18851: 1251×180, radius 80, border5 #e8e8e8 */
 .msg-field {
-  width: 100%;
+  width: 1251px;
+  max-width: 100%;
   height: 180px;
   display: flex;
   align-items: center;
@@ -74,11 +75,12 @@
   font-weight: 400;
 }
 
+/* Figma: 카드 하단(1357) → 체크(1402) 간격 45, 체크(1490) → 버튼(1558) 간격 68 */
 .msg-actions {
   display: flex;
   flex-direction: column;
-  gap: 26px;
-  margin-top: 60px;
+  gap: 68px;
+  margin-top: 45px;
 }
 
 /* Figma 5535:18796 — 초상권 동의 체크 + 안내문 (버튼 위 좌측, 체크 시 테마색 점등) */
@@ -94,13 +96,14 @@
   cursor: pointer;
 }
 
+/* Figma 5581:29600 — 88×88 회색 원 체크 (선택 시 강조색) */
 .msg-check {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   flex: 0 0 auto;
-  width: 84px;
-  height: 84px;
+  width: 88px;
+  height: 88px;
   border-radius: 50%;
   background: #c5c5c1;
   color: #fff;
@@ -120,13 +123,14 @@
   white-space: nowrap;
 }
 
-/* Figma: 두 버튼이 카드 폭을 꽉 채우는 2단 그리드 */
+/* Figma 5535:18835 — 각 732×150, 간격 204 */
 .msg-buttons {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 180px;
+  gap: 204px;
 }
 
+/* Figma: 버튼은 평면(그림자 없음), radius45, 63px */
 .msg-action {
   display: inline-flex;
   align-items: center;
@@ -135,7 +139,6 @@
   height: 150px;
   border: none;
   border-radius: 45px;
-  box-shadow: 0 4px 4px 7px rgba(0, 0, 0, 0.25);
   font-size: 63px;
   font-weight: 700;
   color: #fff;
@@ -156,7 +159,7 @@
   background: #c5c5c1;
 }
 
-/* Figma: 키보드는 버튼 바로 아래 (하단 여백은 푸터가 margin-top:auto 로 흡수) */
+/* Figma: 버튼(1708) → 키보드(1797) 간격 89 */
 .msg-keyboard {
-  margin-top: 80px;
+  margin-top: 89px;
 }

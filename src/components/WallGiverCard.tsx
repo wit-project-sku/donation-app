@@ -1,6 +1,7 @@
 import { resolveDonationPhotoUrl } from "../utils/defaultDonationImage";
 import { formatDonationDate } from "../utils/format";
 import unicefLogo from "../assets/logo-unicef.png";
+import heartDefault from "../assets/donated.png";
 import "./WallGiverCard.css";
 
 interface WallGiverCardProps {
@@ -26,7 +27,11 @@ export function WallGiverCard({
   isNew,
 }: WallGiverCardProps) {
   const dateLabel = donatedAt ? formatDonationDate(donatedAt) : "";
-  const imageUrl = resolveDonationPhotoUrl(photoUrl, campaignImageUrl);
+  const hasPhoto = Boolean(photoUrl?.trim());
+  // No donor photo → show the default heart illustration (contained, not cropped).
+  const imageUrl = hasPhoto
+    ? resolveDonationPhotoUrl(photoUrl, campaignImageUrl)
+    : heartDefault;
   const label = campaignName.trim() || "소중한 나눔";
 
   return (
@@ -34,9 +39,11 @@ export function WallGiverCard({
       className={`wall-giver-card${isNew ? " wall-giver-card--new" : ""}`}
       aria-label="기부 증서"
     >
-      <span className="wall-giver-card__photo">
+      <span
+        className={`wall-giver-card__photo${hasPhoto ? "" : " wall-giver-card__photo--placeholder"}`}
+      >
         <img
-          className="wall-giver-card__img"
+          className={`wall-giver-card__img${hasPhoto ? "" : " wall-giver-card__img--placeholder"}`}
           src={imageUrl}
           alt=""
           loading="lazy"
@@ -49,12 +56,14 @@ export function WallGiverCard({
       </span>
 
       <span className="wall-giver-card__meta">
+        <span className="wall-giver-card__line" aria-hidden />
         {dateLabel ? (
           <span className="wall-giver-card__date">{dateLabel}</span>
         ) : null}
         {donorName ? (
           <span className="wall-giver-card__name">{donorName}</span>
         ) : null}
+        <span className="wall-giver-card__line" aria-hidden />
       </span>
     </article>
   );

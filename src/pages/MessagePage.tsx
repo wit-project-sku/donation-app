@@ -85,12 +85,12 @@ export function MessagePage() {
 
   return (
     <PageBody className="message-page" scroll={false}>
-      <AppHeader />
+      <AppHeader subtitle="이름을 입력해주세요" />
 
       <div className="msg-body">
         <div className="msg-card" style={{ borderColor: theme.primary }}>
           <h2 className="msg-card__title" style={{ color: theme.primary }}>
-            기부한컷 받기
+            기부증서 발급
           </h2>
 
           <div className="msg-field-group">
@@ -108,6 +108,7 @@ export function MessagePage() {
         </div>
 
         <div className="msg-actions">
+          {/* 사진 촬영(초상권) 동의 체크 + 안내문 */}
           <button
             type="button"
             className="msg-consent"
@@ -115,7 +116,7 @@ export function MessagePage() {
             aria-pressed={imageConsent}
           >
             <span className={`msg-check${imageConsent ? " msg-check--on" : ""}`}>
-              <IconCheck size={44} />
+              <IconCheck size={48} />
             </span>
             <span className="msg-consent__text">
               서비스 제공을 위해 이용자의 이미지 및 초상권을 수집·활용할 수 있습니다.

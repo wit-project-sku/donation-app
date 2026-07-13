@@ -31,7 +31,7 @@ export function WallPage() {
   const deferredSearch = useDeferredValue(search.trim());
   const searchRef = useRef<HTMLDivElement>(null);
   const keyboardRef = useRef<HTMLDivElement>(null);
-  const gridPanelRef = useRef<HTMLElement>(null);
+  const gridPanelRef = useRef<HTMLDivElement>(null);
 
   const {
     donorName,
@@ -144,11 +144,13 @@ export function WallPage() {
 
   return (
     <PageBody className="wall-page" scroll={false} style={themeVars}>
-      <AppHeader />
+      <AppHeader subtitle="함께해주셔서 감사합니다" />
 
-      <div className="wall-body">
-        <h2 className="wall-title">함께해주셔서 감사합니다</h2>
-
+      <div
+        className="wall-body"
+        ref={gridPanelRef}
+        onScroll={handleGridScroll}
+      >
         <div className="wall-search-area" ref={searchRef}>
           <div
             className={`wall-search${keyboardOpen ? " wall-search--on" : ""}`}
@@ -195,12 +197,7 @@ export function WallPage() {
           )}
         </div>
 
-        <section
-          ref={gridPanelRef}
-          className="wall-grid-panel"
-          aria-label="기부자의 벽"
-          onScroll={handleGridScroll}
-        >
+        <section className="wall-grid-panel" aria-label="기부자의 벽">
           {isLoading && <p className="wall-status">불러오는 중...</p>}
           {isError && (
             <p className="wall-status wall-status--error">

@@ -188,11 +188,9 @@ export function SchoolSelectPage() {
   return (
     <div className="school-page">
       <div className="school-page__header">
-        <AppHeader title="학교" />
+        {/* Figma: 헤더 타이틀 "교복주기" + ★부제 "기부할 학교를 선택해주세요" */}
+        <AppHeader title="교복주기" subtitle="기부할 학교를 선택해주세요" />
       </div>
-
-      {/* 섹션 타이틀 — Figma 5659:87585 Noto Sans Bold 70 검정 */}
-      <h2 className="school-page__title">기부할 학교를 선택해주세요</h2>
 
       {/* 검색창 — Figma 5659:87589 흰 배경, 코랄 4.29px 테두리, radius 120 */}
       <div className="school-page__search">
@@ -250,23 +248,32 @@ export function SchoolSelectPage() {
         })}
       </div>
 
-      {/* 초성 필터 — Figma 5659:87592 Noto Sans SemiBold 60, tracking 30 */}
-      <div className="school-page__consonants">
-        {CONSONANTS.map((char) => (
-          <button
-            key={char}
-            type="button"
-            className={`school-consonant${consonant === char ? " is-active" : ""}`}
-            onClick={() => setConsonant((prev) => (prev === char ? null : char))}
-          >
-            {char}
-          </button>
-        ))}
-      </div>
+      {/* 초성 필터 — Figma 5659:87592. 지역 선택 시에만 노출(랭킹 뷰엔 없음). */}
+      {selectedRegion && (
+        <div className="school-page__consonants">
+          {CONSONANTS.map((char) => (
+            <button
+              key={char}
+              type="button"
+              className={`school-consonant${consonant === char ? " is-active" : ""}`}
+              onClick={() => setConsonant((prev) => (prev === char ? null : char))}
+            >
+              {char}
+            </button>
+          ))}
+        </div>
+      )}
 
       {selectedRegion ? (
         /* 지역 선택 상태 — 학교 칩 그리드 (실제 결과만 표시, 빈 칸 없음) */
-        <div className="school-grid">
+        <>
+          {/* 학교 수 — Figma 5776:25795: "• 서울시 고등학교 수 : 총 N개교" */}
+          <p className="school-page__count">
+            • {selectedRegion}
+            {/도$|시$/.test(selectedRegion) ? "" : "시"} 고등학교 수 : 총{" "}
+            {(data?.totalElements ?? gridSchools.length).toLocaleString()}개교
+          </p>
+          <div className="school-grid">
           {isLoading ? (
             <div className="school-grid__msg">불러오는 중...</div>
           ) : isError ? (
@@ -287,9 +294,16 @@ export function SchoolSelectPage() {
               </button>
             ))
           )}
-        </div>
+          </div>
+        </>
       ) : (
         <>
+          {/* 전국 학교 수 — Figma: "• 전국고등학교 수 : 총 N개교" (지역 미선택) */}
+          <p className="school-page__count school-page__count--all">
+            • 전국고등학교 수 : 총{" "}
+            {(data?.totalElements ?? schools.length).toLocaleString()}개교
+          </p>
+
           {/* 랭킹 표 */}
           <div className="school-table">
             <div className="school-table__head">
@@ -377,8 +391,8 @@ export function SchoolSelectPage() {
             )}
           </div>
 
-          {/* 기준일 — Figma 5661:96365 Noto Sans Medium 36 #999 */}
-          <p className="school-page__asof">2026.07.07 기준</p>
+          {/* 기준일 — Figma 5776:25491 Noto Sans Medium 36 #999 */}
+          <p className="school-page__asof">2026.07.07 22:00기준</p>
         </>
       )}
 

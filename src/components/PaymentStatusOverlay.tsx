@@ -172,16 +172,6 @@ export function PaymentStatusOverlay({
       onClick={handleBackdrop}
     >
       <div className={`pso__card${isError ? " pso__card--error" : ""}`}>
-        {closable && (
-          <button
-            type="button"
-            className="pso__close"
-            onClick={handleCancel}
-            aria-label="닫기"
-          >
-            ✕
-          </button>
-        )}
         {!isError && (
           <span className="pso__timer" style={{ backgroundColor: theme.primary }}>
             {timer}초

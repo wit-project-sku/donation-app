@@ -33,24 +33,6 @@
   padding-bottom: 120px;
 }
 
-/* 닫기(✕) 버튼 — 모달 좌상단 */
-.pso__close {
-  position: absolute;
-  top: 44px;
-  left: 60px;
-  width: 96px;
-  height: 96px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  background: none;
-  color: #999999;
-  font-size: 66px;
-  line-height: 1;
-  cursor: pointer;
-}
-
 /* 타이머 배지 — Figma: left 1293, top 51, h75, px30, #009fe3, 36px */
 .pso__timer {
   position: absolute;
@@ -94,26 +76,37 @@
   color: #8b7355;
 }
 
-/* 금액 카드 — Figma: 1299×445, r35.49, border 5 #e8e8e8, pt/px 40.56 */
+/* 금액 카드 — Figma: 1299×445, flex column, r35.49, border 5 #e8e8e8, pt/px 40.56, gap 20.28.
+   라벨/금액은 박스 안에서 가로·세로 가운데 정렬. (NGO·학교 공통, 색상만 각 측 유지) */
 .pso__amount-card {
+  display: flex;
   width: 1299px;
+  height: 445px;
   max-width: 100%;
   margin: 77px 0 0;
   border: 5px solid var(--color-border, #e8e8e8);
   border-radius: 35.49px;
-  padding: 40.56px 40.56px 0;
+  padding: 40.56px 40.56px 0 40.56px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20.28px;
 }
 
 .pso__amount-label {
+  width: 100%;
   margin: 0;
   font-size: 70px;
   font-weight: 400;
   line-height: 76.05px;
+  text-align: center;
   color: var(--color-text-secondary, #636363);
 }
 
 .pso__amount-value {
-  margin: 20.28px 0 0;
+  width: 100%;
+  margin: 0;
+  text-align: center;
   font-family: "Paperlogy", "Noto Sans KR", sans-serif;
   font-size: 100px;
   font-weight: 700;
@@ -121,11 +114,11 @@
   color: var(--color-text-secondary, #636363);
 }
 
-/* 카드 리더기 일러스트 — Figma: 752×501, 카드 아래 11px */
+/* 카드 리더기 일러스트 — Figma 5535:18661: 752×501, 카드 아래 11px */
 .pso__reader {
   width: 752px;
   max-width: 100%;
-  height: auto;
+  height: 501px;
   object-fit: contain;
   margin: 11px 0 0;
 }
@@ -137,7 +130,7 @@
   margin: 60px 0 0;
 }
 
-/* 진행바 — Figma: 1258×24, r999, track #e5e5e5, fill #009fe3, 리더기 아래 113px */
+/* 진행바 — Figma 5535:18654: 1258×24, r999, track #e5e5e5, fill #009fe3 942(74.9%), 리더기 아래 113px */
 .pso__bar {
   width: 1258px;
   max-width: 100%;
@@ -148,21 +141,11 @@
   margin: 113px 0 0;
 }
 
-/* 결제 대기/진행 중 로딩바 — 좌→우로 반복 이동하는 인디터미닛 애니메이션 */
+/* Figma: 942/1258 = 74.9% 정적 채움 */
 .pso__bar-fill {
-  width: 40%;
+  width: 74.9%;
   height: 100%;
   border-radius: 999px;
-  animation: psoBarIndeterminate 1.4s ease-in-out infinite;
-}
-
-@keyframes psoBarIndeterminate {
-  0% {
-    transform: translateX(-110%);
-  }
-  100% {
-    transform: translateX(260%);
-  }
 }
 
 /* 취소/다시시도 — Figma: 1258×180, r45, #999 회색, 56px */

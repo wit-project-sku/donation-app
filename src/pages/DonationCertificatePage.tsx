@@ -49,7 +49,7 @@ function ArrowLeft({ color }: { color: string }) {
 
 export function DonationCertificatePage() {
   const navigate = useAppNavigate();
-  const { theme } = useTheme();
+  const { theme, organizer } = useTheme();
   const queryClient = useQueryClient();
   const {
     selectedCampaign,
@@ -143,7 +143,8 @@ export function DonationCertificatePage() {
 
   return (
     <PageBody className="cert-page" scroll={false}>
-      <AppHeader />
+      {/* 뒤로 버튼은 다른 화면처럼 보이되 클릭 불가(완료 화면) */}
+      <AppHeader backStatic />
 
       <div className="cert-body">
         <p className="cert-caption">
@@ -163,7 +164,17 @@ export function DonationCertificatePage() {
               <p>AI 이미지 생성 중입니다...</p>
             </div>
           ) : (
-            <img src={photoSrc} alt="" loading="lazy" />
+            <>
+              <img src={photoSrc} alt="" loading="lazy" />
+              {/* 하단 오버레이 — 주최단체 로고만(이름은 로고에 포함되어 별도 표기 안 함) */}
+              <div className="cert-photo__overlay">
+                <img
+                  className="cert-photo__logo"
+                  src={organizer.logo}
+                  alt={organizer.label}
+                />
+              </div>
+            </>
           )}
         </div>
 

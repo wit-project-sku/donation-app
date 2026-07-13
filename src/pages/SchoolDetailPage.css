@@ -19,11 +19,11 @@
   z-index: 2;
 }
 
-/* Hero — Figma 5591:40527 image284 + 어두운 오버레이 */
+/* Hero — Figma 5776:25998 image284 h1242(보임 987) + 0.2 어두운 오버레이 */
 .sd-hero {
   position: relative;
   flex: 0 0 auto;
-  height: 1305px;
+  height: 1242px;
   overflow: hidden;
 }
 
@@ -37,32 +37,14 @@
 .sd-hero__overlay {
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.2);
 }
 
-/* 기부하기 CTA — Figma 5591:40541 초록 배너, h210, radius45, 흰 Bold 80, 히어로 하단 */
-.sd-hero__cta {
-  position: absolute;
-  left: 170px;
-  right: 170px;
-  bottom: 155px;
-  height: 210px;
-  padding: 0 40px;
-  border: none;
-  border-radius: 45px;
-  box-shadow: 0 4px 4px 7px rgba(0, 0, 0, 0.25);
-  color: #ffffff;
-  font-size: 80px;
-  font-weight: 700;
-  white-space: nowrap;
-  cursor: pointer;
-}
-
-/* White sheet — Figma 5591:40530 rounded-top 100, 히어로 위로 살짝 겹침 */
+/* White sheet — Figma 5776:26002 rounded-top 100, 히어로 위로 겹침(≈255) */
 .sd-body {
   position: relative;
   z-index: 1;
-  margin-top: -85px;
+  margin-top: -255px;
   background: #ffffff;
   border-radius: 100px 100px 0 0;
   padding: 130px 170px 0;
@@ -71,12 +53,32 @@
   flex-direction: column;
 }
 
-/* 학교명 — Figma 5591:40540 Bold 80 검정 */
+/* 학교명 — Figma 5776:26005 불릿 리스트 + Bold 80 검정 */
 .sd-title {
   margin: 0 0 130px;
   font-size: 80px;
   font-weight: 700;
   color: #000000;
+}
+
+.sd-title::before {
+  content: "•";
+  margin-right: 34px;
+}
+
+/* 기부하기 — Figma 5776:26006: 하단 전체폭 버튼(초록, h210, radius45, 흰 80) */
+.sd-cta {
+  flex: 0 0 auto;
+  height: 210px;
+  margin-bottom: 100px;
+  padding: 0 40px;
+  border: none;
+  border-radius: 45px;
+  color: #ffffff;
+  font-size: 80px;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
 }
 
 /* 사용처 카드 3개 — Figma 5591:40607: w529/h350, border5 #00a937, radius45 */
@@ -91,11 +93,11 @@
 .sd-prog {
   box-sizing: border-box;
   position: relative;
-  height: 350px;
+  height: 297px;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 44px;
+  padding: 0 40px;
   background: #ffffff;
   border: 5px solid #00a937;
   border-radius: 45px;
@@ -126,9 +128,9 @@
   font-weight: 700;
 }
 
-/* 활동명 — Figma 5591:40610 Display Bold 60 #00a937 */
+/* 활동명 — Figma 5776:26012 Display Bold 55 #00a937 */
 .sd-prog__label {
-  font-size: 60px;
+  font-size: 55px;
   font-weight: 700;
   line-height: 1.2;
   text-align: center;
@@ -165,9 +167,9 @@
   font-weight: 700;
 }
 
-/* 진행바 — Figma 5591:40725 */
+/* 진행바 — Figma 5776:26034 h24 */
 .sd-funding__bar {
-  height: 38px;
+  height: 24px;
   border-radius: 999px;
   background: #e8e8e8;
   overflow: hidden;
@@ -186,11 +188,11 @@
   font-weight: 700;
 }
 
-/* 참여자·수혜자 — Figma 5659:87044 Regular 70 #636363, 중앙 */
+/* 참여자·수혜자 — Figma 5776:26038 Regular 55 #636363, 중앙 */
 .sd-stats {
-  margin: 0 0 80px;
+  margin: 0 0 90px;
   text-align: center;
-  font-size: 70px;
+  font-size: 55px;
   font-weight: 400;
   color: #636363;
 }

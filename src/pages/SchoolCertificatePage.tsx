@@ -10,7 +10,7 @@ import { useDonationStore } from "../store/donationStore";
 import { useTheme } from "../theme/ThemeContext";
 import { buildMobileCertificateUrl } from "../utils/mobileCertificateUrl";
 import { submitCurrentDonation } from "../utils/buildSubmitPayload";
-import certSample from "../assets/cert-sample.jpg";
+import heartDefault from "../assets/donated.png";
 import schoolEmblem from "../assets/school-emblem.png";
 import "./SchoolCertificatePage.css";
 
@@ -82,7 +82,8 @@ export function SchoolCertificatePage() {
 
   if (!selectedCampaign) return null;
 
-  const photo = capturedPhotoUrl || certSample;
+  const hasPhoto = Boolean(capturedPhotoUrl);
+  const photo = capturedPhotoUrl || heartDefault;
   const gradText = graduationYear ? `${graduationYear} 졸업` : "졸업";
   const displayName = donorName || "기부자";
   const isSaved = submittedRecordId != null || submitMutation.isSuccess;
@@ -128,18 +129,25 @@ export function SchoolCertificatePage() {
 
   return (
     <PageBody className="school-certificate" scroll={false}>
-      <AppHeader title="기부" backTo="/school-complete" />
+      {/* 뒤로 버튼은 다른 화면처럼 보이되 클릭 불가(완료 화면) */}
+      <AppHeader title="기부" backStatic />
 
       <div className="sc2-body">
         <p className="sc2-thanks">
           귀하의 따뜻한 마음과 의미 있는 기여에 깊은 감사를 전합니다
         </p>
 
-        {/* 합성 사진 카드 — Figma 5535:19844 border5 #999, radius 38 */}
-        <div className="sc2-photo">
+        {/* 합성 사진 카드 — Figma 5535:19844 border5 #999, radius 38.
+            사진 없음 → 기본 이미지를 원형(border-radius 50%)으로 표시. */}
+        <div className={`sc2-photo${hasPhoto ? "" : " sc2-photo--default"}`}>
           <img className="sc2-photo__img" src={photo} alt="기부한컷" />
-          <img className="sc2-photo__emblem" src={schoolEmblem} alt="" />
-          <span className="sc2-photo__grad">{gradText}</span>
+          {/* 하단 오버레이 — 학교 로고 + 학교명·졸업 (Figma 5776:25584: rgba0,0,0,.5 h161) */}
+          <div className="sc2-photo__overlay">
+            <img className="sc2-photo__emblem" src={schoolEmblem} alt="" />
+            <span className="sc2-photo__caption">
+              {selectedCampaign.title} {gradText}
+            </span>
+          </div>
         </div>
 
         {/* 날짜 · 이름 — Figma 5535:19843/19845 */}

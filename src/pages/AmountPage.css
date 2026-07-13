@@ -9,12 +9,12 @@
   gap: 0;
 }
 
-/* 본문 — 좌우 170px, 헤더 아래 */
+/* 본문 — 좌우 170px, 헤더 아래(칩 y≈750, 헤더 699 → 상단 여백 ≈50) */
 .amount-page__body {
   display: flex;
   flex-direction: column;
   flex: 1 0 auto;
-  padding: 0 170px;
+  padding: 50px 170px 0;
 }
 
 /* 선택 캠페인 칩 (Figma 5535:18003: bg 테마색, w1270/h180, radius45, 좌측정렬) */
@@ -43,22 +43,15 @@
   object-fit: contain;
 }
 
-/* "기부금을 선택해 주세요" Figma 5535:18009 Regular 66 #636363, 그리드와 같은 123 인셋 */
-.amount-page__label {
-  margin: 64px 0 40px 123px;
-  font-size: 66px;
-  font-weight: 400;
-  text-align: left;
-  color: #636363;
-}
-
-/* 금액 프리셋 그리드 — 2×2 (Figma 5535:18011: w772/h350, col-gap30, 중앙 1574) */
+/* 금액 프리셋 그리드 — 2×2 (Figma 5535:18011: w772/h350, col-gap30, 중앙 1574).
+   칩(하단 y≈930) → 그리드(y≈1070) 간격 ≈140. */
 .amount-grid {
+  margin-top: 140px;
   display: grid;
   grid-template-columns: repeat(2, 772px);
   justify-content: center;
   column-gap: 30px;
-  row-gap: 60px;
+  row-gap: 63px;
 }
 
 .amount-opt {
@@ -137,7 +130,7 @@
 }
 
 .amount-funding__bar {
-  height: 38px;
+  height: 24px;
   border-radius: 999px;
   background: #e8e8e8;
   overflow: hidden;

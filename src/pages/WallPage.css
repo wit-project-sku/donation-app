@@ -9,12 +9,34 @@
   gap: 0;
 }
 
+/* 본문(제목·검색·그리드 포함) 전체가 스크롤 컨테이너 — 스크롤바는 본문 우측
+   가장자리에 위치해 카드에서 멀리 떨어진다. */
 .wall-body {
   flex: 1 1 auto;
   min-height: 0;
   display: flex;
   flex-direction: column;
-  padding: 35px 170px 0;
+  padding: 35px 170px 56px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  /* Firefox */
+  scrollbar-width: auto;
+  scrollbar-color: var(--wall-primary, #fe6c50) transparent;
+}
+
+/* 스크롤바 — 디자인 지정 규격: width 34.32, radius 21.45, 페이지 강조색 필 */
+.wall-body::-webkit-scrollbar {
+  width: 34.32px;
+}
+
+.wall-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.wall-body::-webkit-scrollbar-thumb {
+  background: var(--wall-primary, #fe6c50);
+  border-radius: 21.45px;
 }
 
 .wall-title {
@@ -78,18 +100,17 @@
   flex: 0 0 auto;
 }
 
+/* 그리드 래퍼 — 스크롤은 상위 .wall-body 가 담당 (여기선 자연 높이) */
 .wall-grid-panel {
-  flex: 1 1 auto;
-  min-height: 0;
-  overflow-y: auto;
-  padding-bottom: 56px;
+  flex: 0 0 auto;
 }
 
+/* Figma 5706:13096: 4열, 카드 369, 열간격 115, 행간격 150 */
 .wall-grid {
   display: grid;
-  grid-template-columns: repeat(3, 444px);
-  column-gap: 152px;
-  row-gap: 60px;
+  grid-template-columns: repeat(4, 369px);
+  column-gap: 115px;
+  row-gap: 150px;
   justify-content: center;
   justify-items: center;
 }
@@ -118,13 +139,15 @@
   cursor: pointer;
 }
 
-/* 키보드 — 검색창 바로 아래 절대배치, 본문(페이지) 전체 폭을 꽉 채움
-   (.wall-body 좌우 패딩 170px 밖으로 빼내 화면 폭까지 확장) */
+/* 키보드 — 검색창 바로 아래 절대배치. 본문이 스크롤 컨테이너(overflow)가 되면서
+   음수 좌우로 빼내면 잘리므로 본문 폭 안(0~0)에 맞춘다. */
+/* 키보드는 본문 폭을 꽉 채우도록 전체 스테이지 폭으로 풀블리드 (다른 페이지와 동일) */
 .wall-keyboard {
   position: absolute;
   top: calc(100% + 20px);
-  left: -170px;
-  right: -170px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: var(--kiosk-stage-width);
   z-index: 30;
   overflow: hidden;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.18);

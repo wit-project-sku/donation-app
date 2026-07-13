@@ -106,7 +106,7 @@ export function PaymentPage() {
 
   return (
     <PageBody className="payment-page">
-      <AppHeader />
+      <AppHeader subtitle="결제 수단을 선택해주세요" />
 
       <div className="payment-page__body">
         <button
@@ -119,7 +119,8 @@ export function PaymentPage() {
           <span>{selectedCampaign.title}</span>
         </button>
 
-        <div className="pay-amount-card" style={{ borderColor: theme.primary }}>
+        {/* 기부 금액 박스 — Figma 5535:18087: 회색 테두리(#e8e8e8), 강조색 아님 */}
+        <div className="pay-amount-card">
           <p className="pay-amount-card__label">기부 금액</p>
           <p className="pay-amount-card__value">{formatCurrency(amount)}원</p>
         </div>

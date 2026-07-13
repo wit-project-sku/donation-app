@@ -10,9 +10,8 @@ import { fetchWallEntriesPage } from "../api/wall";
 import { useDonationStore } from "../store/donationStore";
 import { useTheme } from "../theme/ThemeContext";
 import { appendKeyboardInput, removeLastHangul } from "../utils/hangulInput";
-import { resolveDonationPhotoUrl } from "../utils/defaultDonationImage";
-import certSample from "../assets/cert-sample.jpg";
 import schoolEmblem from "../assets/school-emblem.png";
+import heartDefault from "../assets/donated.png";
 import "./SchoolWallPage.css";
 
 type Filter = "name" | "school";
@@ -92,11 +91,16 @@ export function SchoolWallPage() {
 
   return (
     <PageBody className="school-wall" scroll={false}>
-      <AppHeader title="기부" backTo="/school-certificate" />
+      <AppHeader
+        title="기부"
+        backTo="/school-certificate"
+        subtitle="함께해주셔서 감사합니다"
+      />
 
-      <div className="sw-body">
-        <p className="sw-thanks">함께해주셔서 감사합니다</p>
-
+      <div
+        className="sw-body"
+        style={{ ["--sw-accent" as string]: theme.primary }}
+      >
         {/* 검색창 — Figma 5659:96026 초록 테두리 4.29px, radius 120.
             클릭 시 검색창 바로 아래에 본문 폭 가상 키보드 노출 */}
         <div className="sw-search-area">
@@ -171,10 +175,12 @@ export function SchoolWallPage() {
                 className="sw-card"
                 onClick={() => navigate("/school-certificate")}
               >
-                <span className="sw-card__photo">
+                <span
+                  className={`sw-card__photo${entry.photoUrl?.trim() ? "" : " sw-card__photo--placeholder"}`}
+                >
                   <img
-                    className="sw-card__img"
-                    src={resolveDonationPhotoUrl(entry.photoUrl, certSample)}
+                    className={`sw-card__img${entry.photoUrl?.trim() ? "" : " sw-card__img--placeholder"}`}
+                    src={entry.photoUrl?.trim() || heartDefault}
                     alt=""
                     loading="lazy"
                   />
@@ -182,10 +188,12 @@ export function SchoolWallPage() {
                   <span className="sw-card__grad">{entry.campaignName}</span>
                 </span>
                 <span className="sw-card__meta">
+                  <span className="sw-card__line" aria-hidden />
                   <span className="sw-card__date">
                     {formatDotDate(entry.donatedAt)}
                   </span>
                   <span className="sw-card__name">{entry.donorName}</span>
+                  <span className="sw-card__line" aria-hidden />
                 </span>
               </button>
             ))}

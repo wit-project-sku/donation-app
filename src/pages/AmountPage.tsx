@@ -44,7 +44,7 @@ export function AmountPage() {
 
   return (
     <PageBody className="amount-page">
-      <AppHeader />
+      <AppHeader subtitle="기부금을 선택해주세요" />
 
       <div className="amount-page__body">
         <button
@@ -56,8 +56,6 @@ export function AmountPage() {
           <img src="/icons/heart.png" alt="" className="amount-chip__heart" />
           <span>{selectedCampaign.title}</span>
         </button>
-
-        <p className="amount-page__label">기부금을 선택해 주세요</p>
 
         {amountOptions.length === 0 ? (
           <p className="amount-empty">선택 가능한 기부 금액이 없습니다.</p>

@@ -80,16 +80,6 @@ export function SchoolDetailPage() {
           decoding="async"
         />
         <div className="sd-hero__overlay" aria-hidden />
-
-        {/* 기부하기 CTA — Figma 5591:40541/40542 초록 배너 */}
-        <button
-          type="button"
-          className="sd-hero__cta"
-          style={{ backgroundColor: theme.primary }}
-          onClick={() => navigate("/outfit")}
-        >
-          기부하기{subtitle ? ` - ${subtitle}` : ""}
-        </button>
       </div>
 
       <div className="sd-header-overlay">
@@ -138,11 +128,21 @@ export function SchoolDetailPage() {
           </p>
         </div>
 
-        {/* 참여자·수혜자 — Figma 5659:87044 Regular 70 #636363 */}
+        {/* 참여자·수혜자 — Figma 5776:26038 Regular 55 #636363, 중앙 */}
         <p className="sd-stats">
           기부 참여자 : {selectedCampaign.participantCount ?? 0}명 / 기부 수혜자
           : {selectedCampaign.studentCount ?? 0}명
         </p>
+
+        {/* 기부하기 — Figma 5776:26006: 하단 전체폭 버튼(초록, radius45) */}
+        <button
+          type="button"
+          className="sd-cta"
+          style={{ backgroundColor: theme.primary }}
+          onClick={() => navigate("/outfit")}
+        >
+          기부하기{subtitle ? ` - ${subtitle}` : ""}
+        </button>
       </div>
 
       <PartnerBar />

@@ -61,7 +61,11 @@ export function SchoolRegisterPage() {
 
   return (
     <PageBody className="school-register" scroll={false}>
-      <AppHeader title="기부" backTo="/school-complete" />
+      <AppHeader
+        title="기부"
+        backTo="/school-complete"
+        subtitle="졸업연도와 이름을 입력해주세요"
+      />
 
       <div className="sr-body">
         {/* 기부한컷 받기 카드 — Figma 5659:87140 초록 테두리 15px */}
@@ -137,7 +141,7 @@ export function SchoolRegisterPage() {
             className={`sr-check${consent ? " is-on" : ""}`}
             style={consent ? { backgroundColor: theme.primary } : undefined}
           >
-            <IconCheck size={44} strokeWidth={3} aria-hidden />
+            <IconCheck size={48} strokeWidth={3} aria-hidden />
           </span>
           <span className="sr-consent__text">
             서비스 제공을 위해 이용자의 합성된 이미지는 WITH 플랫폼에 저장됩니다.

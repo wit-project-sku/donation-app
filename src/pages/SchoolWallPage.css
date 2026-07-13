@@ -9,13 +9,35 @@
   gap: 0;
 }
 
+/* 본문(제목·검색·필터·그리드 포함) 전체가 스크롤 컨테이너 — 스크롤바는 본문
+   우측 가장자리에 위치해 카드에서 멀리 떨어진다. */
 .sw-body {
   flex: 1 1 auto;
   min-height: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 20px 170px 0;
+  padding: 20px 170px 56px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  /* Firefox */
+  scrollbar-width: auto;
+  scrollbar-color: var(--sw-accent, #30b95c) transparent;
+}
+
+/* 스크롤바 — 디자인 지정 규격: width 34.32, radius 21.45, 초록(#30B95C) 필 */
+.sw-body::-webkit-scrollbar {
+  width: 34.32px;
+}
+
+.sw-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sw-body::-webkit-scrollbar-thumb {
+  background: var(--sw-accent, #30b95c);
+  border-radius: 21.45px;
 }
 
 /* 함께해주셔서 감사합니다 — Figma 5659:96030 Medium 68 #999 */
@@ -36,11 +58,13 @@
 
 /* 키보드 — 검색창 바로 아래, 본문(페이지) 전체 폭을 꽉 채움
    (.sw-body 좌우 패딩 170px + 중앙정렬 밖으로 빼내 화면 폭까지 확장) */
+/* 키보드는 본문 폭을 꽉 채우도록 전체 스테이지 폭으로 풀블리드 (다른 페이지와 동일) */
 .sw-keyboard {
   position: absolute;
   top: calc(100% + 20px);
-  left: -171px;
-  right: -171px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: var(--kiosk-stage-width);
   z-index: 30;
   overflow: hidden;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.18);
@@ -118,17 +142,15 @@
   cursor: pointer;
 }
 
-/* 그리드 — 3열, 스크롤 */
+/* 그리드 — Figma 5706:13096: 4열, 카드 369, 열간격 115, 행간격 150 */
 .sw-grid {
-  flex: 1 1 auto;
-  min-height: 0;
+  flex: 0 0 auto;
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(3, 444px);
+  grid-template-columns: repeat(4, 369px);
   justify-content: center;
-  column-gap: 152px;
-  row-gap: 60px;
-  overflow-y: auto;
+  column-gap: 115px;
+  row-gap: 150px;
   padding-bottom: 40px;
 }
 
@@ -143,12 +165,12 @@
   cursor: pointer;
 }
 
-/* 합성 사진 — Figma 444×790, border5 #999, radius 38 */
+/* 합성 사진 — Figma 5776:24347: 369×656, border5 #999, radius 38 */
 .sw-card__photo {
   position: relative;
   display: block;
-  width: 444px;
-  height: 790px;
+  width: 369px;
+  height: 656px;
   border: 5px solid #999999;
   border-radius: 38px;
   overflow: hidden;
@@ -161,12 +183,37 @@
   display: block;
 }
 
+/* 사진 없음 — 흰 카드(색 없음) + 얇은 테두리, 그림자 없음. 엠블럼/라벨 숨김. */
+.sw-card__photo--placeholder {
+  background: #ffffff;
+  border-width: 2px;
+  border-color: #d9d9d9;
+  box-shadow: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sw-card__photo--placeholder .sw-card__emblem,
+.sw-card__photo--placeholder .sw-card__grad {
+  display: none;
+}
+
+/* 기본 하트 — 꽉 채우지 않고 가운데 원형(border-radius 50%)으로 */
+.sw-card__img--placeholder {
+  width: 62%;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
 .sw-card__emblem {
   position: absolute;
-  top: 16px;
-  left: 16px;
-  width: 66px;
-  height: 66px;
+  top: 14px;
+  left: 14px;
+  width: 52px;
+  height: 52px;
   border-radius: 50%;
   object-fit: contain;
   background: rgba(255, 255, 255, 0.85);
@@ -178,28 +225,30 @@
   position: absolute;
   left: 0;
   right: 0;
-  bottom: 22px;
+  bottom: 20px;
   text-align: center;
-  font-size: 30px;
+  font-size: 28px;
   font-weight: 500;
   color: #ffffff;
   text-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
 }
 
+/* 캡션 — Figma: ──── 날짜 이름 ──── (양옆 장식선) */
 .sw-card__meta {
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 24px;
-  font-size: 30px;
+  gap: 16px;
+  font-size: 28px;
   font-weight: 500;
   color: #000000;
 }
 
-.sw-card__date::after {
-  content: "·";
-  margin-left: 24px;
-  color: #999999;
+.sw-card__line {
+  flex: 1 1 auto;
+  height: 2px;
+  background: #d9d9d9;
 }
 
 .sw-empty {

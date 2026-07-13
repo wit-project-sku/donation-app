@@ -1,90 +1,79 @@
-/* Figma 5262:28313 실측: 백드롭 design_y 2499→3264 (높이 765), 키 163×101, 키간격 ~14, 행간격 ~50 */
+/* Figma 4097:76605 (node 5535:18820): 키보드 2160×1000, 표준 키 163×120, 키간격 14, 행간격 58.
+   키는 고정 크기(늘어나지 않음)로 배치하고 각 행은 가운데 정렬 → 모든 글자 키가 동일 크기. */
 .virtual-keyboard {
   width: 100%;
-  height: 765px;
+  height: 1000px;
   box-sizing: border-box;
-  padding: 30px 104px;
+  padding: 95px 58px 73px;
   background: #d7d7d4;
   border-radius: 0;
   display: flex;
   flex-direction: column;
-  gap: 50px;
+  gap: 58px;
 }
 
 .virtual-keyboard__row {
   display: flex;
   justify-content: center;
-  gap: 16px;
-  height: 101px;
+  gap: 14px;
+  height: 120px;
   flex-shrink: 0;
 }
 
-.virtual-keyboard__row--narrow {
-  padding: 0 116px;
-}
-
-.virtual-keyboard__row--middle {
-  padding: 0 50px;
-}
-
-.virtual-keyboard__row--bottom {
-  padding: 0 190px;
-}
-
-.virtual-keyboard__row--space {
-  padding: 0 202px;
-}
-
+/* 표준 키 — Figma 163×120, radius 20, 흰 배경, 하단 그림자. 고정 크기(늘어나지 않음). */
 .virtual-keyboard__key {
-  min-width: 126px;
-  height: 101px;
+  flex: 0 0 auto;
+  width: 163px;
+  height: 120px;
   border: 0;
   border-radius: 20px;
   background: #fff;
   box-shadow: 0 4px 0 rgba(0, 0, 0, 0.28);
   color: #000;
   font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 58px;
-  font-weight: 800;
+  font-size: 64px;
+  font-weight: 700;
   line-height: 1;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  flex: 1;
 }
 
 .virtual-keyboard__key:active {
   opacity: 0.65;
 }
 
-.virtual-keyboard__key--special,
-.virtual-keyboard__key--return {
-  background: #fff;
-  flex: 1.35;
+/* 백스페이스 / Shift — Figma 262px */
+.virtual-keyboard__key--special {
+  width: 262px;
 }
 
+/* 줄바꿈(↵) — Figma 362px. 화살표 글리프는 시각적으로 작아 크게 키움. */
+.virtual-keyboard__key--return {
+  width: 362px;
+  font-size: 96px;
+  font-weight: 900;
+}
+
+/* 자판 전환(지구본) — Figma 362px, 아이콘 + 한/En 라벨 세로 배치 */
 .virtual-keyboard__key--globe {
-  background: #fff;
-  flex: 1.35;
+  width: 362px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 8px;
 }
 
+/* 스페이스바 — Figma 1211px */
 .virtual-keyboard__key--spacebar {
-  flex: 6;
+  width: 1211px;
   font-size: 50px;
 }
 
 .virtual-keyboard__key--active {
   background: color-mix(in srgb, var(--keyboard-active-color, #1a4d7e) 12%, #ffffff);
-}
-
-.virtual-keyboard__key--globe {
-  gap: 8px;
 }
 
 .virtual-keyboard__layout-label {

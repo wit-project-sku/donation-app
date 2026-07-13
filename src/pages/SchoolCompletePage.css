@@ -78,13 +78,13 @@
   display: flex;
   flex-direction: column;
   align-items: stretch;
+  justify-content: center;
   width: 1299px;
-  height: 445px;
-  padding: 40.56px 40.56px 0;
+  padding: 40.56px;
   gap: 20.28px;
   border: 5px solid #e8e8e8;
   border-radius: 35.49px;
-  margin-bottom: 60px;
+  margin-bottom: 24px;
 }
 
 .sc-amount__label {

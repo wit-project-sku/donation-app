@@ -117,20 +117,23 @@ export function EntryPage() {
 
   return (
     <PageBody className="entry-page">
-      <AppHeader showBack onBack={exitDonationApp} />
+      <AppHeader
+        subtitle="기부할 대상을 선택해주세요"
+        showBack
+        onBack={exitDonationApp}
+      />
 
       <div className="entry-page__hero">
         <h2 className="entry-page__headline">
           당신의 따뜻한 마음이 누군가의 희망이 됩니다
         </h2>
-        <p className="entry-page__sub">기부할 대상을 선택해주세요</p>
       </div>
 
       <div className="entry-page__cards">
-        <div className="entry-card entry-card--ngo">
+        <div className="entry-col">
           <button
             type="button"
-            className="entry-card__body"
+            className="entry-card entry-card--ngo"
             onClick={() => choose("ngo")}
           >
             <span className="entry-card__icon">
@@ -145,17 +148,17 @@ export function EntryPage() {
           </button>
           <button
             type="button"
-            className="entry-card__history"
+            className="entry-history entry-history--ngo"
             onClick={() => navigate("/wall")}
           >
             기부내역 보기
           </button>
         </div>
 
-        <div className="entry-card entry-card--school">
+        <div className="entry-col">
           <button
             type="button"
-            className="entry-card__body"
+            className="entry-card entry-card--school"
             onClick={() => choose("school")}
           >
             <span className="entry-card__icon">
@@ -165,7 +168,7 @@ export function EntryPage() {
                 className="entry-card__icon-img entry-card__icon-img--school"
               />
             </span>
-            <span className="entry-card__label">학교</span>
+            <span className="entry-card__label">교복 주기</span>
             <span className="entry-card__desc">
               학교를 통해 우리 주변의
               <br />
@@ -174,7 +177,7 @@ export function EntryPage() {
           </button>
           <button
             type="button"
-            className="entry-card__history"
+            className="entry-history entry-history--school"
             onClick={() => navigate("/school-wall")}
           >
             기부내역 보기

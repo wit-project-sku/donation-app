@@ -37,6 +37,8 @@ interface AppHeaderProps {
   /** Explicit back target (overrides the route map). */
   backTo?: string;
   onBack?: () => void;
+  /** 뒤로 버튼을 다른 화면과 동일하게 '보이기만' 하고 클릭은 막는다(예: 증서 완료 화면). */
+  backStatic?: boolean;
   /** 히어로 위에 오버레이되는 화면(캠페인/상세)에서 타이틀·날짜를 흰색으로 (Figma). */
   light?: boolean;
 }
@@ -50,10 +52,11 @@ interface AppHeaderProps {
  */
 export function AppHeader({
   title = "기부",
-  subtitle = "페이지 설명문",
+  subtitle,
   showBack,
   backTo,
   onBack,
+  backStatic = false,
   light = false,
 }: AppHeaderProps) {
   const { theme } = useTheme();
@@ -62,7 +65,8 @@ export function AppHeader({
   const resetSession = useDonationStore((state) => state.resetSession);
 
   const backTarget = backTo ?? getBackRoute(pathname);
-  const canBack = showBack ?? backTarget !== null;
+  // backStatic 이면 경로에 상관없이 뒤로 버튼을 노출(하지만 비활성).
+  const canBack = backStatic || (showBack ?? backTarget !== null);
 
   const handleHome = () => finishDonationFlow(navigate, resetSession);
   const handleBack = () => {
@@ -106,9 +110,11 @@ export function AppHeader({
         {canBack ? (
           <button
             type="button"
-            className="app-header__back"
-            onClick={handleBack}
+            className={`app-header__back${backStatic ? " app-header__back--static" : ""}`}
+            onClick={backStatic ? undefined : handleBack}
             aria-label="뒤로"
+            aria-disabled={backStatic || undefined}
+            tabIndex={backStatic ? -1 : undefined}
           >
             <IconBackCircle
               color={theme.primary}
@@ -120,7 +126,9 @@ export function AppHeader({
         )}
       </div>
 
-      <p className="app-header__subtitle">★ {subtitle}</p>
+      {subtitle ? (
+        <p className="app-header__subtitle">★ {subtitle}</p>
+      ) : null}
     </header>
   );
 }

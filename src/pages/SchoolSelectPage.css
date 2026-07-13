@@ -17,24 +17,12 @@
   z-index: 2;
 }
 
-/* 섹션 타이틀 — Figma 5659:87585 Noto Sans Bold 70 검정 */
-.school-page__title {
-  position: absolute;
-  left: 168.5px;
-  top: 666px;
-  width: 874px;
-  margin: 0;
-  font-size: 70px;
-  font-weight: 700;
-  line-height: normal;
-  color: #000000;
-}
-
-/* 검색창 — Figma 5659:87589 흰 배경, 코랄 4.29px 테두리, radius 120, drop-shadow */
+/* 검색창 — Figma 5776:25409 흰 배경, 코랄 4.29px 테두리, radius 120, drop-shadow.
+   부제를 헤더로 옮기며 검색창은 Figma 위치(top 720)로. */
 .school-page__search {
   position: absolute;
-  left: 142.5px;
-  top: 833px;
+  left: 142px;
+  top: 720px;
   width: 1838px;
   height: 182px;
   box-sizing: border-box;
@@ -91,7 +79,7 @@
   position: absolute;
   left: 0;
   right: 0;
-  top: 1035px;
+  top: 922px;
   z-index: 20;
   overflow: hidden;
   box-shadow: 0 12px 50px rgba(0, 0, 0, 0.2);
@@ -101,7 +89,7 @@
 .school-page__regions {
   position: absolute;
   left: 170.9px;
-  top: 1103px;
+  top: 973px;
   width: 1820px;
   display: flex;
   flex-wrap: wrap;
@@ -140,16 +128,17 @@
 }
 
 /* 지역 선택 시 학교 칩 그리드 — Figma 5659:87407 (7열 × 8행) */
+/* 학교 칩 그리드 — Figma 5659:86855: top 1732, 7열 250, 행간격 78 */
 .school-grid {
   position: absolute;
   left: 170.9px;
-  top: 1753px;
+  top: 1732px;
   width: 1820px;
   display: grid;
   grid-template-columns: repeat(7, 250px);
   justify-content: space-between;
   align-content: start;
-  row-gap: 64px;
+  row-gap: 78px;
 }
 
 .school-grid__msg {
@@ -180,14 +169,32 @@
 
 /* 초성 필터 — Figma 5659:87592 Noto Sans SemiBold 60.
    지역칩/표와 동일한 폭(1820)에 균등 분배해 우측 끝까지 펼친다. */
+/* 초성 필터 — Figma 5776:25794: left 220, top 1425, width 1744 */
 .school-page__consonants {
   position: absolute;
-  left: 170.9px;
-  top: 1551px;
-  width: 1820px;
+  left: 220px;
+  top: 1425px;
+  width: 1744px;
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
+}
+
+/* 학교 수 — Figma 5776:25795: left 171, top 1604, Noto Medium 55 #636363 */
+.school-page__count {
+  position: absolute;
+  left: 171px;
+  top: 1604px;
+  margin: 0;
+  font-size: 55px;
+  font-weight: 500;
+  color: #636363;
+  white-space: nowrap;
+}
+
+/* 랭킹 뷰(지역 미선택) — 지역칩(끝 ≈1348)과 표(top 1621) 사이 정중앙 */
+.school-page__count--all {
+  top: 1444px;
 }
 
 .school-consonant {
@@ -207,11 +214,11 @@
   border-bottom-color: #fe6c50;
 }
 
-/* 랭킹 표 — Figma 5660:96286 흰 박스 + 5px #e8e8e8 테두리 */
+/* 랭킹 표 — Figma 5776:25419: left 182, top 1621, 1820×1401, 5px #e8e8e8 테두리 */
 .school-table {
   position: absolute;
-  left: 182.5px;
-  top: 1753px;
+  left: 182px;
+  top: 1621px;
   width: 1820px;
   height: 1401px;
   box-sizing: border-box;
@@ -391,11 +398,11 @@
   color: #005ab4;
 }
 
-/* 기준일 — Figma 5661:96365 Noto Sans Medium 36 #999 */
+/* 기준일 — Figma 5776:25491: left 1645, top 3041, Noto Medium 36 #999 */
 .school-page__asof {
   position: absolute;
-  left: 1738px;
-  top: 3173px;
+  left: 1645px;
+  top: 3041px;
   margin: 0;
   font-size: 36px;
   font-weight: 500;

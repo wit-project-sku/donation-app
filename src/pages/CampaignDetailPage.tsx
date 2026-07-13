@@ -54,15 +54,6 @@ export function CampaignDetailPage() {
           decoding="async"
         />
         <div className="cd-hero__overlay" aria-hidden />
-
-        <button
-          type="button"
-          className="cd-hero__cta"
-          style={{ backgroundColor: theme.primary }}
-          onClick={() => navigate("/amount")}
-        >
-          기부하기
-        </button>
       </div>
 
       <div className="cd-header-overlay">
@@ -131,6 +122,16 @@ export function CampaignDetailPage() {
             {formatCurrency(progress.target)}원
           </p>
         </div>
+
+        {/* 기부하기 — Figma 5535:17974: 모금 현황 아래 전체폭 버튼(테마색, radius45) */}
+        <button
+          type="button"
+          className="cd-cta"
+          style={{ backgroundColor: theme.primary }}
+          onClick={() => navigate("/amount")}
+        >
+          기부하기
+        </button>
       </div>
 
       <PartnerBar />

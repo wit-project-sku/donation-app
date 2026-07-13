@@ -46,7 +46,7 @@ export function CertificatePromptPage() {
         </div>
 
         <div className="cert-prompt__complete">
-          {/* 완료 체크 — 조직 테마색 원 + 흰 체크 (Figma 301×301) */}
+          {/* 완료 체크 — 조직 테마색 원 + 흰 체크 */}
           <svg
             className="cert-prompt__check"
             viewBox="0 0 301 301"

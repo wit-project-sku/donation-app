@@ -2,6 +2,9 @@
   /* Design base: 1820 � 2290 (native kiosk Unity webview size) */
   --kiosk-width: 1820;
   --kiosk-height: 2290;
+  /* Full render-stage width (see KioskShell.css .kiosk-stage). Used to make the
+     on-screen keyboard span the full body width (edge to edge) on every page. */
+  --kiosk-stage-width: 2162.207px;
 
   /* Semantic � use these for UI */
   --color-primary: #FF7BB7;
