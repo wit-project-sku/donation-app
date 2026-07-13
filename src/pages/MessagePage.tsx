@@ -85,12 +85,12 @@ export function MessagePage() {
 
   return (
     <PageBody className="message-page" scroll={false}>
-      <AppHeader subtitle="이름을 입력해주세요" />
+      <AppHeader subtitle="당신의 마음이 필요한 곳에 전해집니다" />
 
       <div className="msg-body">
         <div className="msg-card" style={{ borderColor: theme.primary }}>
           <h2 className="msg-card__title" style={{ color: theme.primary }}>
-            기부증서 발급
+            기부한컷 발급
           </h2>
 
           <div className="msg-field-group">
@@ -119,7 +119,7 @@ export function MessagePage() {
               <IconCheck size={48} />
             </span>
             <span className="msg-consent__text">
-              서비스 제공을 위해 이용자의 이미지 및 초상권을 수집·활용할 수 있습니다.
+              서비스 제공을 위해 이용자의 합성된 이미지는 WITH 플랫폼에 저장됩니다.
             </span>
           </button>
           <div className="msg-buttons">

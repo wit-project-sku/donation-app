@@ -11,12 +11,12 @@ import { appendKeyboardInput, removeLastHangul } from "../utils/hangulInput";
 import "./SchoolRegisterPage.css";
 
 const MAX_NAME_LENGTH = 20;
-/** 드롭다운에 노출할 졸업연도 개수 (현재 연도 기준 최신 N개) */
-const YEAR_COUNT = 7;
+/** 졸업연도 드롭다운 시작 연도 (1980 ~ 현재) */
+const START_YEAR = 1980;
 
 /**
  * 학교 기부한컷 등록 화면 (Figma 5659:87121 열림 / 5597:41982 입력).
- * 졸업연도(현재 연도 기준 최신 N개) + 이름/닉네임 + 동의 후 등록하기.
+ * 졸업연도(1980~현재) + 이름/닉네임 + 동의 후 등록하기.
  */
 export function SchoolRegisterPage() {
   const navigate = useAppNavigate();
@@ -29,10 +29,11 @@ export function SchoolRegisterPage() {
     setGraduationYear,
   } = useDonationStore();
 
-  // 현재 연도 기준 최신 N개 연도 (하드코딩이 아닌 동적 생성)
+  // 1980 ~ 현재 연도 (최신순: 현재 연도가 맨 위)
   const years = useMemo(() => {
     const current = new Date().getFullYear();
-    return Array.from({ length: YEAR_COUNT }, (_, i) => current - i);
+    const count = current - START_YEAR + 1;
+    return Array.from({ length: count }, (_, i) => current - i);
   }, []);
 
   const selectedYear = graduationYear ?? years[0];

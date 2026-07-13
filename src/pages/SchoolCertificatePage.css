@@ -74,20 +74,12 @@
   padding: 0 40px;
 }
 
-/* 사진 없음(기본) 상태에선 오버레이 숨김 */
+/* 사진 없음(기본 이미지) 상태 — 학교명은 그대로 노출하되 어두운 배드롭만 제거 */
 .sc2-photo--default .sc2-photo__overlay {
-  display: none;
+  background: transparent;
 }
 
-/* 학교 로고(엠블럼) — 오버레이 안, 76px (Figma image463) */
-.sc2-photo__emblem {
-  flex: 0 0 auto;
-  width: 77px;
-  height: 76px;
-  object-fit: contain;
-}
-
-/* 학교명 · 졸업 — Figma 5597:42141 흰 Medium 50 */
+/* 학교명 · 졸업 — Figma 5597:42141 Medium 50. 사진 위에선 흰 글씨 */
 .sc2-photo__caption {
   font-size: 50px;
   font-weight: 500;
@@ -95,6 +87,11 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* 사진 없음 카드 — 흰 배경이라 학교명은 어둡게 */
+.sc2-photo--default .sc2-photo__caption {
+  color: #333333;
 }
 
 /* 날짜 · 이름 — Figma 5535:19843/19845 */

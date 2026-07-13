@@ -48,8 +48,11 @@ export function WallGiverCard({
           alt=""
           loading="lazy"
         />
-        <img className="wall-giver-card__emblem" src={unicefLogo} alt="" />
-        <span className="wall-giver-card__label">{label}</span>
+        {/* 하단 오버레이 — 증서 페이지와 동일하게 주최단체 로고를 하단 바에
+            가운데·contain 으로 노출 (좌상단 원형 뱃지 대신). */}
+        <span className="wall-giver-card__overlay">
+          <img className="wall-giver-card__emblem" src={unicefLogo} alt={label} />
+        </span>
         {isNew ? (
           <span className="wall-giver-card__badge">방금 참여</span>
         ) : null}

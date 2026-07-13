@@ -108,6 +108,9 @@ export function SchoolDetailPage() {
         {/* 소개문 — Figma 5591:40690 Medium 55 #636363 */}
         <p className="sd-desc">{selectedCampaign.description}</p>
 
+        {/* 캠페인 안내 — 모금 현황 바로 위, 중앙 */}
+        <p className="sd-partner">이 캠페인은 채널A와 함께합니다.</p>
+
         {/* 모금 현황 — Figma 5591:40722 흰 박스 + 진행바 */}
         <div className="sd-funding">
           <p className="sd-funding__label" style={{ color: theme.primary }}>

@@ -11,7 +11,6 @@ import { useTheme } from "../theme/ThemeContext";
 import { buildMobileCertificateUrl } from "../utils/mobileCertificateUrl";
 import { submitCurrentDonation } from "../utils/buildSubmitPayload";
 import heartDefault from "../assets/donated.png";
-import schoolEmblem from "../assets/school-emblem.png";
 import "./SchoolCertificatePage.css";
 
 /** YYYY.MM.DD */
@@ -48,7 +47,6 @@ export function SchoolCertificatePage() {
     amount,
     donorName,
     donorPhone,
-    graduationYear,
     capturedPhotoUrl,
     sharePhotoUrl,
     photoStatus,
@@ -84,7 +82,6 @@ export function SchoolCertificatePage() {
 
   const hasPhoto = Boolean(capturedPhotoUrl);
   const photo = capturedPhotoUrl || heartDefault;
-  const gradText = graduationYear ? `${graduationYear} 졸업` : "졸업";
   const displayName = donorName || "기부자";
   const isSaved = submittedRecordId != null || submitMutation.isSuccess;
   const photoPending = photoStatus === "generating" && !capturedPhotoUrl;
@@ -141,12 +138,10 @@ export function SchoolCertificatePage() {
             사진 없음 → 기본 이미지를 원형(border-radius 50%)으로 표시. */}
         <div className={`sc2-photo${hasPhoto ? "" : " sc2-photo--default"}`}>
           <img className="sc2-photo__img" src={photo} alt="기부한컷" />
-          {/* 하단 오버레이 — 학교 로고 + 학교명·졸업 (Figma 5776:25584: rgba0,0,0,.5 h161) */}
+          {/* 하단 오버레이 — 학교 로고가 없어 학교명을 표시. 사진 있으면 어두운
+              배드롭 위에, 없으면(기본 이미지) 배드롭 없이 학교명만 노출. */}
           <div className="sc2-photo__overlay">
-            <img className="sc2-photo__emblem" src={schoolEmblem} alt="" />
-            <span className="sc2-photo__caption">
-              {selectedCampaign.title} {gradText}
-            </span>
+            <span className="sc2-photo__caption">{selectedCampaign.title}</span>
           </div>
         </div>
 

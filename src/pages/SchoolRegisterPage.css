@@ -96,13 +96,17 @@
   line-height: 1;
 }
 
-/* 열린 연도 목록 — Figma 5659:87149 흰 박스, radius 90, 스크롤 */
+/* 열린 연도 목록 — Figma 5659:87149 흰 박스, radius 90.
+   1980~현재(약 47개)라 스크롤은 필요하되 스크롤바는 숨김(터치 스크롤). */
 .sr-options {
   position: absolute;
   top: calc(100% + 12px);
   left: 0;
   width: 423px;
-  overflow: visible;
+  max-height: 900px;
+  overflow-y: auto;
+  -ms-overflow-style: none; /* IE/Edge */
+  scrollbar-width: none; /* Firefox */
   margin: 0;
   padding: 20px 0;
   list-style: none;
@@ -111,6 +115,11 @@
   border-radius: 90px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
   z-index: 40;
+}
+
+/* Chromium(키오스크): 스크롤바 숨김 */
+.sr-options::-webkit-scrollbar {
+  display: none;
 }
 
 .sr-option {

@@ -30,14 +30,15 @@
   color: #636363;
 }
 
-/* 사진 카드 — Figma 5706:13089 1058×1881, border 5 #999, radius 38 */
+/* 사진 카드 — Figma 5706:13089 1058×1881, radius 38.
+   테두리(프레임)는 이미지에 맞지 않아 제거. */
 .cert-photo {
   position: relative;
   box-sizing: border-box;
   width: 1058px;
   max-width: 100%;
   height: 1881px;
-  border: 5px solid var(--color-text-muted, #999999);
+  border: none;
   border-radius: 38px;
   overflow: hidden;
   background: #ffffff;
@@ -50,11 +51,13 @@
   display: block;
 }
 
-/* 사진 미제공(직접 발급) — 일러스트를 카드 안에 contain 배치 */
+/* 사진 미제공(직접 발급) — 일러스트를 카드 안에 contain 배치.
+   기본 이미지 카드에만 연한 테두리(#E8E8E8)를 준다(AI 사진 카드는 테두리 없음). */
 .cert-photo--illust {
   display: flex;
   align-items: center;
   justify-content: center;
+  border: 5px solid var(--5, #e8e8e8);
 }
 
 /* 기본(사진 없음) 이미지 — 원형(border-radius 50%) */
@@ -82,16 +85,18 @@
   padding: 0 40px;
 }
 
-/* 사진 없음(직접 발급) 상태에선 오버레이 숨김 */
+/* 사진 없음(기본 이미지) 상태 — 하단 로고는 그대로 노출하되 어두운 배경(백드롭)만 제거 */
 .cert-photo--illust .cert-photo__overlay {
-  display: none;
+  background: transparent;
 }
 
-/* 주최단체 로고 — 오버레이 안 (.cert-photo img 전체규칙보다 우선) */
+/* 주최단체 로고 — 오버레이 안 (.cert-photo img 전체규칙보다 우선).
+   박스를 넉넉히 주고 contain 으로 로고 전체가 잘리지 않게 노출. */
 .cert-photo__overlay .cert-photo__logo {
   flex: 0 0 auto;
   width: auto;
-  height: 66px;
+  max-width: 90%;
+  height: 96px;
   object-fit: contain;
 }
 

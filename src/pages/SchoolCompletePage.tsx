@@ -17,7 +17,7 @@ import "./SchoolCompletePage.css";
  */
 export function SchoolCompletePage() {
   const navigate = useAppNavigate();
-  const { theme, organizer } = useTheme();
+  const { theme } = useTheme();
   const { selectedCampaign, amount, resetSession } = useDonationStore();
 
   useEffect(() => {
@@ -32,6 +32,7 @@ export function SchoolCompletePage() {
     <PageBody className="school-complete" scroll={false}>
       <AppHeader
         title="기부"
+        subtitle="당신의 마음이 필요한 곳에 전해집니다"
         showBack
         onBack={() => finishDonationFlow(navigate, resetSession)}
       />
@@ -77,7 +78,7 @@ export function SchoolCompletePage() {
         </div>
 
         {/* 캠페인 안내 + 모금 현황 */}
-        <p className="sc-partner">이 캠페인은 {organizer.label}와 함께합니다.</p>
+        <p className="sc-partner">이 캠페인은 채널A와 함께합니다.</p>
 
         <div className="sc-funding">
           <p className="sc-funding__label" style={{ color: theme.primary }}>

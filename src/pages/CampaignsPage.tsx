@@ -8,7 +8,6 @@ import { IconSearch } from "../components/Icon";
 import { useDonationStore } from "../store/donationStore";
 import { useTheme } from "../theme/ThemeContext";
 import { resolveOrganizer } from "../theme/organizers";
-import { PartnerBar } from "../components/PartnerBar";
 import type { Campaign } from "../types";
 import "./CampaignsPage.css";
 
@@ -200,8 +199,12 @@ export function CampaignsPage() {
                     alt={organizer.label}
                   />
                 </span>
-                {/* 캠페인명 — 한 줄 행(one-line row). 이미지 하단 오버레이 대신. */}
-                <span className="campaign-card__title">{campaign.title}</span>
+                {/* 캠페인명 — 카드 하단, 가운데. 제목이 길어 최대 10자만 노출(초과 시 …). */}
+                <span className="campaign-card__title">
+                  {campaign.title.length > 10
+                    ? `${campaign.title.slice(0, 10)}…`
+                    : campaign.title}
+                </span>
               </button>
             );
           })}
@@ -210,8 +213,6 @@ export function CampaignsPage() {
           )}
         </div>
       </div>
-
-      <PartnerBar />
     </PageBody>
   );
 }

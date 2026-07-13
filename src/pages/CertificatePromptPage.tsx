@@ -33,6 +33,7 @@ export function CertificatePromptPage() {
     <PageBody className="cert-prompt">
       <AppHeader
         showBack
+        subtitle="당신의 마음이 필요한 곳에 전해집니다"
         onBack={() => finishDonationFlow(navigate, resetSession)}
       />
 

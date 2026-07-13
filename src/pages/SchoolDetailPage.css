@@ -146,6 +146,15 @@
   color: #636363;
 }
 
+/* 캠페인 안내 문구 — 모금 현황 바로 위, 중앙 */
+.sd-partner {
+  margin: 0 0 46px;
+  text-align: center;
+  font-size: 55px;
+  font-weight: 400;
+  color: #636363;
+}
+
 /* 모금 현황 카드 — Figma 5591:40723 흰 배경, border5 #e8e8e8, radius45, h416 */
 .sd-funding {
   box-sizing: border-box;

@@ -11,8 +11,12 @@ import {
 import { IconHomeCircle, IconBackCircle } from "./Icon";
 import "./SideNav.css";
 
-/** 증서 완료 화면 — 뒤로 버튼은 노출하되 클릭 불가(다른 화면과 동일한 외형). */
-const STATIC_BACK_ROUTES = new Set(["/certificate", "/school-certificate"]);
+/** 증서 완료/발급 화면 — 뒤로 버튼은 노출하되 클릭 불가(다른 화면과 동일한 외형). */
+const STATIC_BACK_ROUTES = new Set([
+  "/certificate",
+  "/school-certificate",
+  "/certificate-prompt",
+]);
 
 /**
  * 좌측 중앙에 세로로 쌓인 홈 + 뒤로가기 네비게이션 (Figma 5535:18546).

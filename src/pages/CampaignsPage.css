@@ -114,22 +114,22 @@
   flex: 0 0 auto;
 }
 
-/* 전체 캠페인을 3열 그리드로 세로 나열 (Figma 카드 w550/h629, 간격 85).
-   minmax(0,550) 로 스크롤바가 나타나 폭이 줄어도 열이 살짝 좁아질 뿐 넘치지 않는다. */
+/* 전체 캠페인을 3열 그리드로 세로 나열 — Figma 5535:18379: 카드 549.491×629.181,
+   가로/세로 간격 동일 63.26 (카드 좌측 x192 기준 대칭 배치에서 산출). 가운데 정렬. */
 .campaigns-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 550px));
-  justify-content: space-between;
-  gap: 85px;
+  grid-template-columns: repeat(3, 549.491px);
+  justify-content: center;
+  /* 가로 간격은 Figma(63.26), 세로 간격은 행 사이 여유를 조금 더 준다. */
+  column-gap: 63.26px;
+  row-gap: 100px;
 }
 
-/* 카드 Figma 5535:18379: w549, radius 45, shadow 0 4 4 3 / 0.1.
-   높이는 콘텐츠(이미지 + 캠페인명 한 줄 + 기부하기)에 맞춰 흐른다. */
+/* 카드 Figma 5535:18379: 549.491×629.181, radius 45, shadow 0 4 4 3 / 0.1. */
 .campaign-card {
   box-sizing: border-box;
-  width: 100%;
-  max-width: 549px;
-  height: auto;
+  width: 549.491px;
+  height: 629.181px;
   display: flex;
   flex-direction: column;
   background: #fff;
@@ -185,11 +185,14 @@
   filter: none;
 }
 
-/* 캠페인명 — 한 줄 행(one-line row), 카드 흰 영역, 가운데. 말줄임 처리.
-   기부하기 스트립 제거 → 제목만 표시. 상하 여백으로 카드 하단 마감. */
+/* 캠페인명 — 카드 하단 흰 영역(이미지 아래 남은 높이)을 채우고 가로·세로 가운데.
+   최대 10자만 노출하므로 한 줄로 마감된다. */
 .campaign-card__title {
-  flex: 0 0 auto;
-  padding: 44px 34px 48px;
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 34px;
   color: #232323;
   font-size: 48px;
   font-weight: 700;
@@ -209,7 +212,8 @@
 }
 
 /* 안내문 Figma 5535:18401 Noto Sans Medium 55 #999, 중앙.
-   Figma 5535:18379: 히어로 바로 아래(body 상단), 카드 그리드 위. */
+   Figma 5535:18379: 히어로 바로 아래(body 상단), 카드 그리드는 안내문 바로 아래.
+   카드가 화면 하단까지 채워지며 마지막 행은 자연스럽게 잘려(스크롤) 보인다. */
 .campaigns-note {
   margin: 0 0 90px;
   text-align: center;

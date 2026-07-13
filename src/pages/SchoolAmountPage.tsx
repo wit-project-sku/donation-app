@@ -20,7 +20,7 @@ const PRESETS = [1000, 2000, 10000, 20000];
  */
 export function SchoolAmountPage() {
   const navigate = useAppNavigate();
-  const { theme, organizer } = useTheme();
+  const { theme } = useTheme();
   const { selectedCampaign, setAmount } = useDonationStore();
   const [selected, setSelected] = useState<number | null>(null);
 
@@ -38,7 +38,7 @@ export function SchoolAmountPage() {
 
   return (
     <PageBody className="school-amount" scroll={false}>
-      <AppHeader title="기부" backTo="/outfit" />
+      <AppHeader title="기부" subtitle="기부금을 선택해주세요" backTo="/outfit" />
 
       <div className="sa-body">
         {/* 학교 배지 — Figma 5535:18168 초록 pill + 하트 + 학교명 */}
@@ -80,7 +80,7 @@ export function SchoolAmountPage() {
         </button>
 
         {/* 캠페인 안내 — Figma 5535:18176 */}
-        <p className="sa-partner">이 캠페인은 {organizer.label}와 함께합니다.</p>
+        <p className="sa-partner">이 캠페인은 채널A와 함께합니다.</p>
 
         {/* 모금 현황 — Figma 5591:41174~41180 */}
         <div className="sa-funding">

@@ -14,7 +14,6 @@ import { useTheme } from "../theme/ThemeContext";
 import { formatCurrency } from "../utils/format";
 import { getCampaignProgressPercent } from "../utils/campaignProgress";
 import { getKioskBridge } from "../utils/kioskBridge";
-import cameraGuideModal from "../assets/camera-guide-modal.png";
 import "swiper/css";
 import "swiper/css/grid";
 import "swiper/css/free-mode";
@@ -24,7 +23,7 @@ const PAGE_SIZE = 12;
 
 export function OutfitSelectionPage() {
   const navigate = useAppNavigate();
-  const { theme, organizer, category } = useTheme();
+  const { theme, category } = useTheme();
   const isSchool = category === "school";
   // NGO flow shows PREMIUM outfits; school flow shows SCHOOL_UNIFORM (교복).
   const outfitType = isSchool ? "SCHOOL_UNIFORM" : "PREMIUM";
@@ -279,6 +278,7 @@ export function OutfitSelectionPage() {
                     <button
                       type="button"
                       className={`outfit-card${isSelected ? " outfit-card--on" : ""}`}
+                      style={isSelected ? { borderColor: theme.primary } : undefined}
                       role="listitem"
                       onClick={() => setSelected(isSelected ? null : outfit)}
                       aria-pressed={isSelected}
@@ -312,6 +312,7 @@ export function OutfitSelectionPage() {
         <button
           type="button"
           className="outfit-action"
+          style={selected ? { backgroundColor: theme.primary } : undefined}
           onClick={() => handlePhoto(false)}
           disabled={!canTakePhoto}
         >
@@ -321,6 +322,7 @@ export function OutfitSelectionPage() {
         <button
           type="button"
           className="outfit-action"
+          style={selected ? { backgroundColor: theme.primary } : undefined}
           onClick={() => handlePhoto(true)}
           disabled={!canTakePhoto}
         >
@@ -333,7 +335,7 @@ export function OutfitSelectionPage() {
       {isSchool && (
         <div className="outfit-donation">
           <p className="outfit-donation__partner">
-            이 캠페인은 {organizer.label}와 함께합니다.
+            이 캠페인은 채널A와 함께합니다.
           </p>
 
           <div className="outfit-funding">
@@ -371,7 +373,7 @@ export function OutfitSelectionPage() {
         <div className="outfit-guide" role="dialog" aria-modal="true">
           <img
             className="outfit-guide__img"
-            src={cameraGuideModal}
+            src="/icons/Group%201707482686.png"
             alt="왼쪽 화면을 먼저보시고 화면사이 카메라를 봐주세요."
           />
 

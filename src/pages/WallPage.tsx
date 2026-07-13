@@ -8,7 +8,6 @@ import {
   useState,
 } from "react";
 import { fetchWallEntriesPage, type WallEntry } from "../api/wall";
-import { AppFooter } from "../components/AppFooter";
 import { AppHeader } from "../components/AppHeader";
 import { IconSearch } from "../components/Icon";
 import { VirtualKeyboard } from "../components/VirtualKeyboard";
@@ -241,8 +240,6 @@ export function WallPage() {
           )}
         </section>
       </div>
-
-      <AppFooter />
     </PageBody>
   );
 }

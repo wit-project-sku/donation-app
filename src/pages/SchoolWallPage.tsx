@@ -3,14 +3,12 @@ import { useDeferredValue, useMemo, useState } from "react";
 import { useAppNavigate } from "../hooks/useAppNavigate";
 import { PageBody } from "../components/layout/PageBody";
 import { AppHeader } from "../components/AppHeader";
-import { AppFooter } from "../components/AppFooter";
 import { IconSearch } from "../components/Icon";
 import { VirtualKeyboard } from "../components/VirtualKeyboard";
 import { fetchWallEntriesPage } from "../api/wall";
 import { useDonationStore } from "../store/donationStore";
 import { useTheme } from "../theme/ThemeContext";
 import { appendKeyboardInput, removeLastHangul } from "../utils/hangulInput";
-import schoolEmblem from "../assets/school-emblem.png";
 import heartDefault from "../assets/donated.png";
 import "./SchoolWallPage.css";
 
@@ -184,8 +182,11 @@ export function SchoolWallPage() {
                     alt=""
                     loading="lazy"
                   />
-                  <img className="sw-card__emblem" src={schoolEmblem} alt="" />
-                  <span className="sw-card__grad">{entry.campaignName}</span>
+                  {/* 학교는 로고가 없어 하단 오버레이에 학교명을 로고 대신 표시.
+                      증서/NGO 벽과 동일 패턴: 사진 있으면 어두운 배드롭, 없으면 텍스트만. */}
+                  <span className="sw-card__overlay">
+                    <span className="sw-card__grad">{entry.campaignName}</span>
+                  </span>
                 </span>
                 <span className="sw-card__meta">
                   <span className="sw-card__line" aria-hidden />
@@ -214,8 +215,6 @@ export function SchoolWallPage() {
           </button>
         )}
       </div>
-
-      <AppFooter note />
     </PageBody>
   );
 }
