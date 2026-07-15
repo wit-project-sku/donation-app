@@ -10,11 +10,14 @@
 }
 
 .sc-body {
-  flex: 0 0 auto;
+  /* 모금 현황 카드를 하단 배너 위로 밀어내려면 본문이 남는 높이를 채워야 한다 */
+  flex: 1 1 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 50px 170px 0;
+  /* Figma: 배지 상단 750. 공용 AppHeader 가 731(Figma 699)이라 32px 더 크므로
+     상단 패딩으로 흡수해 이 화면의 절대 좌표를 Figma 와 맞춘다. */
+  padding: 19px 170px 0;
 }
 
 /* 학교 배지 — Figma 5591:41280 초록 pill 고정폭 1270, 좌측 정렬 */
@@ -29,7 +32,8 @@
   padding: 0 70px;
   border-radius: 45px;
   color: #ffffff;
-  margin-bottom: 40px;
+  /* Figma: 배지 930 → 체크 1078 */
+  margin-bottom: 148px;
   overflow: hidden;
 }
 
@@ -53,38 +57,41 @@
   height: 301px;
   border-radius: 50%;
   color: #ffffff;
-  margin-bottom: 40px;
+  /* Figma: 체크 1379 → "결제 완료" 1418 */
+  margin-bottom: 39px;
 }
 
-/* 결제 완료 — Display Medium 96 #636363 */
+/* 결제 완료 — Figma 5591:41646: Display Medium 96 #636363, line-height 121.68.
+   아래 여백은 Figma 기준 1540 → 기부금액 카드 1631 */
 .sc-title {
-  margin: 0 0 16px;
+  margin: 0 0 91px;
   font-size: 96px;
   font-weight: 500;
+  line-height: 121.68px;
   color: #636363;
 }
 
-/* 당신의 마음이 필요한 곳에 전해집니다 — Regular 50 #8b7355 */
-.sc-subtitle {
-  margin: 0 0 50px;
-  font-size: 50px;
-  font-weight: 400;
+/* 서브타이틀 — Figma I5591:41278;1233:2178: 헤더 ★문구를 brown02(#8b7355)로.
+   (다른 화면은 #909090 이지만 결제 완료 화면만 브라운) */
+.school-complete .app-header__subtitle {
   color: #8b7355;
 }
 
-/* 기부 금액 박스 — Figma 5591:41649: 1299×445, padding 40.56 40.56 0, gap 20.28 */
+/* 기부 금액 박스 — Figma 5591:41649: 1299×445 고정, padding 40.56 40.56 0(상단 정렬), gap 20.28.
+   아래 여백은 Figma 기준 2076 → QR/버튼 행 2241 */
 .sc-amount {
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  justify-content: center;
+  justify-content: flex-start;
   width: 1299px;
-  padding: 40.56px;
+  height: 445px;
+  padding: 40.56px 40.56px 0;
   gap: 20.28px;
   border: 5px solid #e8e8e8;
   border-radius: 35.49px;
-  margin-bottom: 24px;
+  margin-bottom: 165px;
 }
 
 .sc-amount__label {
@@ -114,42 +121,115 @@
   color: #636363;
 }
 
-/* 액션 버튼 2종 — Figma 5591:41270(초록)/41271(회색): 732×150, radius45 */
+/* QR + 액션 — Figma 5827:169786: 폭 1738.224, 세로 가운데, 양끝 정렬 */
 .sc-actions {
   display: flex;
-  justify-content: center;
-  gap: 104px;
-  width: 100%;
-  margin-bottom: 60px;
+  align-items: center;
+  justify-content: space-between;
+  width: 1738.224px;
+  /* 아래 모금 현황 카드가 margin-top:auto 로 하단 배너 위에 붙으므로 여백 불필요 */
+  margin-bottom: 0;
 }
 
-.sc-action {
-  width: 732px;
-  height: 150px;
-  border: none;
-  border-radius: 45px;
-  color: #ffffff;
-  font-size: 63px;
-  font-weight: 700;
+/* QR — Figma 5827:169787: 214.525 정사각, 4.291 초록 테두리, radius 21.453 */
+.sc-qr {
+  box-sizing: border-box;
+  flex: 0 0 auto;
+  width: 214.525px;
+  height: 214.525px;
+  padding: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  border: 4.291px solid #30b95c;
+  border-radius: 21.453px;
   cursor: pointer;
 }
 
-.sc-action--secondary {
-  background: #999999;
-  font-weight: 500;
+/* 화살표(저장하기 → QR) — Figma 5827:169788 */
+.sc-arrow {
+  flex: 0 0 auto;
+  font-size: 80px;
+  line-height: 1;
 }
 
-/* 캠페인 안내 — Regular 70 #636363 중앙 */
-.sc-partner {
-  margin: 0 0 46px;
-  text-align: center;
-  font-size: 70px;
-  font-weight: 400;
-  color: #636363;
+/* 저장하기(#999) / 기부한컷 발급(테마 초록) — Figma 5827:169790 / 169792 */
+.sc-action {
+  box-sizing: border-box;
+  flex: 0 0 auto;
+  width: 650px;
+  height: 150px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 30px;
+  border: none;
+  border-radius: 42.9px;
+  box-shadow: 0 21.45px 42.9px rgba(143, 147, 157, 0.1);
+  color: #e9e9e9;
+  font-size: 58px;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.sc-action--save {
+  background: #999999;
+}
+
+/* QR 확대 모달 — 딤: Figma 5843:87936 (rgba(0,0,0,0.2), 전체 화면 2161×3842) */
+.sc-qr-dim {
+  position: absolute;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  background: rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+}
+
+/* QR 카드 + 닫기 — 닫기는 카드 오른쪽 위 바깥에 나란히 */
+.sc-qr-panel {
+  display: flex;
+  align-items: flex-start;
+  gap: 40px;
+}
+
+/* 흰 카드 — QR 만 담는다(문구 없음) */
+.sc-qr-modal {
+  box-sizing: border-box;
+  display: flex;
+  padding: 80px;
+  background: #ffffff;
+  border-radius: 45px;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.25);
+}
+
+/* 닫기 — 카드와 떨어진 원형 ✕ (QR 위에 겹치지 않음) */
+.sc-qr-modal__close {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 105px;
+  height: 105px;
+  padding: 0;
+  border: none;
+  border-radius: 999px;
+  color: #ffffff;
+  font-size: 54px;
+  line-height: 1;
+  cursor: pointer;
 }
 
 /* 모금 현황 카드 */
 .sc-funding {
+  /* Figma: 모금 현황 카드 + 지표가 하단 검정 바(3267) 바로 위에 붙는다 */
+  margin-top: auto;
   box-sizing: border-box;
   width: 100%;
   min-height: 416px;
@@ -160,6 +240,16 @@
   flex-direction: column;
   justify-content: center;
   gap: 44px;
+}
+
+/* 참여자·수혜자 — 카드 바로 아래, Regular 70 #636363 중앙.
+   마지막 요소이므로 배너까지의 120px 간격을 여기서 만든다. */
+.sc-stats {
+  margin: 46px 0 120px;
+  text-align: center;
+  font-size: 70px;
+  font-weight: 400;
+  color: #636363;
 }
 
 .sc-funding__label {

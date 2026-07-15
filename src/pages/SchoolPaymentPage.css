@@ -10,7 +10,8 @@
 }
 
 .sp-body {
-  flex: 0 0 auto;
+  /* 모금 현황 카드를 하단 배너 위로 밀어내려면 본문이 남는 높이를 채워야 한다 */
+  flex: 1 1 auto;
   display: flex;
   flex-direction: column;
   padding: 60px 170px 0;
@@ -91,6 +92,20 @@
   color: #6d6d6d;
 }
 
+/* 카드 안내문 — "카드를 넣고 '결제하기'를 눌러주세요."
+   카드 박스에 대한 설명이므로 좌측 정렬(카드 타이틀·카드 박스와 같은 x=170),
+   세로는 타이틀과 카드 박스 사이 정중앙(위아래 30px). */
+.sp-method-desc {
+  margin: 0 0 30px;
+  color: #636363;
+  text-align: left;
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
+  font-size: 45px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 68.445px; /* 152.1% */
+}
+
 .sp-methods {
   display: flex;
   gap: 40px;
@@ -139,17 +154,10 @@
   margin-bottom: 90px;
 }
 
-/* Figma 5591:41264 — Noto Sans Regular 70 #636363 중앙 */
-.sp-partner {
-  margin: 0 0 46px;
-  text-align: center;
-  font-size: 70px;
-  font-weight: 400;
-  color: #636363;
-}
-
 /* 모금 현황 카드 — Figma 5591:41257 */
 .sp-funding {
+  /* Figma: 모금 현황 카드 + 지표가 하단 검정 바(3267) 바로 위에 붙는다 */
+  margin-top: auto;
   box-sizing: border-box;
   min-height: 416px;
   border: 5px solid #e8e8e8;
@@ -159,6 +167,16 @@
   flex-direction: column;
   justify-content: center;
   gap: 44px;
+}
+
+/* 참여자·수혜자 — 카드 바로 아래, Regular 70 #636363 중앙.
+   마지막 요소이므로 배너까지의 120px 간격을 여기서 만든다. */
+.sp-stats {
+  margin: 46px 0 120px;
+  text-align: center;
+  font-size: 70px;
+  font-weight: 400;
+  color: #636363;
 }
 
 .sp-funding__label {

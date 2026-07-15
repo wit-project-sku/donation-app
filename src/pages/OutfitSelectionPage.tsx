@@ -213,33 +213,45 @@ export function OutfitSelectionPage() {
 
   if (!selectedCampaign) return null;
 
-  // 학교 흐름은 교복(실 촬영)으로 진행하므로 의상 미선택이어도 촬영 버튼 활성화
-  const canTakePhoto = isSchool || (Boolean(selected) && !isLoading && !isError);
+  // 촬영 버튼(혼자 찍기 / WITH '인사')은 의상을 골라야 활성화된다(학교·NGO 공통).
+  const canTakePhoto = Boolean(selected) && !isLoading && !isError;
 
   return (
     <PageBody
       className={`outfit-page${isSchool ? " outfit-page--school" : ""}${singleRow && !isSchool ? " outfit-page--onerow" : ""}${captureOpen ? " outfit-page--modal" : ""}`}
       scroll={false}
     >
-      <AppHeader backTo={isSchool ? "/school-detail" : undefined} />
+      {/* 학교: 안내문이 헤더 서브타이틀(★ 회색)로 올라간다 (Figma I5535:18443;1233:2178) */}
+      <AppHeader
+        subtitle={isSchool ? "나의 고등학교 교복을 착용해보세요" : undefined}
+        backTo={isSchool ? "/school-detail" : undefined}
+      />
 
       <div className="outfit-body">
-        <div className="outfit-intro">
-          <h2 className="outfit-intro__title" style={{ color: theme.primary }}>
-            {isSchool
-              ? "나의 고등학교 교복을 착용해보세요!"
-              : "기부 참여자에게만 제공되는 특별 의상을 착용해보세요!"}
-          </h2>
-          <p className="outfit-intro__desc">
-            <span className="outfit-intro__star" aria-hidden>
-              ★
-            </span>
-            <span>
-              사진 촬영 버튼을 누르고 좌측 카메라에 얼굴을 바라봐주세요 10초후
-              촬영이 시작됩니다.
-            </span>
+        {isSchool ? (
+          /* 촬영 안내 — Figma 5535:18468: 테마색 Bold 55, 2줄, 중앙 정렬.
+             NOTE: `.outfit-guide` 는 촬영 팝업 딤 오버레이라 이름이 겹치면 안 된다. */
+          <p className="outfit-shot-guide" style={{ color: theme.primary }}>
+            사진 촬영 버튼을 누르고 좌측 카메라에 얼굴을 바라봐주세요
+            <br />
+            10초후 촬영이 시작됩니다.
           </p>
-        </div>
+        ) : (
+          <div className="outfit-intro">
+            <h2 className="outfit-intro__title" style={{ color: theme.primary }}>
+              기부 참여자에게만 제공되는 특별 의상을 착용해보세요!
+            </h2>
+            <p className="outfit-intro__desc">
+              <span className="outfit-intro__star" aria-hidden>
+                ★
+              </span>
+              <span>
+                사진 촬영 버튼을 누르고 좌측 카메라에 얼굴을 바라봐주세요 10초후
+                촬영이 시작됩니다.
+              </span>
+            </p>
+          </div>
+        )}
 
         {isLoading && <p className="outfit-status">의상 불러오는 중...</p>}
         {isError && (
@@ -334,10 +346,6 @@ export function OutfitSelectionPage() {
       {/* 모금 현황 — Figma 5659:96261~96270 (학교 흐름: 촬영 대기 중 기부 정보 노출) */}
       {isSchool && (
         <div className="outfit-donation">
-          <p className="outfit-donation__partner">
-            이 캠페인은 채널A와 함께합니다.
-          </p>
-
           <div className="outfit-funding">
             <p className="outfit-funding__label" style={{ color: theme.primary }}>
               모금 현황

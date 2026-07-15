@@ -53,9 +53,17 @@
   flex-direction: column;
 }
 
+/* 학교명 + 모금등수 한 줄 (Figma 5776:26005 / 5846:90687) */
+.sd-title-row {
+  display: flex;
+  align-items: baseline;
+  gap: 30px;
+  margin: 0 0 130px;
+}
+
 /* 학교명 — Figma 5776:26005 불릿 리스트 + Bold 80 검정 */
 .sd-title {
-  margin: 0 0 130px;
+  margin: 0;
   font-size: 80px;
   font-weight: 700;
   color: #000000;
@@ -64,6 +72,13 @@
 .sd-title::before {
   content: "•";
   margin-right: 34px;
+}
+
+/* 모금등수 — Figma 5846:90687 Bold 50, 테마색(학교=초록 #30b95c) */
+.sd-rank {
+  font-size: 50px;
+  font-weight: 700;
+  white-space: nowrap;
 }
 
 /* 기부하기 — Figma 5776:26006: 하단 전체폭 버튼(초록, h210, radius45, 흰 80) */
@@ -143,15 +158,6 @@
   font-size: 55px;
   font-weight: 500;
   line-height: 1.4;
-  color: #636363;
-}
-
-/* 캠페인 안내 문구 — 모금 현황 바로 위, 중앙 */
-.sd-partner {
-  margin: 0 0 46px;
-  text-align: center;
-  font-size: 55px;
-  font-weight: 400;
   color: #636363;
 }
 

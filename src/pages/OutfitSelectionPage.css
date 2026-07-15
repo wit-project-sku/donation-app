@@ -111,6 +111,18 @@
   margin-bottom: 80px;
 }
 
+/* 촬영 안내(학교) — Figma 5535:18466/18468: 테마색 Bold 55, 2줄, 중앙, px40.
+   `.outfit-guide` 는 촬영 팝업 딤 오버레이(위 13행)이므로 이름을 분리한다. */
+.outfit-shot-guide {
+  flex: 0 0 auto;
+  margin: 0 0 80px;
+  padding: 0 40px;
+  text-align: center;
+  font-size: 55px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
 .outfit-intro__title {
   /* Figma 5535:18762: 좌측 x=307 (본문패딩 170 + 137), 박스높이 93 (68*1.37) */
   margin: 0 0 17px 137px;
@@ -245,11 +257,6 @@
   padding: 110px 170px 90px 170px;
 }
 
-/* 학교 촬영 버튼 — Figma 5535:18454: 회색(#999) 배경 (강조색 아님) */
-.outfit-page--school .outfit-action:not(:disabled) {
-  background: #999999;
-}
-
 /* 모금 현황 블록 — Figma 5659:96261~96270 (촬영 대기 중 기부 정보) */
 .outfit-donation {
   flex: 0 0 auto;
@@ -258,13 +265,16 @@
   flex-direction: column;
 }
 
-/* "이 캠페인은 ○○와 함께합니다." — Regular 70 #636363 중앙 */
-.outfit-donation__partner {
-  margin: 0 0 46px;
-  text-align: center;
-  font-size: 70px;
-  font-weight: 400;
-  color: #636363;
+/* Figma 5659:96261: 모금 현황 카드/지표는 하단 검정 바(3267) 바로 위에 붙는다.
+   남는 세로 공간을 이 블록 위쪽이 흡수하도록 auto 밀어내기를 여기로 옮긴다
+   (.app-footer 의 margin-top:auto 와 나눠 가지지 않도록 푸터는 0 으로). */
+.outfit-page--school .outfit-donation {
+  margin-top: auto;
+  margin-bottom: 120px;
+}
+
+.outfit-page--school .app-footer {
+  margin-top: 0;
 }
 
 /* 모금 현황 카드 — 흰 배경, border5 #e8e8e8, radius45, h416 */

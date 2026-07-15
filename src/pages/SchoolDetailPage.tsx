@@ -7,15 +7,16 @@ import { useDonationStore } from "../store/donationStore";
 import { useTheme } from "../theme/ThemeContext";
 import { formatCurrency } from "../utils/format";
 import { getCampaignProgressPercent } from "../utils/campaignProgress";
-import { fetchSchoolById } from "../api/schools";
+import { fetchSchoolById, fetchSchoolsPage } from "../api/schools";
 import { buildSchoolCampaignFromDto } from "../data/schoolCampaign";
 import "./SchoolDetailPage.css";
 
-/** 선택한 사용처에 따라 바뀌는 CTA 부제 (Figma 5591:40542: "교복을 사줍시다.") */
+/** 선택한 사용처에 따라 바뀌는 CTA 부제.
+ *  Figma 5776:26007 "기부하기 - 후배들에게 교복을 사줍시다" — 마침표 없음. */
 const PROGRAM_SUBTITLES: Record<string, string> = {
-  "우수학생 장학금": "후배들의 배움을 응원합시다.",
-  "학교 시설 개선": "더 나은 배움터를 만듭시다.",
-  "교복 지원": "후배들에게 교복을 사줍시다.",
+  "우수학생 장학금": "후배들의 배움을 응원합시다",
+  "학교 시설 개선": "더 나은 배움터를 만듭시다",
+  "교복 지원": "후배들에게 교복을 사줍시다",
 };
 
 /**
@@ -27,7 +28,8 @@ const PROGRAM_SUBTITLES: Record<string, string> = {
 export function SchoolDetailPage() {
   const navigate = useAppNavigate();
   const { theme } = useTheme();
-  const { selectedCampaign, setSelectedCampaign } = useDonationStore();
+  const { selectedCampaign, setSelectedCampaign, setDonationCategory } =
+    useDonationStore();
   // Figma 기본 선택: 교복 지원(3번째)
   const [selected, setSelected] = useState(2);
 
@@ -36,6 +38,13 @@ export function SchoolDetailPage() {
   useEffect(() => {
     if (!selectedCampaign) navigate("/school", { replace: true });
   }, [selectedCampaign, navigate]);
+
+  // 이 화면에 있다는 것은 학교 흐름이 확정됐다는 뜻이다. 카테고리가 비어 있으면
+  // (직접 진입·유휴 리셋) 이후 /outfit 이 NGO 흐름으로 오인해 결제 페이지로
+  // 리다이렉트되므로 여기서 보정한다.
+  useEffect(() => {
+    setDonationCategory("school");
+  }, [setDonationCategory]);
 
   // List endpoint response has the same fields we need for this UI,
   // but we still refetch by id to align with `/api/donations/schools/{id}`.
@@ -54,7 +63,31 @@ export function SchoolDetailPage() {
       try {
         const dto = await fetchSchoolById(id);
         if (cancelled) return;
-        setSelectedCampaign(buildSchoolCampaignFromDto(dto));
+        const next = buildSchoolCampaignFromDto(dto);
+
+        // 모금등수(전국 순위)는 목록(sort=DONATION*) 응답에만 있고 상세
+        // 엔드포인트(/schools/{id})는 내려주지 않는다. 따라서 상세 응답으로
+        // 통째로 덮어쓰면 등수가 사라진다 → 기존 값을 유지하고, 그래도 없으면
+        // 이름으로 랭킹을 조회해 보충한다.
+        let rank =
+          next.donationRank ??
+          useDonationStore.getState().selectedCampaign?.donationRank;
+
+        if (rank == null) {
+          try {
+            const ranked = await fetchSchoolsPage({
+              keyword: dto.name,
+              sort: "DONATION",
+              pageSize: 20,
+            });
+            if (cancelled) return;
+            rank = ranked.content.find((s) => s.id === dto.id)?.nationwideRank;
+          } catch {
+            // 랭킹 조회 실패 시 등수 없이 표시한다.
+          }
+        }
+
+        setSelectedCampaign({ ...next, donationRank: rank });
       } catch {
         // Degraded mode: keep the list-derived campaign.
       }
@@ -87,8 +120,15 @@ export function SchoolDetailPage() {
       </div>
 
       <div className="sd-body">
-        {/* 학교명 — Figma 5591:40540 Bold 80 */}
-        <h2 className="sd-title">{selectedCampaign.title}</h2>
+        {/* 학교명 + 모금등수 — Figma 5591:40540 Bold 80 / 5846:90687 Bold 50 테마색 */}
+        <div className="sd-title-row">
+          <h2 className="sd-title">{selectedCampaign.title}</h2>
+          {selectedCampaign.donationRank != null && (
+            <span className="sd-rank" style={{ color: theme.primary }}>
+              모금등수 : {selectedCampaign.donationRank}등
+            </span>
+          )}
+        </div>
 
         {/* 사용처 카드 3종 — Figma 5591:40607~40621 (선택: 연초록 #e5ffed) */}
         <div className="sd-programs">
@@ -107,9 +147,6 @@ export function SchoolDetailPage() {
 
         {/* 소개문 — Figma 5591:40690 Medium 55 #636363 */}
         <p className="sd-desc">{selectedCampaign.description}</p>
-
-        {/* 캠페인 안내 — 모금 현황 바로 위, 중앙 */}
-        <p className="sd-partner">이 캠페인은 채널A와 함께합니다.</p>
 
         {/* 모금 현황 — Figma 5591:40722 흰 박스 + 진행바 */}
         <div className="sd-funding">

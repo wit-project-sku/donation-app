@@ -1,5 +1,4 @@
-import { useEffect, useRef } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { HashRouter, Route, Routes } from "react-router-dom";
 import { LocationNavigate } from "./components/LocationNavigate";
 import { AppLayout } from "./components/layout/AppLayout";
@@ -15,6 +14,7 @@ import { SchoolCompletePage } from "./pages/SchoolCompletePage";
 import { SchoolRegisterPage } from "./pages/SchoolRegisterPage";
 import { SchoolCertificatePage } from "./pages/SchoolCertificatePage";
 import { SchoolWallPage } from "./pages/SchoolWallPage";
+import { SchoolWallDetailPage } from "./pages/SchoolWallDetailPage";
 import { CertificatePromptPage } from "./pages/CertificatePromptPage";
 import { EntryPage } from "./pages/EntryPage";
 import { DonationCertificatePage } from "./pages/DonationCertificatePage";
@@ -25,59 +25,11 @@ import { PaymentPage } from "./pages/PaymentPage";
 import { WallPage } from "./pages/WallPage";
 import { ThemeProvider } from "./theme/ThemeContext";
 import { useKioskPhotoBridge } from "./hooks/useKioskPhotoBridge";
-import { useDonationStore } from "./store/donationStore";
 
 function LocationAwareApp() {
   const [searchParams] = useSearchParams();
   const location = searchParams.get("location") || "insadong";
-  const navigate = useNavigate();
-  const resetSession = useDonationStore((s) => s.resetSession);
-  const idleTimerRef = useRef<number | null>(null);
   useKioskPhotoBridge();
-
-  useEffect(() => {
-    const resetToHome = () => {
-      resetSession();
-      navigate("/", { replace: true });
-    };
-
-    const clearIdleTimer = () => {
-      if (idleTimerRef.current) {
-        window.clearTimeout(idleTimerRef.current);
-      }
-    };
-
-    const startIdleTimer = () => {
-      clearIdleTimer();
-      idleTimerRef.current = window.setTimeout(resetToHome, 3 * 60 * 1000);
-    };
-
-    const activityEvents = [
-      "mousedown",
-      "mousemove",
-      "keydown",
-      "touchstart",
-      "scroll",
-      "click",
-      "pointerdown",
-    ] as const;
-
-    startIdleTimer();
-
-    activityEvents.forEach((eventName) => {
-      window.addEventListener(eventName, startIdleTimer, { passive: true });
-    });
-
-    window.addEventListener("focus", startIdleTimer);
-
-    return () => {
-      clearIdleTimer();
-      activityEvents.forEach((eventName) => {
-        window.removeEventListener(eventName, startIdleTimer);
-      });
-      window.removeEventListener("focus", startIdleTimer);
-    };
-  }, [navigate, resetSession]);
 
   return (
     <ThemeProvider location={location}>
@@ -99,6 +51,10 @@ function LocationAwareApp() {
                   <Route path="/school-register" element={<SchoolRegisterPage />} />
                   <Route path="/school-certificate" element={<SchoolCertificatePage />} />
                   <Route path="/school-wall" element={<SchoolWallPage />} />
+                  <Route
+                    path="/school-wall-detail"
+                    element={<SchoolWallDetailPage />}
+                  />
                   <Route path="/campaigns" element={<CampaignsPage />} />
                   <Route path="/campaign" element={<CampaignDetailPage />} />
                   <Route path="/amount" element={<AmountPage />} />

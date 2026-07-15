@@ -131,15 +131,17 @@ export function EntryPage() {
 
       <div className="entry-page__cards">
         <div className="entry-col">
+          {/* NGO 흐름은 아직 준비중 — 카드/기부내역 모두 비활성(클릭 불가) */}
           <button
             type="button"
-            className="entry-card entry-card--ngo"
-            onClick={() => choose("ngo")}
+            className="entry-card entry-card--ngo entry-card--disabled"
+            disabled
+            aria-disabled="true"
           >
             <span className="entry-card__icon">
               <img src={ngoIcon} alt="" className="entry-card__icon-img" />
             </span>
-            <span className="entry-card__label">NGO</span>
+            <span className="entry-card__label">NGO(준비중)</span>
             <span className="entry-card__desc">
               국내외 다양한 단체를 통해
               <br />
@@ -148,8 +150,9 @@ export function EntryPage() {
           </button>
           <button
             type="button"
-            className="entry-history entry-history--ngo"
-            onClick={() => navigate("/wall")}
+            className="entry-history entry-history--ngo entry-history--disabled"
+            disabled
+            aria-disabled="true"
           >
             기부내역 보기
           </button>

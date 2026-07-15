@@ -5,7 +5,8 @@
   height: 1000px;
   box-sizing: border-box;
   padding: 95px 58px 73px;
-  background: #d7d7d4;
+  /* Figma 4097:76442 — 반투명 배경 #c5c5c1 @ 70% */
+  background: rgba(197, 197, 193, 0.7);
   border-radius: 0;
   display: flex;
   flex-direction: column;
@@ -20,7 +21,7 @@
   flex-shrink: 0;
 }
 
-/* 표준 키 — Figma 163×120, radius 20, 흰 배경, 하단 그림자. 고정 크기(늘어나지 않음). */
+/* 표준 키 — Figma 163×120, radius 20, 흰 배경(평면). 고정 크기(늘어나지 않음). */
 .virtual-keyboard__key {
   flex: 0 0 auto;
   width: 163px;
@@ -28,7 +29,6 @@
   border: 0;
   border-radius: 20px;
   background: #fff;
-  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.28);
   color: #000;
   font-family: "Noto Sans", "Noto Sans KR", sans-serif;
   font-size: 64px;
@@ -47,6 +47,12 @@
 /* 백스페이스 / Shift — Figma 262px */
 .virtual-keyboard__key--special {
   width: 262px;
+}
+
+/* 백스페이스 — Figma 4097:76588 검정 키 + 흰 아이콘 */
+.virtual-keyboard__key--backspace {
+  background: #111111;
+  color: #ffffff;
 }
 
 /* 줄바꿈(↵) — Figma 362px. 화살표 글리프는 시각적으로 작아 크게 키움. */
@@ -74,11 +80,4 @@
 
 .virtual-keyboard__key--active {
   background: color-mix(in srgb, var(--keyboard-active-color, #1a4d7e) 12%, #ffffff);
-}
-
-.virtual-keyboard__layout-label {
-  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
-  font-size: 22px;
-  font-weight: 800;
-  line-height: 1;
 }

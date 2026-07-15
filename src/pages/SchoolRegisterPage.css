@@ -9,6 +9,11 @@
   gap: 0;
 }
 
+/* 서브타이틀 — Figma I5597:41985;1233:2178: brown02 */
+.school-register .app-header__subtitle {
+  color: #8b7355;
+}
+
 /* 카드는 헤더(699) 바로 아래(Figma card top 699) */
 .sr-body {
   flex: 0 0 auto;
@@ -64,7 +69,10 @@
   flex: 1 1 auto;
 }
 
+/* 라벨 — Figma 5597:42005/42006: Regular 60 #636363.
+   입력창보다 28px 안쪽에서 시작(졸업연도 376 vs 셀렉트 348) */
 .sr-field__label {
+  padding-left: 28px;
   font-size: 60px;
   font-weight: 400;
   line-height: 72px;
@@ -160,16 +168,36 @@
   color: #000000;
 }
 
-/* 동의 — Figma 5597:42018: 카드(하단 1357)→체크(1402) 간격 45, 카드 좌측(≈76)과 정렬 */
+/* 동의 — 카드(하단 1357)→체크(1402) 간격 45, 카드 좌측(≈76)과 정렬 */
 .sr-consent {
   display: flex;
   align-items: center;
   gap: 32px;
   align-self: flex-start;
   margin: 45px 0 0 76px;
+}
+
+/* 체크 토글 — [개인보호정책] 링크와 버튼이 중첩되지 않도록 분리 */
+.sr-consent__toggle {
+  display: inline-flex;
   padding: 0;
   border: none;
   background: none;
+  cursor: pointer;
+}
+
+/* [개인보호정책] — 눌러서 처리방침 팝업 열기 (밑줄 없음, 행 텍스트와 동일 스타일) */
+.sr-policy-link {
+  padding: 0;
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  font-style: inherit;
+  line-height: inherit;
+  color: inherit;
+  text-decoration: none;
   cursor: pointer;
 }
 
@@ -187,18 +215,115 @@
 }
 
 .sr-consent__text {
-  font-size: 50px;
+  margin: 0;
+  color: #d0d2d3;
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
+  font-size: 48px;
+  font-style: normal;
   font-weight: 700;
-  color: #000000;
+  line-height: normal;
   white-space: nowrap;
 }
 
+/* ── 개인정보 처리방침 팝업 — Figma 5827:170940 ───────────────────────── */
+
+.sr-policy-dim {
+  position: absolute;
+  inset: 0;
+  z-index: 70;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+/* 카드 — Figma 5827:170941: 1820×2574, radius 53.625, 흰 배경 */
+.sr-policy {
+  position: relative;
+  box-sizing: border-box;
+  width: 1820px;
+  height: 2574px;
+  background: #ffffff;
+  border-radius: 53.625px;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.25);
+}
+
+/* 닫기 — Figma 5827:170943: 125px, 카드 기준 left 1634 / top 78.
+   본문(.sr-policy__body)이 DOM 상 뒤라 그대로 두면 위를 덮어 클릭이 막힌다 → z-index 필수 */
+.sr-policy__close {
+  position: absolute;
+  z-index: 2;
+  top: 78px;
+  left: 1634px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 125px;
+  height: 125px;
+  padding: 0;
+  background: none;
+  border: 4px solid #333333;
+  border-radius: 999px;
+  color: #333333;
+  font-size: 64px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+/* 본문 — Figma 5827:170942: left 40, top 108, w1740, #333, 자간 -2.36 */
+.sr-policy__body {
+  position: absolute;
+  left: 40px;
+  top: 108px;
+  width: 1740px;
+  /* 카드(2574) 안에서 본문이 넘치면 세로 스크롤 (스크롤바는 숨김 — 터치) */
+  max-height: 2394px;
+  overflow-y: auto;
+  scrollbar-width: none;
+  color: #333333;
+  letter-spacing: -2.36px;
+}
+
+.sr-policy__body::-webkit-scrollbar {
+  display: none;
+}
+
+/* 제목 — SemiBold 60, 자간 -3 */
+.sr-policy__title {
+  margin: 0 0 47px;
+  font-size: 60px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -3px;
+}
+
+.sr-policy__section {
+  margin-bottom: 47px;
+}
+
+/* 소제목 — Medium 51 */
+.sr-policy__heading {
+  margin: 0;
+  font-size: 51px;
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+/* 본문 줄 — Regular 47 */
+.sr-policy__line {
+  margin: 0;
+  font-size: 47px;
+  font-weight: 400;
+  line-height: 1.3;
+}
+
 /* 등록하기 — Figma 5659:96272/96273: 1660×150, radius45, 회색(#999)→완성 시 초록.
-   체크(하단 1490)→버튼(1558) 간격 68 */
+   Figma 는 카드(하단 1357) → 버튼(1610) 간격이 253.
+   동의 체크(45 + 88)를 그 사이에 유지하므로 남는 120 을 버튼 위 여백으로 준다. */
 .sr-submit {
   width: 1660px;
   height: 150px;
-  margin-top: 68px;
+  margin-top: 120px;
   border: none;
   border-radius: 45px;
   background: #999999;
@@ -213,10 +338,10 @@
   cursor: default;
 }
 
-/* 키보드 — Figma: 버튼(1708)→키보드(1798) 간격 90 */
+/* 키보드 — Figma 5597:42009: 버튼(하단 1760) → 키보드(1892) 간격 132 */
 .sr-keyboard {
   flex: 0 0 auto;
-  margin-top: 90px;
+  margin-top: 132px;
 }
 
 /* 좌측 홈/뒤로 네비가 키보드 키와 겹치지 않도록 왼쪽 여백(키 없는 영역)으로 이동 */

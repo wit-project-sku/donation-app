@@ -64,7 +64,7 @@ export function VirtualKeyboard({
         ))}
         <button
           type="button"
-          className="virtual-keyboard__key virtual-keyboard__key--special"
+          className="virtual-keyboard__key virtual-keyboard__key--special virtual-keyboard__key--backspace"
           onClick={onBackspace}
           aria-label="삭제"
         >
@@ -136,10 +136,7 @@ export function VirtualKeyboard({
           aria-label={layout === "korean" ? "영문 자판으로 전환" : "한글 자판으로 전환"}
           aria-pressed={layout === "english"}
         >
-          <IconGlobe size={60} strokeWidth={2.4} />
-          <span className="virtual-keyboard__layout-label">
-            {layout === "korean" ? "한" : "En"}
-          </span>
+          <IconGlobe size={72} strokeWidth={2.4} />
         </button>
         <button
           type="button"

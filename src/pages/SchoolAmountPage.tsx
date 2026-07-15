@@ -79,9 +79,6 @@ export function SchoolAmountPage() {
           기부하기
         </button>
 
-        {/* 캠페인 안내 — Figma 5535:18176 */}
-        <p className="sa-partner">이 캠페인은 채널A와 함께합니다.</p>
-
         {/* 모금 현황 — Figma 5591:41174~41180 */}
         <div className="sa-funding">
           <p className="sa-funding__label" style={{ color: theme.primary }}>
@@ -101,6 +98,12 @@ export function SchoolAmountPage() {
             {formatCurrency(selectedCampaign.targetAmount)}원
           </p>
         </div>
+
+        {/* 참여자·수혜자 — 모금 현황 카드 바로 아래 (Regular 70 #636363, 중앙) */}
+        <p className="sa-stats">
+          기부 참여자 : {selectedCampaign.participantCount ?? 0}명 / 기부 수혜자
+          : {selectedCampaign.studentCount ?? 0}명
+        </p>
       </div>
 
       <AppFooter />

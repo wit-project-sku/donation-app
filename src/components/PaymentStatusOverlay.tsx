@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTheme } from "../theme/ThemeContext";
 import { ApiError } from "../api/client";
-import { IconCheck } from "./Icon";
 import cardReader from "../assets/card-reader-illust.png";
 import errComm from "../assets/error-comm.png";
 import errTimeout from "../assets/error-timeout.png";
@@ -10,7 +9,9 @@ import { formatCurrency } from "../utils/format";
 import "./PaymentStatusOverlay.css";
 
 type ErrorKind = "comm" | "timeout" | "insufficient";
-type Step = "insert" | "processing" | "success" | "error";
+/** 결제 성공 시엔 팝업에서 완료 화면을 띄우지 않고 바로 다음 페이지로 넘어간다
+ *  (완료 화면은 /school-complete · /certificate-prompt 가 담당) → "success" 단계 없음. */
+type Step = "insert" | "processing" | "error";
 
 interface PaymentStatusOverlayProps {
   amount: number;
@@ -79,7 +80,6 @@ export function PaymentStatusOverlay({
   const [step, setStep] = useState<Step>("insert");
   const [errorKind, setErrorKind] = useState<ErrorKind>("comm");
   const [timer, setTimer] = useState(30);
-  const [countdown, setCountdown] = useState(3);
   const cancelledRef = useRef(false);
   const refs = useRef({ onProcessPayment, onComplete, onCancel, onPaymentFailed });
   refs.current = { onProcessPayment, onComplete, onCancel, onPaymentFailed };
@@ -98,7 +98,8 @@ export function PaymentStatusOverlay({
         await refs.current.onProcessPayment();
         if (cancelledRef.current) return;
         window.clearTimeout(toProcessing);
-        setStep("success");
+        // 결제 성공 — 팝업에 완료 화면을 띄우지 않고 곧바로 다음 페이지로 넘긴다.
+        refs.current.onComplete();
       } catch (err) {
         if (cancelledRef.current) return;
         window.clearTimeout(toProcessing);
@@ -126,23 +127,6 @@ export function PaymentStatusOverlay({
     return () => window.clearInterval(id);
   }, [step]);
 
-  // 3s success countdown → next step
-  useEffect(() => {
-    if (step !== "success") return;
-    setCountdown(3);
-    const id = window.setInterval(() => {
-      setCountdown((c) => {
-        if (c <= 1) {
-          window.clearInterval(id);
-          refs.current.onComplete();
-          return 0;
-        }
-        return c - 1;
-      });
-    }, 1000);
-    return () => window.clearInterval(id);
-  }, [step]);
-
   const handleCancel = () => {
     cancelledRef.current = true;
     refs.current.onCancel();
@@ -158,10 +142,9 @@ export function PaymentStatusOverlay({
     </div>
   );
 
-  const closable = step !== "success";
   const handleBackdrop = (event: React.MouseEvent<HTMLDivElement>) => {
-    // 카드(모달) 바깥(백드롭)을 눌렀을 때만 닫기 — 성공 화면은 자동 전환이라 유지
-    if (closable && event.target === event.currentTarget) handleCancel();
+    // 카드(모달) 바깥(백드롭)을 눌렀을 때만 닫기
+    if (event.target === event.currentTarget) handleCancel();
   };
 
   return (
@@ -199,22 +182,6 @@ export function PaymentStatusOverlay({
             <button type="button" className="pso__cancel" onClick={handleCancel}>
               취소
             </button>
-          </>
-        )}
-
-        {step === "success" && (
-          <>
-            <h2 className="pso__title">결제 완료</h2>
-            <p className="pso__desc pso__desc--success">
-              당신의 마음이 필요한 곳에 전해집니다
-            </p>
-            {amountCard}
-            <div className="pso__check" aria-hidden>
-              <IconCheck size={96} strokeWidth={3.2} color="#fff" />
-            </div>
-            <div className="pso__auto">
-              {countdown}초 후 다음 단계로 자동 전환됩니다
-            </div>
           </>
         )}
 

@@ -1,5 +1,7 @@
 /* 학교 기부내역(기부한컷) 벽 (Figma 5659:96280 / 5659:96279) */
 .school-wall {
+  /* 키보드를 페이지 좌표(top 2240)로 고정하기 위한 기준 */
+  position: relative;
   display: flex;
   flex-direction: column;
 }
@@ -17,7 +19,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 20px 170px 56px;
+  /* Figma: 헤더(699) → 필터 탭(712) = 13 */
+  padding: 13px 170px 56px;
   overflow-y: auto;
   overflow-x: hidden;
   overscroll-behavior: contain;
@@ -50,21 +53,101 @@
 }
 
 /* 검색 영역 — 키보드를 검색창 바로 아래 절대배치하기 위한 기준 (본문 폭 1820) */
+/* 검색줄(하단 1149) → 그리드(1327) = 178 (Figma). 그리드가 붙어버리지 않도록 여기서 띄운다. */
 .sw-search-area {
   position: relative;
-  width: 1820px;
+  width: 1814.08px;
+  margin-bottom: 178px;
   z-index: 20;
+}
+
+/* 졸업연도 + 검색창 한 줄 — Figma: 연도 174~597, 검색 662~1988 (총 1814) */
+.sw-search-row {
+  display: flex;
+  align-items: center;
+  gap: 65px;
+}
+
+/* 졸업연도 셀렉트 — Figma 5827:170293: 423×180, radius 90, border5 #e8e8e8 */
+.sw-year {
+  box-sizing: border-box;
+  flex: 0 0 423px;
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 50px;
+  background: #ffffff;
+  border: 5px solid #e8e8e8;
+  border-radius: 90px;
+  cursor: pointer;
+}
+
+/* Figma 5827:170294 "2026" Regular 60 #636363 */
+.sw-year__value {
+  font-size: 60px;
+  font-weight: 400;
+  color: #636363;
+}
+
+/* Figma 5827:170295 "▼" 68 테마색 */
+.sw-year__arrow {
+  font-size: 68px;
+  line-height: 1;
+}
+
+/* 연도 목록 — 등록 화면(sr-options)과 동일 패턴 */
+.sw-year-options {
+  position: absolute;
+  top: calc(100% + 12px);
+  left: 0;
+  width: 423px;
+  max-height: 900px;
+  overflow-y: auto;
+  scrollbar-width: none;
+  margin: 0;
+  padding: 20px 0;
+  list-style: none;
+  background: #ffffff;
+  border: 5px solid #e8e8e8;
+  border-radius: 90px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+  z-index: 40;
+}
+
+.sw-year-options::-webkit-scrollbar {
+  display: none;
+}
+
+.sw-year-option {
+  width: 100%;
+  height: 130px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  background: none;
+  font-size: 60px;
+  font-weight: 400;
+  color: #636363;
+  cursor: pointer;
+}
+
+.sw-year-option.is-selected {
+  font-weight: 700;
 }
 
 /* 키보드 — 검색창 바로 아래, 본문(페이지) 전체 폭을 꽉 채움
    (.sw-body 좌우 패딩 170px + 중앙정렬 밖으로 빼내 화면 폭까지 확장) */
 /* 키보드는 본문 폭을 꽉 채우도록 전체 스테이지 폭으로 풀블리드 (다른 페이지와 동일) */
+/* 좌측 세로중앙 네비(SideNav top 2010 + h205 ≈ 2215) 바로 아래, 전체 폭.
+   본문이 스크롤돼도 따라 움직이지 않도록 .sw-body 바깥(페이지 기준)에 둔다. */
 .sw-keyboard {
   position: absolute;
-  top: calc(100% + 20px);
-  left: 50%;
-  transform: translateX(-50%);
-  width: var(--kiosk-stage-width);
+  left: 0;
+  right: 0;
+  top: 2240px;
   z-index: 30;
   overflow: hidden;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.18);
@@ -82,9 +165,10 @@
 }
 
 /* 검색창 — Figma 5659:96026 초록 테두리 4.29px, radius 120, h182 */
+/* 검색창 — Figma 5535:19877: 1326×182 (연도 셀렉트 오른쪽) */
 .sw-search {
   box-sizing: border-box;
-  width: 1820px;
+  flex: 0 0 1326px;
   height: 182px;
   display: flex;
   align-items: center;
@@ -123,10 +207,12 @@
 }
 
 /* 필터 탭 — Figma 5659:96227/96229 815×150, radius45, #999 → 초록 */
+/* 필터 탭 — Figma 5659:87298/87305: 815 두 개 + 간격 183 (총 1814).
+   아래 여백은 Figma 기준 탭(하단 862) → 검색줄(967) = 105 */
 .sw-filters {
   display: flex;
-  gap: 190px;
-  margin: 44px 0;
+  gap: 183px;
+  margin: 0 0 105px;
 }
 
 .sw-filter {
@@ -142,14 +228,15 @@
 }
 
 /* 그리드 — Figma 5706:13096: 4열, 카드 369, 열간격 115, 행간격 150 */
+/* Figma 5827:170314: 5열 × 292.96, 열간격 87.78 / 행간격 126.81, 폭 1814 */
 .sw-grid {
   flex: 0 0 auto;
-  width: 100%;
+  width: 1814.08px;
   display: grid;
-  grid-template-columns: repeat(4, 369px);
-  justify-content: center;
-  column-gap: 115px;
-  row-gap: 150px;
+  grid-template-columns: repeat(5, 292.96px);
+  justify-content: space-between;
+  column-gap: 87.78px;
+  row-gap: 126.81px;
   padding-bottom: 40px;
 }
 
@@ -157,7 +244,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 18px;
+  /* Figma: 사진(하단 1848.2) → 메타(1861.5) ≈ 13, 카드 전체 546.96 */
+  gap: 13px;
   padding: 0;
   border: none;
   background: none;
@@ -165,11 +253,12 @@
 }
 
 /* 합성 사진 — Figma 5776:24347: 369×656, radius 38. 테두리/그림자 없음(사진 카드). */
+/* Figma 5780:26741: 카드 사진 292.96 × 520.82 */
 .sw-card__photo {
   position: relative;
   display: block;
-  width: 369px;
-  height: 656px;
+  width: 292.96px;
+  height: 520.82px;
   border: none;
   border-radius: 38px;
   overflow: hidden;
@@ -182,23 +271,20 @@
   display: block;
 }
 
-/* 사진 없음 — 흰 카드 + 연한 테두리(증서 페이지와 동일 #E8E8E8). */
-.sw-card__photo--placeholder {
-  background: #ffffff;
-  border: 5px solid var(--5, #e8e8e8);
-  box-shadow: none;
+/* 사진 없음 — 기본 이미지를 넣지 않고 어두운 배경만 (증서 카드와 동일 #999) */
+.sw-card__photo--empty {
   display: flex;
   align-items: center;
   justify-content: center;
+  background: #999999;
 }
 
-/* 기본 하트 — 꽉 채우지 않고 가운데 원형(border-radius 50%)으로 */
-.sw-card__img--placeholder {
-  width: 62%;
-  height: auto;
-  aspect-ratio: 1 / 1;
-  object-fit: cover;
-  border-radius: 50%;
+/* 학교 엠블럼 — 증서 카드(1074.5폭, 엠블럼 469×460)를 카드 폭 292.96 으로
+   축소한 비율(0.2727) → 128×125, 카드 중앙 */
+.sw-card__emblem {
+  width: 128px;
+  height: 125px;
+  object-fit: contain;
 }
 
 /* 하단 오버레이 바 — 백드롭 없이 학교명(로고 대신)만 가운데(두 조건 모두 배경 투명) */
@@ -217,37 +303,36 @@
 }
 
 /* 학교명(로고 대신) — 사진 위에선 흰 글씨 + 가독성용 그림자 */
+/* 학교명·졸업 — Figma 5780:26743 (w109.9). 증서 카드(1074.5폭/50px)를 카드 폭
+   292.96 으로 축소한 비율(0.2727) → 13.6px, 증서와 동일한 Medium. */
 .sw-card__grad {
   margin: 0;
   text-align: center;
-  font-size: 28px;
-  font-weight: 700;
+  font-size: 13.6px;
+  font-weight: 500;
   color: #ffffff;
   text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
   word-break: keep-all;
 }
 
-/* 사진 없음 카드 — 흰 배경이라 학교명은 어둡게(그림자 없음) */
-.sw-card__photo--placeholder .sw-card__grad {
-  color: #333333;
-  text-shadow: none;
-}
-
 /* 캡션 — Figma: ──── 날짜 이름 ──── (양옆 장식선) */
+/* 날짜 · 이름 — Figma 5780:26753/26764: 카드 축소 비율(0.2727) → 13.6px Medium.
+   Figma 간격: 선(177~243.6) 17 날짜(261~330.7) 18 이름(348.5~384.3) 16 선(400.4~467) */
 .sw-card__meta {
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 16px;
-  font-size: 28px;
+  gap: 17px;
+  font-size: 13.6px;
   font-weight: 500;
   color: #000000;
 }
 
+/* 구분선 — Figma 5780:26769/26770: 66.53 × 1.22 (양쪽 고정 폭) */
 .sw-card__line {
-  flex: 1 1 auto;
-  height: 2px;
+  flex: 0 0 66.53px;
+  height: 1.22px;
   background: #d9d9d9;
 }
 

@@ -17,21 +17,11 @@
   padding: 20px 170px 0;
 }
 
-/* 감사문 — Figma 5535:19842 Regular 40 #636363 */
-.sc2-thanks {
-  margin: 0 0 40px;
-  text-align: center;
-  font-size: 40px;
-  font-weight: 400;
-  color: #636363;
-}
-
-/* 합성 사진 카드 — Figma 5535:19844 border5 #999, radius 38, 1058×1881 */
+/* 합성 사진 카드 — Figma 5843:87972: 1074.5×1910.25, radius 38, 테두리 없음 */
 .sc2-photo {
   position: relative;
-  width: 1058px;
-  height: 1881px;
-  border: 5px solid #999999;
+  width: 1074.5px;
+  height: 1910.25px;
   border-radius: 38px;
   overflow: hidden;
 }
@@ -43,19 +33,19 @@
   display: block;
 }
 
-/* 기본(사진 없음) 이미지 — 중앙 원형(border-radius 50%) */
-.sc2-photo--default {
+/* 사진 없음 — 기본 이미지를 넣지 않고 어두운 배경만 (Figma 5843:87972 글씨-main #999) */
+.sc2-photo--empty {
   display: flex;
   align-items: center;
   justify-content: center;
+  background: #999999;
 }
 
-.sc2-photo--default .sc2-photo__img {
-  width: 640px;
-  height: 640px;
-  max-width: 80%;
-  aspect-ratio: 1 / 1;
-  border-radius: 50%;
+/* 학교 엠블럼 — Figma 5843:88007: 469×460, 카드 중앙 */
+.sc2-photo__emblem {
+  width: 469px;
+  height: 460px;
+  object-fit: contain;
 }
 
 /* 하단 오버레이 — Figma 5776:25584: rgba(0,0,0,.5), h161, 사진 하단.
@@ -74,12 +64,7 @@
   padding: 0 40px;
 }
 
-/* 사진 없음(기본 이미지) 상태 — 학교명은 그대로 노출하되 어두운 배드롭만 제거 */
-.sc2-photo--default .sc2-photo__overlay {
-  background: transparent;
-}
-
-/* 학교명 · 졸업 — Figma 5597:42141 Medium 50. 사진 위에선 흰 글씨 */
+/* 학교명 · 졸업 — Figma 5843:88006 Medium 50 흰색 (사진 유무와 무관하게 동일) */
 .sc2-photo__caption {
   font-size: 50px;
   font-weight: 500;
@@ -87,11 +72,6 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-
-/* 사진 없음 카드 — 흰 배경이라 학교명은 어둡게 */
-.sc2-photo--default .sc2-photo__caption {
-  color: #333333;
 }
 
 /* 날짜 · 이름 — Figma 5535:19843/19845 */
@@ -118,12 +98,12 @@
 }
 
 /* QR + 액션 — Figma 5659:95750 */
+/* Figma 5843:87964: 폭 1732.78, 양끝 정렬 (QR ← 저장하기 · 기부내역보기) */
 .sc2-actions {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 40px;
-  width: 100%;
+  justify-content: space-between;
+  width: 1732.78px;
 }
 
 .sc2-qr {
@@ -148,6 +128,7 @@
 }
 
 /* QR 크게 보기 팝업 */
+/* QR 팝업 딤 — Figma 5843:87936 rgba(0,0,0,0.2) */
 .sc2-qr-dim {
   position: absolute;
   inset: 0;
@@ -155,61 +136,41 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0;
-  border: none;
-  background: rgba(0, 0, 0, 0.5);
-  cursor: pointer;
+  background: rgba(0, 0, 0, 0.2);
 }
 
+/* QR 카드 + 닫기 — 닫기는 카드 오른쪽 위 바깥에 나란히 */
+.sc2-qr-panel {
+  display: flex;
+  align-items: flex-start;
+  gap: 40px;
+}
+
+/* 흰 카드 — QR 만 담는다(문구 없음) */
 .sc2-qr-modal {
   box-sizing: border-box;
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 40px;
-  width: 1100px;
-  padding: 90px;
+  padding: 80px;
   background: #ffffff;
-  border-radius: 60px;
-  box-shadow: 0 60px 80px rgba(0, 0, 0, 0.35);
-  cursor: default;
+  border-radius: 45px;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.25);
 }
 
-.sc2-qr-modal__title {
-  margin: 0;
-  font-size: 80px;
-  font-weight: 700;
-  color: #232323;
-}
-
-.sc2-qr-modal__desc {
-  margin: 0;
-  text-align: center;
-  font-size: 48px;
-  font-weight: 400;
-  color: #636363;
-}
-
-.sc2-qr-modal__code {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 30px;
-  background: #ffffff;
-  border: 5px solid #e8e8e8;
-  border-radius: 30px;
-}
-
+/* 닫기 — 카드 바깥(오른쪽 위) 원형 ✕. QR 위에 겹치지 않는다. */
 .sc2-qr-modal__close {
+  flex: 0 0 auto;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 500px;
-  height: 150px;
-  border-radius: 45px;
+  width: 105px;
+  height: 105px;
+  padding: 0;
+  border: none;
+  border-radius: 999px;
   color: #ffffff;
-  font-size: 58px;
-  font-weight: 700;
+  font-size: 54px;
+  line-height: 1;
+  cursor: pointer;
 }
 
 .sc2-arrow {

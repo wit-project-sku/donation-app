@@ -123,6 +123,7 @@ export function SchoolPaymentPage() {
 
         {/* 결제수단 — Figma 5591:41242/41243 카드(신용/체크) 선택 */}
         <p className="sp-method-label">카드</p>
+        <p className="sp-method-desc">카드를 넣고 ‘결제하기’를 눌러주세요.</p>
         <div className="sp-methods">
           <button
             type="button"
@@ -156,9 +157,6 @@ export function SchoolPaymentPage() {
           결제하기
         </button>
 
-        {/* 캠페인 안내 — Figma 5591:41264 */}
-        <p className="sp-partner">이 캠페인은 채널A와 함께합니다.</p>
-
         {/* 모금 현황 — Figma 5591:41256 (실 누적/목표액 기준) */}
         <div className="sp-funding">
           <p className="sp-funding__label" style={{ color: theme.primary }}>
@@ -178,6 +176,12 @@ export function SchoolPaymentPage() {
             {formatCurrency(progress.target)}원
           </p>
         </div>
+
+        {/* 참여자·수혜자 — 모금 현황 카드 바로 아래 (Regular 70 #636363, 중앙) */}
+        <p className="sp-stats">
+          기부 참여자 : {selectedCampaign.participantCount ?? 0}명 / 기부 수혜자
+          : {selectedCampaign.studentCount ?? 0}명
+        </p>
       </div>
 
       <AppFooter />

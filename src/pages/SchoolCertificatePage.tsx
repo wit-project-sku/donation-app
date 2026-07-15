@@ -10,7 +10,7 @@ import { useDonationStore } from "../store/donationStore";
 import { useTheme } from "../theme/ThemeContext";
 import { buildMobileCertificateUrl } from "../utils/mobileCertificateUrl";
 import { submitCurrentDonation } from "../utils/buildSubmitPayload";
-import heartDefault from "../assets/donated.png";
+import schoolEmblem from "../assets/school-emblem.png";
 import "./SchoolCertificatePage.css";
 
 /** YYYY.MM.DD */
@@ -47,6 +47,7 @@ export function SchoolCertificatePage() {
     amount,
     donorName,
     donorPhone,
+    graduationYear,
     capturedPhotoUrl,
     sharePhotoUrl,
     photoStatus,
@@ -81,7 +82,8 @@ export function SchoolCertificatePage() {
   if (!selectedCampaign) return null;
 
   const hasPhoto = Boolean(capturedPhotoUrl);
-  const photo = capturedPhotoUrl || heartDefault;
+  // 사진이 없으면 기본 이미지를 채우지 않는다 — 어두운 배경 + 학교 엠블럼만 노출.
+  const schoolLogo = schoolEmblem;
   const displayName = donorName || "기부자";
   const isSaved = submittedRecordId != null || submitMutation.isSuccess;
   const photoPending = photoStatus === "generating" && !capturedPhotoUrl;
@@ -126,22 +128,39 @@ export function SchoolCertificatePage() {
 
   return (
     <PageBody className="school-certificate" scroll={false}>
-      {/* 뒤로 버튼은 다른 화면처럼 보이되 클릭 불가(완료 화면) */}
-      <AppHeader title="기부" backStatic />
+      {/* 뒤로 버튼은 다른 화면처럼 보이되 클릭 불가(완료 화면).
+          감사문은 Figma 5843:87975 기준 헤더 ★서브타이틀(#909090) 자리다. */}
+      <AppHeader
+        title="기부"
+        backStatic
+        subtitle="귀하의 따뜻한 마음에 깊은 감사를 전합니다"
+      />
 
       <div className="sc2-body">
-        <p className="sc2-thanks">
-          귀하의 따뜻한 마음과 의미 있는 기여에 깊은 감사를 전합니다
-        </p>
 
-        {/* 합성 사진 카드 — Figma 5535:19844 border5 #999, radius 38.
-            사진 없음 → 기본 이미지를 원형(border-radius 50%)으로 표시. */}
-        <div className={`sc2-photo${hasPhoto ? "" : " sc2-photo--default"}`}>
-          <img className="sc2-photo__img" src={photo} alt="기부한컷" />
-          {/* 하단 오버레이 — 학교 로고가 없어 학교명을 표시. 사진 있으면 어두운
-              배드롭 위에, 없으면(기본 이미지) 배드롭 없이 학교명만 노출. */}
+        {/* 합성 사진 카드 — Figma 5843:87972: 1074.5×1910.25, radius 38.
+            사진 있음 → 사진으로 채움 / 없음 → 어두운 배경 + 학교 엠블럼 크게 중앙
+            (Figma 5843:88007, 469×460). 하단 오버레이는 두 경우 모두 노출한다. */}
+        <div className={`sc2-photo${hasPhoto ? "" : " sc2-photo--empty"}`}>
+          {hasPhoto ? (
+            <img
+              className="sc2-photo__img"
+              src={capturedPhotoUrl ?? ""}
+              alt="기부한컷"
+            />
+          ) : (
+            schoolLogo && (
+              <img className="sc2-photo__emblem" src={schoolLogo} alt="" />
+            )
+          )}
+          {/* 하단 오버레이 — Figma 5843:87973: rgba(0,0,0,.5) h161 */}
           <div className="sc2-photo__overlay">
-            <span className="sc2-photo__caption">{selectedCampaign.title}</span>
+            {/* Figma 5843:88006 "원화여고 25회 졸업" — 학교명 + 졸업연도.
+                (Figma 의 "N회"(기수)는 수집 데이터에 없어 졸업연도로 표기) */}
+            <span className="sc2-photo__caption">
+              {selectedCampaign.title}
+              {graduationYear ? ` ${graduationYear}년 졸업` : ""}
+            </span>
           </div>
         </div>
 
@@ -196,37 +215,35 @@ export function SchoolCertificatePage() {
 
       <AppFooter note />
 
-      {/* QR 크게 보기 팝업 — 휴대폰으로 스캔해 사진 저장 */}
+      {/* QR 크게 보기 팝업 — 흰 카드에 QR 만(문구 없음), 닫기는 카드 오른쪽 위 바깥 */}
       {qrOpen && (
-        <button
-          type="button"
+        <div
           className="sc2-qr-dim"
-          aria-label="닫기"
+          role="presentation"
           onClick={() => setQrOpen(false)}
         >
-          <div className="sc2-qr-modal" onClick={(e) => e.stopPropagation()}>
-            <p className="sc2-qr-modal__title">휴대폰으로 저장하기</p>
-            <p className="sc2-qr-modal__desc">
-              QR 코드를 스캔하면 기부한컷을 저장할 수 있습니다
-            </p>
-            <div className="sc2-qr-modal__code">
+          <div className="sc2-qr-panel" onClick={(e) => e.stopPropagation()}>
+            <div className="sc2-qr-modal">
               <QRCodeSVG
                 value={qrValue}
-                size={760}
+                size={620}
                 bgColor="#FFFFFF"
                 fgColor="#000000"
                 level="M"
                 marginSize={0}
               />
             </div>
-            <span
+            <button
+              type="button"
               className="sc2-qr-modal__close"
               style={{ backgroundColor: theme.primary }}
+              aria-label="닫기"
+              onClick={() => setQrOpen(false)}
             >
-              닫기
-            </span>
+              ✕
+            </button>
           </div>
-        </button>
+        </div>
       )}
     </PageBody>
   );

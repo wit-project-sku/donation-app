@@ -40,6 +40,8 @@ export function buildSchoolCampaignFromDto(school: SchoolDto): Campaign {
     targetAmount: 566600000,
     participantCount: school.participantCount ?? 0,
     studentCount: school.studentCount ?? 0,
+    // 모금등수 = 전국 누적 기부액 순위 (Figma 5846:90687 "모금등수 : 200등")
+    donationRank: school.nationwideRank,
     sections: [],
     programs: SCHOOL_PROGRAMS,
   };

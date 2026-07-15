@@ -32,7 +32,7 @@
   gap: 40px;
   padding: 55px 75px;
   background: #ffffff;
-  border: 4.29px solid #fe6c50;
+  border: 5px solid #fe6c50;
   border-radius: 120px;
 }
 
@@ -73,12 +73,13 @@
   cursor: default;
 }
 
-/* 검색창(top 833 + h182) 바로 아래에, 본문(페이지) 전체 폭을 꽉 채워 노출 */
+/* 좌측 세로중앙 네비(home/back, SideNav top 2010 + h205 ≈ 2215) 바로 아래에
+   전체 폭으로 노출 — 검색 중에도 상단 랭킹 결과가 보이도록 아래쪽에 배치 */
 .school-page__keyboard {
   position: absolute;
   left: 0;
   right: 0;
-  top: 922px;
+  top: 2240px;
   z-index: 20;
   overflow: hidden;
   box-shadow: 0 12px 50px rgba(0, 0, 0, 0.2);
@@ -105,18 +106,12 @@
   justify-content: center;
   padding: 0;
   background: #ffffff;
-  border: 2.145px solid #e8e8e8;
+  border: 5px solid #e8e8e8;
   border-radius: 42.9px;
-  box-shadow: 0 21.45px 42.9px rgba(143, 147, 157, 0.1);
   font-size: 50px;
   font-weight: 500;
   color: #999999;
   cursor: pointer;
-}
-
-/* 기본 강조 지역 — Figma 5659:87603 서울: Bold(회색) */
-.school-region.is-active {
-  font-weight: 700;
 }
 
 /* 선택 지역 — Figma 5656:54454 서울: 연코랄 배경 #faeee3 + 코랄 Bold */
@@ -133,11 +128,31 @@
   left: 170.9px;
   top: 1732px;
   width: 1820px;
+  /* 하단 파트너바 위까지 채우고 넘치면 세로 스크롤 (Figma 5769:56666 코랄 스크롤바) */
+  max-height: 1480px;
+  overflow-x: hidden;
+  overflow-y: auto;
   display: grid;
   grid-template-columns: repeat(7, 250px);
   justify-content: space-between;
   align-content: start;
   row-gap: 78px;
+  scrollbar-width: auto;
+  scrollbar-color: #fe6c50 transparent;
+}
+
+/* 스크롤바 — Figma 5769:56666: width 34.32, radius 21.45, #FE6C50 솔리드 */
+.school-grid::-webkit-scrollbar {
+  width: 34.32px;
+}
+
+.school-grid::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.school-grid::-webkit-scrollbar-thumb {
+  background: #fe6c50;
+  border-radius: 21.45px;
 }
 
 .school-grid__msg {
@@ -196,6 +211,35 @@
   top: 1444px;
 }
 
+/* 지역 순위 토글 칩 — Figma 5846:93667: left 1637, top 1593, 343×84,
+   radius 42.9, #f8ecde 배경, #999 50px. 켜짐(is-active) 시 코랄. */
+.school-region-rank {
+  position: absolute;
+  left: 1637px;
+  top: 1593px;
+  width: 343px;
+  height: 84px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  border-radius: 42.9px;
+  background: #f8ecde;
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
+  font-size: 50px;
+  font-weight: 500;
+  color: #999999;
+  cursor: pointer;
+}
+
+/* 켜짐(지역 랭킹 표) — Figma 5846:94372: #e8e8e8 배경 + 5px #e8e8e8 테두리 */
+.school-region-rank.is-active {
+  background: #e8e8e8;
+  border: 5px solid #e8e8e8;
+}
+
 .school-consonant {
   padding: 0 0 15px;
   background: none;
@@ -213,12 +257,12 @@
   border-bottom-color: #fe6c50;
 }
 
-/* 랭킹 표 — Figma 5776:25419: left 182, top 1621, 1820×1401, 5px #e8e8e8 테두리 */
+/* 랭킹 표 — Figma 5776:25420: 중앙(50%+37.5) 정렬 → left 233, top 1621, 1769×1401, 5px #e8e8e8 테두리 */
 .school-table {
   position: absolute;
-  left: 182px;
+  left: 233px;
   top: 1621px;
-  width: 1820px;
+  width: 1769px;
   height: 1401px;
   box-sizing: border-box;
   display: flex;
@@ -234,9 +278,17 @@
   display: flex;
   align-items: center;
   border-bottom: 2px solid #e8e8e8;
+}
+
+/* 헤더 셀 타이포 — 열(.school-table__col--*)이 데이터셀용 폰트를 지정하므로,
+   헤더는 2-클래스 선택자로 덮어써서 항상 동일한 제목 스타일을 유지한다. */
+.school-table__head .school-table__col {
+  color: var(--main, #999);
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
   font-size: 36px;
+  font-style: normal;
   font-weight: 500;
-  color: #999999;
+  line-height: 100%;
 }
 
 /* 데이터행 — 130px, 하단 구분선 */
@@ -263,29 +315,30 @@
   white-space: nowrap;
 }
 
-/* 세로 구분선(우측 테두리) — Figma 5660:96287 등 */
+/* 세로 구분선(우측 테두리) — Figma 구분선 5776:25476~25479 좌표 기준 열 폭 */
+/* 기부액 폭을 40px 줄여 좌측(순위·학교명)에 12/28px 로 나눠 준다 */
 .school-table__col--rank {
-  flex: 0 0 205px;
+  flex: 0 0 268.6px;
   gap: 14px;
   border-right: 2px solid #e8e8e8;
 }
 
 .school-table__col--name {
-  flex: 0 0 600px;
+  flex: 0 0 557.7px;
   border-right: 2px solid #e8e8e8;
   font-size: 48px;
   font-weight: 500;
 }
 
 .school-table__col--amount {
-  flex: 0 0 548px;
+  flex: 0 0 492.6px;
   border-right: 2px solid #e8e8e8;
   font-size: 44px;
   font-weight: 500;
 }
 
 .school-table__col--part {
-  flex: 0 0 225px;
+  flex: 0 0 218.7px;
   border-right: 2px solid #e8e8e8;
   font-family: var(--font-paperlogy);
   font-size: 46px;
@@ -297,6 +350,45 @@
   font-family: var(--font-paperlogy);
   font-size: 46px;
   font-weight: 500;
+}
+
+/* 전국 순위 열 — 지역 랭킹 표에서만 (Figma 5846:93680) */
+.school-table__col--nation {
+  flex: 1 1 auto;
+  font-family: var(--font-paperlogy);
+  font-size: 46px;
+  font-weight: 500;
+}
+
+/* 지역 랭킹 표 — Figma 5846:91388: left 220, top 1702, 1770.8×1401.
+   열 구분선 x = 416.5 / 901.67 / 1408.44 / 1608.81 / 1794.94 (표 우측 끝 1990.8) */
+.school-table--region {
+  left: 220px;
+  top: 1702px;
+  width: 1770.8px;
+}
+
+/* 기부액 폭을 40px 줄여 좌측(순위·학교명)에 12/28px 로 나눠 준다 */
+.school-table--region .school-table__col--rank {
+  flex: 0 0 203.5px;
+}
+
+.school-table--region .school-table__col--name {
+  flex: 0 0 513.17px;
+}
+
+.school-table--region .school-table__col--amount {
+  flex: 0 0 466.77px;
+}
+
+.school-table--region .school-table__col--part {
+  flex: 0 0 200.37px;
+}
+
+/* 지역 표에서는 수혜자 뒤에 전국 순위 열이 붙으므로 우측 구분선을 둔다 */
+.school-table--region .school-table__col--benef {
+  flex: 0 0 186.13px;
+  border-right: 2px solid #e8e8e8;
 }
 
 /* 순위 숫자 — Figma Paperlogy 5Medium (1~3위 70 / 4위 이하 50) */
@@ -397,16 +489,63 @@
   color: #005ab4;
 }
 
-/* 기준일 — Figma 5776:25491: left 1645, top 3041, Noto Medium 36 #999 */
+/* 기준일 — Figma 5776:25491: left 1645, top 3057, Noto Medium 36 #999 */
 .school-page__asof {
   position: absolute;
   left: 1645px;
-  top: 3041px;
+  top: 3057px;
   margin: 0;
   font-size: 36px;
   font-weight: 500;
   color: #999999;
   white-space: nowrap;
+}
+
+/* 지역 랭킹 표는 81px 아래(top 1702) → 기준일도 함께 이동 (Figma 5846:91459) */
+.school-page__asof--region {
+  left: 1610.6px;
+  top: 3138px;
+}
+
+/* 1·2·3위 메달 — 표(left 233) 왼쪽 바깥 여백 (Figma 5842:3457/3458/3459: left 160) */
+.school-page__medal {
+  position: absolute;
+  left: 160px;
+  z-index: 2;
+  height: auto;
+  pointer-events: none;
+}
+
+.school-page__medal--1 {
+  top: 1740px;
+  width: 60px;
+}
+
+.school-page__medal--2 {
+  top: 1873px;
+  width: 58px;
+}
+
+.school-page__medal--3 {
+  top: 2002px;
+  width: 58px;
+}
+
+/* 지역 랭킹 표 메달 — Figma 5846:91499/91498/91497: left 141, top 1825/1958/2087 */
+.school-page__medal--region {
+  left: 141px;
+}
+
+.school-page__medal--1.school-page__medal--region {
+  top: 1825px;
+}
+
+.school-page__medal--2.school-page__medal--region {
+  top: 1958px;
+}
+
+.school-page__medal--3.school-page__medal--region {
+  top: 2087px;
 }
 
 /* 하단 그라데이션 페이드 — Figma 5659:87586 (투명 → #c4c4c4) */

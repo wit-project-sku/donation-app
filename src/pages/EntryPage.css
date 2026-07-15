@@ -60,11 +60,18 @@
 }
 
 .entry-card--ngo {
-  background: #f6faf2;
+  background: #e0f6c9;
+}
+
+/* 준비중(비활성) 카드/기부내역 — 색상은 그대로, 클릭만 불가 */
+.entry-card--disabled,
+.entry-history--disabled {
+  cursor: default;
+  pointer-events: none;
 }
 
 .entry-card--school {
-  background: #eff4f7;
+  background: #daedf9;
 }
 
 /* 기부내역 보기 박스 (Figma 5535:18569/5707:13651): 카드와 같은 tint, radius 78, 별도 박스 */
@@ -85,11 +92,11 @@
 }
 
 .entry-history--ngo {
-  background: #f6faf2;
+  background: #e0f6c9;
 }
 
 .entry-history--school {
-  background: #eff4f7;
+  background: #daedf9;
 }
 
 /* 아이콘 흰 원 (Figma image289 / ellipse48 ~480) */

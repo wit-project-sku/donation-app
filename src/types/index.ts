@@ -58,4 +58,6 @@ export interface Campaign {
   /** 기부 참여자 수 / 수혜(학생) 수 — 학교 캠페인의 모금 현황 지표 */
   participantCount?: number;
   studentCount?: number;
+  /** 모금등수 — 전국 누적 기부액 순위 (학교 상세 "모금등수 : N등"). */
+  donationRank?: number;
 }

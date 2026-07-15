@@ -185,8 +185,10 @@ export type SchoolRegionCode =
   | "GYEONGNAM"
   | "JEJU";
 
-/** GET /api/donations/schools — sort */
-export type SchoolSort = "NAME" | "DONATION";
+/** GET /api/donations/schools — sort
+ *  NAME(이름순, 기본) | DONATION(전국 누적 기부액순)
+ *  | DONATION_REGION(지역 기준 누적 기부액순 — region 과 함께 쓰면 그 지역 내 순위순) */
+export type SchoolSort = "NAME" | "DONATION" | "DONATION_REGION";
 
 export interface SchoolDto {
   id: number;
@@ -206,6 +208,10 @@ export interface SchoolDto {
   studentCount?: number;
   /** 하루 전 대비 순위 변동 (양수=상승 ▲, 음수=하락 ▼, 0=변동 없음). DONATION 정렬에서만 의미. */
   rankChange?: number;
+  /** 전국 순위 (활성 학교 기준). DONATION/DONATION_REGION 정렬 응답에 포함. */
+  nationwideRank?: number;
+  /** 지역 내 순위 (활성 학교 기준). DONATION_REGION 정렬 + region 지정 시 의미. */
+  regionRank?: number;
   createdAt: string;
 }
 
