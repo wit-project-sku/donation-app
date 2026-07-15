@@ -178,6 +178,14 @@
   background: #999999;
 }
 
+/* 사진 공개 링크가 아직 없을 때(생성 중·업로드 실패) — 눌러도 빈 증서만 열리므로
+   비활성. 이때는 "기부한컷 발급"(초록)으로 증서 화면에서 저장할 수 있다. */
+.sc-action:disabled,
+.sc-qr:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
 /* QR 확대 모달 — 딤: Figma 5843:87936 (rgba(0,0,0,0.2), 전체 화면 2161×3842) */
 .sc-qr-dim {
   position: absolute;

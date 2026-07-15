@@ -1,4 +1,4 @@
-import { useMemo, useRef, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, type ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
 import type { Swiper as SwiperClass } from "swiper";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -9,6 +9,7 @@ import { useAppNavigate } from "../hooks/useAppNavigate";
 import { fetchCampaignsPage } from "../api/campaigns";
 import { useDonationStore } from "../store/donationStore";
 import { exitDonationApp } from "../config/navigation";
+import { getKioskBridge } from "../utils/kioskBridge";
 import { PageBody } from "../components/layout/PageBody";
 import { AppHeader } from "../components/AppHeader";
 import type { Campaign, DonationCategory } from "../types";
@@ -74,6 +75,12 @@ export function EntryPage() {
   const setSelectedCampaign = useDonationStore(
     (state) => state.setSelectedCampaign,
   );
+
+  // 기부 앱 홈으로 돌아온 시점(가드 리다이렉트·미지정 경로 등)에는 결제 완료 전
+  // 상태이므로, 키오스크 Monitor 2 에 AI 결과가 남아 있으면 안 된다. 영상으로 되돌린다.
+  useEffect(() => {
+    getKioskBridge()?.showVideo?.();
+  }, []);
 
   const choose = (category: Exclude<DonationCategory, "none">) => {
     setDonationCategory(category);

@@ -133,7 +133,14 @@ export function OutfitSelectionPage() {
       capturingRef.current = true;
       setCapturedPhotoUrl(null);
       setPhotoStatus("generating");
-      bridge.takePhoto({ mode, clothingKey: selected?.outfitCode ?? "" });
+      // 학교 흐름은 결제 전에 촬영하므로 결제 완료 전까지 Monitor 2 에 결과를
+      // 띄우지 않도록 보류를 건다(결제 완료 화면에서 revealPhoto).
+      // NGO 흐름은 이미 결제를 마친 뒤라 바로 노출해도 된다.
+      bridge.takePhoto({
+        mode,
+        clothingKey: selected?.outfitCode ?? "",
+        holdResult: isSchool,
+      });
     },
     [isSchool, navigate, selected, setCapturedPhotoUrl, setPhotoStatus],
   );

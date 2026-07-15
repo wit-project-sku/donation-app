@@ -8,6 +8,7 @@ import { IconHeart, IconCheck } from "../components/Icon";
 import { useDonationStore } from "../store/donationStore";
 import { useTheme } from "../theme/ThemeContext";
 import { finishDonationFlow } from "../config/navigation";
+import { getKioskBridge } from "../utils/kioskBridge";
 import { formatCurrency } from "../utils/format";
 import { buildMobileCertificateUrl } from "../utils/mobileCertificateUrl";
 import { getCampaignProgressPercent } from "../utils/campaignProgress";
@@ -34,6 +35,7 @@ export function SchoolCompletePage() {
     donorPhone,
     sharePhotoUrl,
     capturedPhotoUrl,
+    photoStatus,
   } = useDonationStore();
   const [qrOpen, setQrOpen] = useState(false);
 
@@ -43,7 +45,20 @@ export function SchoolCompletePage() {
     }
   }, [selectedCampaign, amount, navigate]);
 
+  // 결제 완료 — 촬영 때 보류해 둔 AI 결과를 이제 키오스크 Monitor 2 에 노출한다.
+  // (학교 흐름은 결제 전에 촬영하므로, 결제까지 오지 않으면 결과는 끝내 안 뜬다.)
+  useEffect(() => {
+    if (!selectedCampaign || amount <= 0) return;
+    getKioskBridge()?.revealPhoto?.();
+  }, [selectedCampaign, amount]);
+
   if (!selectedCampaign || amount <= 0) return null;
+
+  // QR 로 사진을 받아 가려면 키오스크가 보내 준 "공개 링크"(shareUrl)가 있어야 한다.
+  // capturedPhotoUrl 은 data: 바이트라 QR 에 담기지 않으므로(휴대폰이 못 염) 여기선
+  // 링크 유무만 본다. 링크가 없으면 스캔해도 사진 없는 증서가 열리므로 QR 을 막는다.
+  const photoLinkReady = Boolean(sharePhotoUrl?.trim());
+  const photoGenerating = photoStatus === "generating" && !photoLinkReady;
 
   // 모바일 증서 링크 — 이름/사진은 이후 단계에서 채워지므로 있는 값만 담는다.
   const qrValue = buildMobileCertificateUrl({
@@ -92,6 +107,7 @@ export function SchoolCompletePage() {
             className="sc-qr"
             style={{ borderColor: theme.primary }}
             onClick={() => setQrOpen(true)}
+            disabled={!photoLinkReady}
             aria-label="QR 크게 보기"
           >
             <QRCodeSVG
@@ -106,12 +122,15 @@ export function SchoolCompletePage() {
           <span className="sc-arrow" style={{ color: theme.primary }} aria-hidden>
             ←
           </span>
+          {/* 사진 공개 링크(키오스크 shareUrl)가 있어야 QR 로 받아 갈 수 있다.
+              아직 생성 중이면 안내만 하고, 링크 없이 빈 증서로 가는 QR 은 막는다. */}
           <button
             type="button"
             className="sc-action sc-action--save"
             onClick={() => setQrOpen(true)}
+            disabled={!photoLinkReady}
           >
-            저장하기
+            {photoGenerating ? "생성 중..." : "저장하기"}
           </button>
           <button
             type="button"

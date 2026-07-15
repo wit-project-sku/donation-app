@@ -17,8 +17,19 @@ export interface KioskBridge {
   isKiosk: boolean;
   /** Close the donation webview and return the kiosk to its home screen. */
   goKioskHome(): void;
-  /** Run the AI hanbok capture on the kiosk's Monitor 2. */
-  takePhoto(params: { mode: "solo" | "together"; clothingKey: string }): void;
+  /**
+   * Run the AI hanbok capture on the kiosk's Monitor 2.
+   *
+   * holdResult: 학교 흐름은 결제 전에 촬영하므로, 결제 완료(revealPhoto) 전까지
+   * Monitor 2 에 AI 결과가 뜨면 안 된다. NGO 흐름은 결제 후 촬영이라 false.
+   */
+  takePhoto(params: {
+    mode: "solo" | "together";
+    clothingKey: string;
+    holdResult?: boolean;
+  }): void;
+  /** 보류해 둔 AI 결과를 Monitor 2 에 노출한다 (결제 완료 시점). */
+  revealPhoto(): void;
   /** Abort an in-progress capture and reset Monitor 2. */
   cancelPhoto(): void;
   /** Play the celebration/attract video on Monitor 2 (wall page). */
@@ -93,6 +104,7 @@ const bridge: KioskBridge = {
   isKiosk: true,
   goKioskHome: () => postToHost("goHome"),
   takePhoto: (params) => postToHost("takePhoto", params),
+  revealPhoto: () => postToHost("revealPhoto"),
   cancelPhoto: () => postToHost("cancelPhoto"),
   showVideo: () => postToHost("showVideo"),
   on: (type, listener) => {
