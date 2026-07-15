@@ -72,9 +72,6 @@ export function EntryPage() {
   const setDonationCategory = useDonationStore(
     (state) => state.setDonationCategory,
   );
-  const setSelectedCampaign = useDonationStore(
-    (state) => state.setSelectedCampaign,
-  );
 
   // 기부 앱 홈으로 돌아온 시점(가드 리다이렉트·미지정 경로 등)에는 결제 완료 전
   // 상태이므로, 키오스크 Monitor 2 에 AI 결과가 남아 있으면 안 된다. 영상으로 되돌린다.
@@ -85,18 +82,6 @@ export function EntryPage() {
   const choose = (category: Exclude<DonationCategory, "none">) => {
     setDonationCategory(category);
     navigate(category === "school" ? "/school" : "/campaigns");
-  };
-
-  // 하단 배너 탭 → 해당 캠페인 상세 페이지로 이동 (NGO 흐름). 실캠페인이 없으면
-  // (폴백 배너) 캠페인 목록으로 이동한다.
-  const openBanner = (banner: BannerSlide) => {
-    if (!banner.campaign) {
-      navigate("/campaigns");
-      return;
-    }
-    setDonationCategory("ngo");
-    setSelectedCampaign(banner.campaign);
-    navigate("/campaign");
   };
 
   // 하단 배너는 NGO 캠페인 API 로부터 받아온다(같은 fetchCampaignsPage).
@@ -210,12 +195,9 @@ export function EntryPage() {
         >
           {bannerSlides.map((banner) => (
             <SwiperSlide key={banner.id} className="entry-featured-slide">
-              <button
-                type="button"
-                className="entry-page__featured-hit"
-                onClick={() => openBanner(banner)}
-                aria-label="캠페인 자세히 보기"
-              >
+              {/* NGO 캠페인 배너 — NGO(준비중)이므로 보여주기만 하고 클릭은 막는다
+                  (누르면 NGO 상세로 들어가 버린다). 좌우 화살표/도트는 배너 넘김용이라 유지. */}
+              <div className="entry-page__featured-hit">
                 <img
                   src={banner.image ?? bannerBg}
                   alt=""
@@ -236,7 +218,7 @@ export function EntryPage() {
                     </span>
                   </span>
                 </div>
-              </button>
+              </div>
             </SwiperSlide>
           ))}
         </Swiper>

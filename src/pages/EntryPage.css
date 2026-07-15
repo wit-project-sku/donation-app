@@ -168,6 +168,7 @@
 }
 
 /* 배너 전체를 감싼 클릭 영역(해당 캠페인 상세로 이동) — 슬라이드를 꽉 채우는 리셋 버튼 */
+/* NGO 배너 — NGO(준비중)이라 노출만 하고 클릭은 받지 않는다(색/레이아웃은 그대로) */
 .entry-page__featured-hit {
   position: absolute;
   inset: 0;
@@ -180,7 +181,7 @@
   background: none;
   color: #fff;
   text-align: left;
-  cursor: pointer;
+  cursor: default;
 }
 
 .entry-page__featured-bg-img {
