@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useAppNavigate } from "../hooks/useAppNavigate";
 import { VirtualKeyboard } from "../components/VirtualKeyboard";
 import { AppHeader } from "../components/AppHeader";
-import { AppFooter } from "../components/AppFooter";
+import { FooterBanner } from "../components/FooterBanner";
 import { IconCamera, IconCheck } from "../components/Icon";
 import { PageBody } from "../components/layout/PageBody";
 import { useDonationStore } from "../store/donationStore";
@@ -152,7 +152,7 @@ export function MessagePage() {
         />
       </div>
 
-      <AppFooter />
+      <FooterBanner />
     </PageBody>
   );
 }

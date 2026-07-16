@@ -9,7 +9,7 @@ import {
 } from "../api/payments";
 import { PaymentStatusOverlay } from "../components/PaymentStatusOverlay";
 import { AppHeader } from "../components/AppHeader";
-import { PartnerBar } from "../components/PartnerBar";
+import { FooterBanner } from "../components/FooterBanner";
 import { PageBody } from "../components/layout/PageBody";
 import { useDonationStore } from "../store/donationStore";
 import { useTheme } from "../theme/ThemeContext";
@@ -189,7 +189,7 @@ export function PaymentPage() {
         </div>
       </div>
 
-      <PartnerBar />
+      <FooterBanner />
 
       {overlay === "card" && (
         <PaymentStatusOverlay

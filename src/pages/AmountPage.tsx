@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { PageBody } from "../components/layout/PageBody";
 import { AppHeader } from "../components/AppHeader";
-import { PartnerBar } from "../components/PartnerBar";
+import { FooterBanner } from "../components/FooterBanner";
 import { useAppNavigate } from "../hooks/useAppNavigate";
 import { useDonationStore } from "../store/donationStore";
 import { useTheme } from "../theme/ThemeContext";
@@ -123,7 +123,7 @@ export function AmountPage() {
         </div>
       </div>
 
-      <PartnerBar />
+      <FooterBanner />
     </PageBody>
   );
 }

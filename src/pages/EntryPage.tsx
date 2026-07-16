@@ -1,68 +1,58 @@
-import { useEffect, useMemo, useRef, type ReactNode } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useEffect, useRef, type ReactNode } from "react";
 import type { Swiper as SwiperClass } from "swiper";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay, Pagination } from "swiper/modules";
+import { Autoplay } from "swiper/modules";
 import "swiper/css";
-import "swiper/css/pagination";
 import { useAppNavigate } from "../hooks/useAppNavigate";
-import { fetchCampaignsPage } from "../api/campaigns";
 import { useDonationStore } from "../store/donationStore";
 import { exitDonationApp } from "../config/navigation";
 import { getKioskBridge } from "../utils/kioskBridge";
 import { PageBody } from "../components/layout/PageBody";
 import { AppHeader } from "../components/AppHeader";
-import type { Campaign, DonationCategory } from "../types";
+import type { DonationCategory } from "../types";
 import ngoIcon from "../assets/entry-ngo.png";
 import schoolIcon from "../assets/entry-school.png";
-import bannerBg from "../assets/featured-banner.png";
+import bannerArrow from "../assets/banner-arrow.svg";
+import bannerUniformTryon from "../assets/banner-uniform-tryon.png";
+import bannerSchoolRank from "../assets/banner-school-rank.png";
 import "./EntryPage.css";
 
-/** 하단 featured 캐러셀 슬라이드 (Figma 5535:18557 배너 · 강조 텍스트 #fcd869)
- *  실데이터: 캠페인 API 의 bannerTitle(큰 글씨)/bannerSubtitle(작은 글씨). */
+/** 하단 featured 캐러셀 슬라이드 (Figma 5896:103080 / 5896:103081)
+ *  작은 글씨(eyebrow) 48 Regular #fff, 큰 글씨(title) 80 Bold #bef2ce. */
 interface BannerSlide {
   id: string | number;
   eyebrow: ReactNode;
   title: ReactNode;
-  image?: string;
-  /** Source campaign (real data) — tapping the banner opens its detail page. */
-  campaign?: Campaign;
+  image: string;
 }
 
-/** 캠페인이 없을 때(로딩/오프라인) 보여줄 기본 배너. */
-const FALLBACK_BANNERS: BannerSlide[] = [
+/** 배너 문구·이미지는 Figma 시안 고정값이다(캠페인 API 연동 아님). */
+const BANNERS: BannerSlide[] = [
   {
-    id: 1,
-    eyebrow: "오늘도 도움이 필요한 아이들이 있습니다",
+    // Figma 5896:103080
+    id: "uniform-tryon",
+    eyebrow: "우리 학교 교복으로 특별한 순간을 만들어보세요",
     title: (
       <>
-        매일 어린이 <em>1,200명</em>이
+        우리 학교 교복 입어보고
         <br />
-        <em>말라리아</em>로 인해 사망합니다.
+        기부한컷과 학교 순위를 확인해보세요
       </>
     ),
+    image: bannerUniformTryon,
   },
   {
-    id: 2,
-    eyebrow: "당신의 작은 나눔이 큰 힘이 됩니다",
+    // Figma 5896:103081
+    id: "school-rank",
+    eyebrow: "나의 참여가 후배들의 교복 지원으로 이어집니다",
     title: (
       <>
-        커피 한 잔 값 <em>5,000원</em>으로
+        후배들에게 전달된 나눔의 결과와
         <br />
-        한 아이의 <em>하루</em>를 지킬 수 있습니다.
+        우리학교 순위를 확인해보세요
       </>
     ),
-  },
-  {
-    id: 3,
-    eyebrow: "함께하면 더 멀리 갈 수 있습니다",
-    title: (
-      <>
-        지금까지 <em>12,480명</em>이
-        <br />
-        나눔에 <em>동참</em>했습니다.
-      </>
-    ),
+    image: bannerSchoolRank,
   },
 ];
 
@@ -83,29 +73,6 @@ export function EntryPage() {
     setDonationCategory(category);
     navigate(category === "school" ? "/school" : "/campaigns");
   };
-
-  // 하단 배너는 NGO 캠페인 API 로부터 받아온다(같은 fetchCampaignsPage).
-  const { data: campaignsData } = useQuery({
-    queryKey: ["campaigns", "home-banner"],
-    queryFn: () => fetchCampaignsPage({ pageSize: 10 }),
-    staleTime: 5 * 60 * 1000,
-  });
-
-  const bannerSlides = useMemo<BannerSlide[]>(() => {
-    const campaigns = campaignsData?.content ?? [];
-    if (campaigns.length === 0) return FALLBACK_BANNERS;
-    return campaigns.map((campaign) => ({
-      id: campaign.id,
-      // 큰 글씨 = bannerTitle, 작은 글씨 = bannerSubtitle (미설정 시 캠페인명/단체명 폴백).
-      title: campaign.bannerTitle?.trim() || campaign.title,
-      eyebrow:
-        campaign.bannerSubtitle?.trim() ||
-        campaign.organization?.name ||
-        "",
-      image: campaign.imageUrl || undefined,
-      campaign,
-    }));
-  }, [campaignsData]);
 
   return (
     <PageBody className="entry-page">
@@ -183,7 +150,7 @@ export function EntryPage() {
       <div className="entry-page__featured">
         <Swiper
           className="entry-featured-swiper"
-          modules={[Autoplay, Pagination]}
+          modules={[Autoplay]}
           onSwiper={(swiper) => {
             featuredSwiper.current = swiper;
           }}
@@ -191,15 +158,13 @@ export function EntryPage() {
           rewind
           speed={600}
           autoplay={{ delay: 5000, disableOnInteraction: false }}
-          pagination={{ clickable: true }}
         >
-          {bannerSlides.map((banner) => (
+          {BANNERS.map((banner) => (
             <SwiperSlide key={banner.id} className="entry-featured-slide">
-              {/* NGO 캠페인 배너 — NGO(준비중)이므로 보여주기만 하고 클릭은 막는다
-                  (누르면 NGO 상세로 들어가 버린다). 좌우 화살표/도트는 배너 넘김용이라 유지. */}
+              {/* 배너는 안내 문구 노출용 — 클릭 동작 없음(좌우 화살표만 넘김) */}
               <div className="entry-page__featured-hit">
                 <img
-                  src={banner.image ?? bannerBg}
+                  src={banner.image}
                   alt=""
                   className="entry-page__featured-bg-img"
                 />
@@ -208,15 +173,6 @@ export function EntryPage() {
                     {banner.eyebrow}
                   </p>
                   <p className="entry-page__featured-title">{banner.title}</p>
-                  <span className="entry-page__featured-more">
-                    더 알아보기
-                    <span
-                      className="entry-page__featured-more-chevron"
-                      aria-hidden
-                    >
-                      ›
-                    </span>
-                  </span>
                 </div>
               </div>
             </SwiperSlide>
@@ -228,7 +184,7 @@ export function EntryPage() {
           onClick={() => featuredSwiper.current?.slidePrev()}
           aria-label="이전 배너"
         >
-          ‹
+          <img src={bannerArrow} alt="" className="entry-page__featured-nav-icon" />
         </button>
         <button
           type="button"
@@ -236,7 +192,7 @@ export function EntryPage() {
           onClick={() => featuredSwiper.current?.slideNext()}
           aria-label="다음 배너"
         >
-          ›
+          <img src={bannerArrow} alt="" className="entry-page__featured-nav-icon" />
         </button>
       </div>
 

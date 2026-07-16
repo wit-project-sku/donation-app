@@ -71,7 +71,7 @@
   padding: 0 60px;
   border: none;
   border-radius: 45px;
-  background: #009fe3;
+  background: var(--color-primary, #fe6c50);
   color: #ffffff;
   font-size: 56px;
   font-weight: 700;
@@ -207,7 +207,7 @@
 
 /* 선택 시: 테두리를 primary 색으로, 그림자는 제거 */
 .outfit-card--on {
-  border-color: var(--color-primary, #009fe3);
+  border-color: var(--color-primary, #fe6c50);
   box-shadow: none;
 }
 
@@ -336,7 +336,7 @@
   border: 5px solid var(--color-border, #e8e8e8);
   border-radius: 45px;
   /* 선택 완료 시 활성 = 조직 테마 강조색 */
-  background: var(--main-01, #009fe3);
+  background: var(--main-01, #fe6c50);
   color: #fff;
   font-size: 58px;
   font-weight: 700;

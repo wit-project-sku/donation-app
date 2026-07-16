@@ -3,14 +3,14 @@ import { QRCodeSVG } from "qrcode.react";
 import { useAppNavigate } from "../hooks/useAppNavigate";
 import { PageBody } from "../components/layout/PageBody";
 import { AppHeader } from "../components/AppHeader";
-import { AppFooter } from "../components/AppFooter";
+import { FooterBanner } from "../components/FooterBanner";
 import { IconHeart, IconCheck } from "../components/Icon";
 import { useDonationStore } from "../store/donationStore";
 import { useTheme } from "../theme/ThemeContext";
 import { finishDonationFlow } from "../config/navigation";
 import { getKioskBridge } from "../utils/kioskBridge";
 import { formatCurrency } from "../utils/format";
-import { buildMobileCertificateUrl } from "../utils/mobileCertificateUrl";
+import { buildKioskPhotoSaveUrl } from "../utils/kioskPhotoSaveUrl";
 import { getCampaignProgressPercent } from "../utils/campaignProgress";
 import "./SchoolCompletePage.css";
 
@@ -18,12 +18,6 @@ import "./SchoolCompletePage.css";
  * 학교 결제 완료 화면 (Figma 5591:41267).
  * 결제 성공 후 진입 — 결제 완료 안내 + 기부 금액 + 기부증서 발급 / 종료 선택.
  */
-/** QR 링크용 날짜 (YYYY-MM-DD, 로컬 기준) */
-function isoDate(date: Date): string {
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
-}
-
 export function SchoolCompletePage() {
   const navigate = useAppNavigate();
   const { theme } = useTheme();
@@ -31,10 +25,7 @@ export function SchoolCompletePage() {
     selectedCampaign,
     amount,
     resetSession,
-    donorName,
-    donorPhone,
     sharePhotoUrl,
-    capturedPhotoUrl,
     photoStatus,
   } = useDonationStore();
   const [qrOpen, setQrOpen] = useState(false);
@@ -45,8 +36,9 @@ export function SchoolCompletePage() {
     }
   }, [selectedCampaign, amount, navigate]);
 
-  // 결제 완료 — 촬영 때 보류해 둔 AI 결과를 이제 키오스크 Monitor 2 에 노출한다.
-  // (학교 흐름은 결제 전에 촬영하므로, 결제까지 오지 않으면 결과는 끝내 안 뜬다.)
+  // 결제 완료 — 촬영 때 잠가 둔 AI 결과의 블러를 지금 푼다.
+  // (학교 흐름은 결제 전에 촬영한다. 결제 전까지 Monitor 2 는 결과를 블러 + 안내
+  //  문구로만 보여 주고, 결제까지 오지 않으면 끝내 선명해지지 않는다.)
   useEffect(() => {
     if (!selectedCampaign || amount <= 0) return;
     getKioskBridge()?.revealPhoto?.();
@@ -54,20 +46,14 @@ export function SchoolCompletePage() {
 
   if (!selectedCampaign || amount <= 0) return null;
 
-  // QR 로 사진을 받아 가려면 키오스크가 보내 준 "공개 링크"(shareUrl)가 있어야 한다.
-  // capturedPhotoUrl 은 data: 바이트라 QR 에 담기지 않으므로(휴대폰이 못 염) 여기선
-  // 링크 유무만 본다. 링크가 없으면 스캔해도 사진 없는 증서가 열리므로 QR 을 막는다.
-  const photoLinkReady = Boolean(sharePhotoUrl?.trim());
+  // 이 화면의 QR 은 "AI 사진 받기" 전용 — 키오스크 저장 페이지로 보낸다.
+  // (증서 QR 이 아니다: 이름은 다음 단계(/school-register)에서 받으므로 아직 비어 있고,
+  //  증서는 저장까지 마친 /school-certificate 가 담당한다.)
+  // 키오스크가 보내 준 공개 링크(shareUrl)가 있어야만 만들 수 있다 —
+  // capturedPhotoUrl 은 data: 바이트라 휴대폰이 열 수 없다.
+  const qrValue = buildKioskPhotoSaveUrl(sharePhotoUrl);
+  const photoLinkReady = qrValue !== null;
   const photoGenerating = photoStatus === "generating" && !photoLinkReady;
-
-  // 모바일 증서 링크 — 이름/사진은 이후 단계에서 채워지므로 있는 값만 담는다.
-  const qrValue = buildMobileCertificateUrl({
-    amount,
-    date: isoDate(new Date()),
-    name: donorName,
-    phone: donorPhone,
-    photoUrl: sharePhotoUrl ?? capturedPhotoUrl,
-  });
 
   return (
     <PageBody className="school-complete" scroll={false}>
@@ -111,7 +97,7 @@ export function SchoolCompletePage() {
             aria-label="QR 크게 보기"
           >
             <QRCodeSVG
-              value={qrValue}
+              value={qrValue ?? ""}
               size={160}
               bgColor="#FFFFFF"
               fgColor="#000000"
@@ -169,7 +155,7 @@ export function SchoolCompletePage() {
         </p>
       </div>
 
-      <AppFooter />
+      <FooterBanner />
 
       {/* QR 확대 — Figma 5843:87936: 딤(20% 검정) + 흰 카드에 QR 만. 문구 없음.
           닫기는 카드 우상단 모서리에 걸친 테마색 원형 ✕. */}
@@ -182,7 +168,7 @@ export function SchoolCompletePage() {
           <div className="sc-qr-panel" onClick={(e) => e.stopPropagation()}>
             <div className="sc-qr-modal">
               <QRCodeSVG
-                value={qrValue}
+                value={qrValue ?? ""}
                 size={500}
                 bgColor="#FFFFFF"
                 fgColor="#000000"

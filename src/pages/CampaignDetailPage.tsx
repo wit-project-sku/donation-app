@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useAppNavigate } from "../hooks/useAppNavigate";
 import { PageBody } from "../components/layout/PageBody";
 import { AppHeader } from "../components/AppHeader";
-import { PartnerBar } from "../components/PartnerBar";
+import { FooterBanner } from "../components/FooterBanner";
 import { useDonationStore } from "../store/donationStore";
 import { useTheme } from "../theme/ThemeContext";
 import { fetchCampaignById } from "../api/campaigns";
@@ -134,7 +134,7 @@ export function CampaignDetailPage() {
         </button>
       </div>
 
-      <PartnerBar />
+      <FooterBanner />
     </PageBody>
   );
 }

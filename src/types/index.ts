@@ -60,4 +60,10 @@ export interface Campaign {
   studentCount?: number;
   /** 모금등수 — 전국 누적 기부액 순위 (학교 상세 "모금등수 : N등"). */
   donationRank?: number;
+  /**
+   * 주최처 로고. 학교 캠페인은 SchoolDto.logoImageUrl(학교별 엠블럼)이 들어온다.
+   * 없으면 화면에서 기본 엠블럼으로 폴백한다. NGO 캠페인은 아직 미사용
+   * (NGO 로고는 organizers.ts 의 로컬 에셋으로 결정된다).
+   */
+  logoUrl?: string;
 }

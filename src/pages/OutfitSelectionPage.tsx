@@ -6,7 +6,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { useAppNavigate } from "../hooks/useAppNavigate";
 import { fetchOutfitsPage, type Outfit } from "../api/outfits";
 import { AppHeader } from "../components/AppHeader";
-import { AppFooter } from "../components/AppFooter";
+import { FooterBanner } from "../components/FooterBanner";
 import { IconCamera } from "../components/Icon";
 import { PageBody } from "../components/layout/PageBody";
 import { useDonationStore } from "../store/donationStore";
@@ -382,7 +382,7 @@ export function OutfitSelectionPage() {
         </div>
       )}
 
-      <AppFooter />
+      <FooterBanner />
 
       {captureOpen && (
         <div className="outfit-guide" role="dialog" aria-modal="true">

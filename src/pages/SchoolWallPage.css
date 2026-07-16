@@ -287,32 +287,45 @@
   object-fit: contain;
 }
 
-/* 하단 오버레이 바 — 백드롭 없이 학교명(로고 대신)만 가운데(두 조건 모두 배경 투명) */
+/* 하단 오버레이 바 — 증서 카드(.sc2-photo__overlay)와 동일한 어두운 백드롭.
+   증서(1074.5폭, 바 h161)를 카드 폭 292.96 으로 축소한 비율(0.2727) → h43.9.
+   사진 유무와 무관하게 노출한다(증서 카드와 동일 규칙). */
 .sw-card__overlay {
   position: absolute;
   left: 0;
   right: 0;
   bottom: 0;
-  min-height: 72px;
-  background: transparent;
+  height: 43.9px;
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 12px 16px;
+  /* 로고 배지 ↔ 학교명 간격 — 벽 상세(gap 35)를 같은 비율(0.2727)로 축소 */
+  gap: 9.5px;
+  padding: 0 10.9px;
   box-sizing: border-box;
 }
 
-/* 학교명(로고 대신) — 사진 위에선 흰 글씨 + 가독성용 그림자 */
+/* 학교 로고 배지 — 벽 상세(.swd-photo__badge 77.5×76)를 카드 비율(0.2727)로 축소 */
+.sw-card__badge {
+  flex: 0 0 auto;
+  width: 21.1px;
+  height: 20.7px;
+  object-fit: contain;
+}
+
 /* 학교명·졸업 — Figma 5780:26743 (w109.9). 증서 카드(1074.5폭/50px)를 카드 폭
-   292.96 으로 축소한 비율(0.2727) → 13.6px, 증서와 동일한 Medium. */
+   292.96 으로 축소한 비율(0.2727) → 13.6px, 증서와 동일한 Medium.
+   백드롭이 대비를 만들어 주므로 그림자는 쓰지 않는다(증서 캡션과 동일). */
 .sw-card__grad {
   margin: 0;
   text-align: center;
   font-size: 13.6px;
   font-weight: 500;
   color: #ffffff;
-  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
-  word-break: keep-all;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* 캡션 — Figma: ──── 날짜 이름 ──── (양옆 장식선) */

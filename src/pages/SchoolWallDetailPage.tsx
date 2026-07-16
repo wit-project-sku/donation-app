@@ -3,8 +3,9 @@ import { useLocation } from "react-router-dom";
 import { useAppNavigate } from "../hooks/useAppNavigate";
 import { PageBody } from "../components/layout/PageBody";
 import { AppHeader } from "../components/AppHeader";
-import { AppFooter } from "../components/AppFooter";
+import { FooterBanner } from "../components/FooterBanner";
 import type { WallEntry } from "../api/wall";
+import { useSchoolLogoByName } from "../hooks/useSchoolLogo";
 import schoolEmblem from "../assets/school-emblem.png";
 import "./SchoolWallDetailPage.css";
 
@@ -27,6 +28,8 @@ export function SchoolWallDetailPage() {
   const navigate = useAppNavigate();
   const { state } = useLocation();
   const entry = (state as { entry?: WallEntry } | null)?.entry ?? null;
+  // 기부내역 응답에 로고가 없어 학교명으로 찾는다(훅 규칙상 early return 위에서 호출).
+  const logoByName = useSchoolLogoByName();
 
   // 직접 진입(새로고침 등)으로 항목이 없으면 목록으로 되돌린다.
   useEffect(() => {
@@ -36,6 +39,8 @@ export function SchoolWallDetailPage() {
   if (!entry) return null;
 
   const hasPhoto = Boolean(entry.photoUrl?.trim());
+  // 못 찾으면(신규 학교·200곳 초과 등) 기본 엠블럼으로 폴백 — 기존 동작 유지.
+  const schoolLogo = logoByName(entry.campaignName) ?? schoolEmblem;
 
   return (
     <PageBody className="school-wall-detail" scroll={false}>
@@ -48,12 +53,12 @@ export function SchoolWallDetailPage() {
           {hasPhoto ? (
             <img className="swd-photo__img" src={entry.photoUrl} alt="기부한컷" />
           ) : (
-            <img className="swd-photo__emblem" src={schoolEmblem} alt="" />
+            <img className="swd-photo__emblem" src={schoolLogo} alt="" />
           )}
 
           {/* 하단 오버레이 — Figma 5843:90594: rgba(0,0,0,.5), h161 */}
           <div className="swd-photo__overlay">
-            <img className="swd-photo__badge" src={schoolEmblem} alt="" />
+            <img className="swd-photo__badge" src={schoolLogo} alt="" />
             <span className="swd-photo__caption">{entry.campaignName}</span>
           </div>
         </div>
@@ -67,7 +72,7 @@ export function SchoolWallDetailPage() {
         </div>
       </div>
 
-      <AppFooter note />
+      <FooterBanner />
     </PageBody>
   );
 }

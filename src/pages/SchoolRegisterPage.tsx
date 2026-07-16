@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { useAppNavigate } from "../hooks/useAppNavigate";
 import { PageBody } from "../components/layout/PageBody";
 import { AppHeader } from "../components/AppHeader";
-import { AppFooter } from "../components/AppFooter";
+import { FooterBanner } from "../components/FooterBanner";
 import { VirtualKeyboard } from "../components/VirtualKeyboard";
 import { IconCheck } from "../components/Icon";
 import { useDonationStore } from "../store/donationStore";
@@ -237,7 +237,7 @@ export function SchoolRegisterPage() {
         />
       </div>
 
-      <AppFooter note />
+      <FooterBanner />
 
       {/* 개인정보 처리방침 — Figma 5827:170940 (1820×2574, radius 53.625) */}
       {policyOpen && (

@@ -10,7 +10,7 @@ import {
 import type { SchoolRegionCode, SchoolSort } from "../api/types";
 import { buildSchoolCampaignFromDto } from "../data/schoolCampaign";
 import { AppHeader } from "../components/AppHeader";
-import { PartnerBar } from "../components/PartnerBar";
+import { FooterBanner } from "../components/FooterBanner";
 import { VirtualKeyboard } from "../components/VirtualKeyboard";
 import { appendKeyboardInput, removeLastHangul } from "../utils/hangulInput";
 import { formatCurrency } from "../utils/format";
@@ -111,8 +111,8 @@ function formatAsOf(timestamp: number): string {
 
 /**
  * 기부할 학교 선택 화면 (Figma 5656:26114).
- * 홈에서 [학교] 카드를 누르면 진입한다. 상단 크롬(AppHeader)과 하단 파트너 바
- * (PartnerBar)는 공통 컴포넌트를 재사용하고, 본문(검색·지역칩·초성·랭킹표)은
+ * 홈에서 [학교] 카드를 누르면 진입한다. 상단 크롬(AppHeader)과 하단 배너
+ * (FooterBanner)는 공통 컴포넌트를 재사용하고, 본문(검색·지역칩·초성·랭킹표)은
  * 2160px 키오스크 좌표계에 맞춰 Figma 값 그대로 배치한다.
  */
 export function SchoolSelectPage() {
@@ -478,11 +478,11 @@ export function SchoolSelectPage() {
       {/* 하단 그라데이션 페이드 — Figma 5659:87586 (투명 → #c4c4c4) */}
       <div className="school-page__footer-fade" aria-hidden />
 
-      {/* 파트너 바 — Figma 5659:87593 검정 h572 + 로고.
+      {/* 하단 학교 배너 — Figma 5890:102990 (2160×573).
           지역 탭 선택 시(그리드·지역 랭킹 모두)에는 숨기고 전국 뷰에서만 노출한다. */}
       {!selectedRegion && (
         <div className="school-page__footer">
-          <PartnerBar />
+          <FooterBanner />
         </div>
       )}
     </div>

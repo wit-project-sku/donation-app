@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useAppNavigate } from "../hooks/useAppNavigate";
 import { PageBody } from "../components/layout/PageBody";
 import { AppHeader } from "../components/AppHeader";
-import { PartnerBar } from "../components/PartnerBar";
+import { FooterBanner } from "../components/FooterBanner";
 import { useDonationStore } from "../store/donationStore";
 import { useTheme } from "../theme/ThemeContext";
 import { formatCurrency } from "../utils/format";
@@ -23,7 +23,7 @@ const PROGRAM_SUBTITLES: Record<string, string> = {
  * 학교 상세 화면 (Figma 5591:40524).
  * 학교 목록에서 학교를 고르면 진입한다. 히어로 + 초록 CTA 배너, 사용처 3종 카드
  * (선택 시 연초록), 소개문, 모금 현황(진행바/금액), 참여자·수혜자 지표로 구성된다.
- * 상단 크롬(AppHeader)·하단 파트너 바(PartnerBar)는 공통 컴포넌트 재사용.
+ * 상단 크롬(AppHeader)·하단 배너(FooterBanner)는 공통 컴포넌트 재사용.
  */
 export function SchoolDetailPage() {
   const navigate = useAppNavigate();
@@ -185,7 +185,7 @@ export function SchoolDetailPage() {
         </button>
       </div>
 
-      <PartnerBar />
+      <FooterBanner />
     </PageBody>
   );
 }

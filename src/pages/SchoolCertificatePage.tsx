@@ -5,7 +5,7 @@ import { ApiError } from "../api/client";
 import { useAppNavigate } from "../hooks/useAppNavigate";
 import { PageBody } from "../components/layout/PageBody";
 import { AppHeader } from "../components/AppHeader";
-import { AppFooter } from "../components/AppFooter";
+import { FooterBanner } from "../components/FooterBanner";
 import { useDonationStore } from "../store/donationStore";
 import { useTheme } from "../theme/ThemeContext";
 import { buildMobileCertificateUrl } from "../utils/mobileCertificateUrl";
@@ -83,7 +83,8 @@ export function SchoolCertificatePage() {
 
   const hasPhoto = Boolean(capturedPhotoUrl);
   // 사진이 없으면 기본 이미지를 채우지 않는다 — 어두운 배경 + 학교 엠블럼만 노출.
-  const schoolLogo = schoolEmblem;
+  // 엠블럼은 선택한 학교의 로고(SchoolDto.logoImageUrl)를 쓰고, 없는 학교는 기본 엠블럼.
+  const schoolLogo = selectedCampaign.logoUrl ?? schoolEmblem;
   const displayName = donorName || "기부자";
   const isSaved = submittedRecordId != null || submitMutation.isSuccess;
   const photoPending = photoStatus === "generating" && !capturedPhotoUrl;
@@ -115,15 +116,22 @@ export function SchoolCertificatePage() {
     });
   };
 
-  // 합성 사진 + 기부 정보를 담은 모바일 증서 링크 → QR 로 발급 (기존 로직 재사용)
+  // 합성 사진 + 기부 정보를 담은 모바일 증서 링크 → QR 로 발급.
+  //
+  // 사진 링크 우선순위: 저장하기(submit) 로 우리 백엔드에 올린 이미지(imageUrl)를
+  // 먼저 쓴다 — 증서는 우리 도메인의 자산이므로 키오스크 이미지 호스트의 수명에
+  // 기대면 안 된다. 저장 성공 시 onSuccess 가 capturedPhotoUrl 을 그 imageUrl 로
+  // 바꿔 두므로(:67) 여기서 http(s) 이면 그게 곧 백엔드 링크다.
+  // 아직 저장 전이면 capturedPhotoUrl 은 data: 바이트 → 키오스크 공개 링크로 폴백.
+  const savedImageUrl = /^https?:\/\//i.test(capturedPhotoUrl ?? "")
+    ? capturedPhotoUrl
+    : null;
   const qrValue = buildMobileCertificateUrl({
     amount,
     date: formatDot(new Date()).replace(/\./g, "-"),
     name: displayName,
     phone: donorPhone,
-    // Public share URL for the QR (the phone can't open the data: URL); after
-    // save, capturedPhotoUrl becomes the backend's public imageUrl fallback.
-    photoUrl: sharePhotoUrl ?? capturedPhotoUrl,
+    photoUrl: savedImageUrl ?? sharePhotoUrl,
   });
 
   return (
@@ -155,6 +163,15 @@ export function SchoolCertificatePage() {
           )}
           {/* 하단 오버레이 — Figma 5843:87973: rgba(0,0,0,.5) h161 */}
           <div className="sc2-photo__overlay">
+            {/* 학교 로고 — 기부한컷 벽 상세(.swd-photo__badge)와 같은 규칙·크기.
+                로고 없는 학교는 배지를 아예 그리지 않는다(빈 이미지 아이콘 방지). */}
+            {selectedCampaign.logoUrl && (
+              <img
+                className="sc2-photo__badge"
+                src={selectedCampaign.logoUrl}
+                alt=""
+              />
+            )}
             {/* Figma 5843:88006 "원화여고 25회 졸업" — 학교명 + 졸업연도.
                 (Figma 의 "N회"(기수)는 수집 데이터에 없어 졸업연도로 표기) */}
             <span className="sc2-photo__caption">
@@ -213,7 +230,7 @@ export function SchoolCertificatePage() {
         </div>
       </div>
 
-      <AppFooter note />
+      <FooterBanner />
 
       {/* QR 크게 보기 팝업 — 흰 카드에 QR 만(문구 없음), 닫기는 카드 오른쪽 위 바깥 */}
       {qrOpen && (

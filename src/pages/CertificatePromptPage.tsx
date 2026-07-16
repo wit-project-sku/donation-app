@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useAppNavigate } from "../hooks/useAppNavigate";
 import { AppHeader } from "../components/AppHeader";
-import { PartnerBar } from "../components/PartnerBar";
+import { FooterBanner } from "../components/FooterBanner";
 import { PageBody } from "../components/layout/PageBody";
 import { useDonationStore } from "../store/donationStore";
 import { useTheme } from "../theme/ThemeContext";
@@ -128,7 +128,7 @@ export function CertificatePromptPage() {
         </div>
       </div>
 
-      <PartnerBar />
+      <FooterBanner />
     </PageBody>
   );
 }

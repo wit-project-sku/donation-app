@@ -1,0 +1,75 @@
+/* 공통 하단 배너 — Figma 5890:102990 (2160×573) 좌표 그대로 배치.
+   기존 검정 바(AppFooter)와 동일하게 flex 컬럼 최하단에 붙는다. */
+.footer-banner {
+  position: relative;
+  flex: 0 0 auto;
+  margin-top: auto;
+  height: 573px;
+  overflow: hidden;
+}
+
+/* 배경 사진 (Figma 5890:102985: 2160×573) + 0.4 검정 딤 */
+.footer-banner__bg {
+  position: absolute;
+  inset: 0;
+}
+
+.footer-banner__bg-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.footer-banner__dim {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+}
+
+/* 좌측 교복 사진 (Figma 5890:102982: x0 / y1 / 1184×572) — 딤 없이 원본 밝기 */
+.footer-banner__photo {
+  position: absolute;
+  left: 0;
+  top: 1px;
+  width: 1184px;
+  height: 572px;
+  overflow: hidden;
+}
+
+.footer-banner__photo-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* 타이틀 (Figma 5890:101618: x1125 / y120 / Paperlogy 7 Bold 90 #bef2ce, 줄간격 120, 2줄 h240) */
+.footer-banner__title {
+  position: absolute;
+  left: 1125px;
+  top: 120px;
+  margin: 0;
+  font-family: var(--font-paperlogy);
+  font-size: 90px;
+  font-weight: 700;
+  line-height: 120px;
+  white-space: nowrap;
+  color: #bef2ce;
+}
+
+/* 서브 문구 (Figma 5890:102988: x1125 / y375 / Paperlogy 4 Regular 32 #e8e8e8, 자간 1.6) */
+.footer-banner__eyebrow {
+  position: absolute;
+  left: 1125px;
+  top: 375px;
+  margin: 0;
+  font-family: var(--font-paperlogy);
+  font-size: 32px;
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: 1.6px;
+  color: #e8e8e8;
+}

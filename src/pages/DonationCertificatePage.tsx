@@ -4,7 +4,7 @@ import { useAppNavigate } from "../hooks/useAppNavigate";
 import { QRCodeSVG } from "qrcode.react";
 import { ApiError } from "../api/client";
 import { AppHeader } from "../components/AppHeader";
-import { AppFooter } from "../components/AppFooter";
+import { FooterBanner } from "../components/FooterBanner";
 import { PageBody } from "../components/layout/PageBody";
 import { submitCurrentDonation } from "../utils/buildSubmitPayload";
 import { buildMobileCertificateUrl } from "../utils/mobileCertificateUrl";
@@ -270,7 +270,7 @@ export function DonationCertificatePage() {
         </div>
       )}
 
-      <AppFooter note />
+      <FooterBanner />
     </PageBody>
   );
 }

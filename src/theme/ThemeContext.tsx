@@ -3,6 +3,7 @@ import { useLocation } from "react-router-dom";
 import type { LocationTheme } from "./locations";
 import { getLocationTheme } from "./locations";
 import {
+  ORGANIZERS,
   resolveOrganizer,
   applyOrganizerTheme,
   type Organizer,
@@ -17,6 +18,16 @@ import type { DonationCategory } from "../types";
  * NGO/학교 구분은 진입·목록 화면에선 색이 아니라 검색·제목·콘텐츠로 한다.
  */
 const LOCATION_COLOR_ROUTES = new Set(["/", "/school", "/campaigns"]);
+
+/**
+ * 학교 기부 흐름의 라우트는 스토어 상태와 무관하게 항상 학교(초록) 테마를 쓴다.
+ * 스토어의 donationCategory/selectedCampaign 는 직접 진입·세션 초기화(resetSession)·
+ * 첫 페인트 시점에 비어 있을 수 있고, 그때 resolveOrganizer 의 폴백이 NGO(유니세프 파랑)를
+ * 돌려주면서 학교 화면이 파랗게 보였다. 라우트 자체가 흐름을 알고 있으므로 라우트를 기준으로 고정한다.
+ */
+function isSchoolRoute(pathname: string): boolean {
+  return pathname === "/school" || pathname.startsWith("/school-");
+}
 
 interface ThemeContextType {
   theme: LocationTheme;
@@ -41,8 +52,11 @@ export function ThemeProvider({ location, children }: ThemeProviderProps) {
 
   // 선택한 캠페인의 주최단체(색·로고). 페이지들은 organizer.logo / organizer.label 로 단체를 표시.
   const organizer = useMemo(
-    () => resolveOrganizer(selectedCampaign, category),
-    [selectedCampaign, category],
+    () =>
+      isSchoolRoute(pathname)
+        ? ORGANIZERS.school
+        : resolveOrganizer(selectedCampaign, category),
+    [selectedCampaign, category, pathname],
   );
 
   // 진입/캠페인목록 화면은 위치색(coral) 유지, 그 외 내부 화면은 주최단체 강조색 적용.

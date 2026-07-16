@@ -28,6 +28,8 @@ export function buildSchoolCampaignFromDto(school: SchoolDto): Campaign {
       ? school.description
       : SCHOOL_DESCRIPTION,
     imageUrl: school.imageUrl?.trim() ? school.imageUrl : heroImg,
+    // 학교별 엠블럼. 빈 문자열이 오면 없는 것으로 보고 화면에서 기본 엠블럼으로 폴백.
+    logoUrl: school.logoImageUrl?.trim() || undefined,
     organization: { id: school.id, type: "SCHOOL", name: title },
     amountOptions: [
       { label: "1만원", amount: 10000 },

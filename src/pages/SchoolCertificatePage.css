@@ -64,6 +64,14 @@
   padding: 0 40px;
 }
 
+/* 학교 로고 배지 — 기부한컷 벽 상세(.swd-photo__badge)와 동일 규격(오버레이도 h161로 같다) */
+.sc2-photo__badge {
+  flex: 0 0 auto;
+  width: 77.5px;
+  height: 76px;
+  object-fit: contain;
+}
+
 /* 학교명 · 졸업 — Figma 5843:88006 Medium 50 흰색 (사진 유무와 무관하게 동일) */
 .sc2-photo__caption {
   font-size: 50px;

@@ -7,6 +7,7 @@ import { IconSearch } from "../components/Icon";
 import { VirtualKeyboard } from "../components/VirtualKeyboard";
 import { fetchWallEntriesPage } from "../api/wall";
 import { useDonationStore } from "../store/donationStore";
+import { useSchoolLogoByName } from "../hooks/useSchoolLogo";
 import { useTheme } from "../theme/ThemeContext";
 import { appendKeyboardInput, removeLastHangul } from "../utils/hangulInput";
 import schoolEmblem from "../assets/school-emblem.png";
@@ -37,6 +38,8 @@ export function SchoolWallPage() {
   const navigate = useAppNavigate();
   const { theme } = useTheme();
   const selectedCampaign = useDonationStore((s) => s.selectedCampaign);
+  // 기부내역 응답에 로고가 없어 학교명으로 찾는다 (useSchoolLogo 주석 참고).
+  const logoByName = useSchoolLogoByName();
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<Filter | null>(null);
   const [keyboardOpen, setKeyboardOpen] = useState(false);
@@ -204,7 +207,10 @@ export function SchoolWallPage() {
         {!isLoading && !isError && (
           <div className="sw-grid">
             {/* 카드 탭 → 기부한컷 크게 보기 (선택 항목을 라우터 state 로 전달) */}
-            {entries.map((entry) => (
+            {entries.map((entry) => {
+              // 못 찾은 학교는 기본 엠블럼 — 벽 상세·증서와 같은 폴백 규칙.
+              const schoolLogo = logoByName(entry.campaignName);
+              return (
               <button
                 key={entry.id}
                 type="button"
@@ -226,9 +232,22 @@ export function SchoolWallPage() {
                       loading="lazy"
                     />
                   ) : (
-                    <img className="sw-card__emblem" src={schoolEmblem} alt="" />
+                    <img
+                      className="sw-card__emblem"
+                      src={schoolLogo ?? schoolEmblem}
+                      alt=""
+                    />
                   )}
                   <span className="sw-card__overlay">
+                    {/* 학교 로고 — 증서·벽 상세 오버레이와 같은 규칙(로고 없으면 생략) */}
+                    {schoolLogo && (
+                      <img
+                        className="sw-card__badge"
+                        src={schoolLogo}
+                        alt=""
+                        loading="lazy"
+                      />
+                    )}
                     <span className="sw-card__grad">{entry.campaignName}</span>
                   </span>
                 </span>
@@ -241,7 +260,8 @@ export function SchoolWallPage() {
                   <span className="sw-card__line" aria-hidden />
                 </span>
               </button>
-            ))}
+              );
+            })}
             {entries.length === 0 && (
               <p className="sw-empty">검색 결과가 없습니다</p>
             )}

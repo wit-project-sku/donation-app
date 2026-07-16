@@ -194,7 +194,21 @@ export interface SchoolDto {
   id: number;
   name: string;
   description: string;
-  imageUrl: string;
+  /**
+   * 학교 로고(엠블럼). 기부증서 등에서 학교를 표시할 때 쓴다.
+   * 백엔드가 안 내려주는 학교가 있을 수 있어 optional — 없으면 기본 엠블럼으로 폴백한다.
+   */
+  logoImageUrl?: string;
+  /**
+   * 학교 대표 이미지. 아직 화면에 쓰지 않는다(요청에 따라 보류).
+   * 과거의 imageUrl 을 대체한 것으로 보인다 — 실 응답에 imageUrl 은 더 이상 없다.
+   */
+  thumbnailUrl?: string;
+  /**
+   * @deprecated 실 응답(api-stage-v3)에 더 이상 없다 → 항상 undefined.
+   * 학교 상세 히어로 이미지가 로컬 기본 이미지로만 나오는 원인. 대체 필드는 thumbnailUrl.
+   */
+  imageUrl?: string;
   address: string;
   region: SchoolRegionCode;
   regionLabel: string;

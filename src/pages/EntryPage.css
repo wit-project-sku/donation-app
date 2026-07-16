@@ -140,11 +140,11 @@
   color: #636363;
 }
 
-/* featured 배너 (Figma 5535:18558: w1825/h833, radius 45, 0.2 black dim) */
+/* featured 배너 (Figma 5896:103080/103081: w1819/h830, radius 45) */
 .entry-page__featured {
   position: relative;
   margin: 200px 170px 0;
-  height: 833px;
+  height: 830px;
   border-radius: 45px;
   overflow: hidden;
 }
@@ -153,12 +153,6 @@
 .entry-featured-swiper {
   width: 100%;
   height: 100%;
-  /* 도트 테마 (Figma 5535:18562): 흰색, 비활성 반투명 */
-  --swiper-pagination-color: #ffffff;
-  --swiper-pagination-bottom: 48px;
-  --swiper-pagination-bullet-inactive-color: #ffffff;
-  --swiper-pagination-bullet-inactive-opacity: 0.5;
-  --swiper-pagination-bullet-horizontal-gap: 9px;
 }
 
 .entry-featured-slide {
@@ -192,109 +186,79 @@
   object-fit: cover;
 }
 
-/* 도트: 비활성 18원형, 활성 48 pill (Figma) · 어떤 배경에서도 보이도록 그림자 */
-.entry-featured-swiper .swiper-pagination-bullet {
-  width: 18px;
-  height: 18px;
-  border-radius: 999px;
-  transition: width 0.3s ease, opacity 0.3s ease;
-  filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.45));
-}
-
-.entry-featured-swiper .swiper-pagination-bullet-active {
-  width: 48px;
-}
-
-/* 좌우 화살표 (Figma 5535:18570/18571) — Swiper 인스턴스에 직접 연결한 커스텀 버튼 */
+/* 좌우 화살표 (Figma 5896:103074/103077 Vector: 23.834×47, 흰 stroke 5, y=391)
+   두 화살표는 같은 에셋이며 오른쪽은 좌우 반전이다(Figma 도 동일). */
 .entry-page__featured-nav {
   position: absolute;
-  /* 화살표를 중앙보다 살짝 아래로 (Figma) */
-  top: 57%;
-  transform: translateY(-50%);
+  top: 391px;
   z-index: 10;
-  width: 74px;
-  height: 112px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  width: 23.834px;
+  height: 47px;
   padding: 0;
   border: none;
   background: none;
-  color: #ffffff;
-  font-size: 96px;
-  font-weight: 300;
-  line-height: 1;
   cursor: pointer;
-  filter: drop-shadow(0 2px 10px rgba(0, 0, 0, 0.5));
+}
+
+/* 화살표 자체는 시안 크기 그대로 두고, 키오스크 터치 영역만 넓힌다 */
+.entry-page__featured-nav::before {
+  content: "";
+  position: absolute;
+  inset: -40px;
 }
 
 .entry-page__featured-nav--prev {
-  left: 24px;
+  left: 43px;
 }
 
 .entry-page__featured-nav--next {
-  right: 24px;
+  right: 20.196px;
+  transform: scaleX(-1);
 }
 
+/* stroke(5px, round cap)가 vector 박스 밖으로 번지는 만큼(-5.32% / -10.49%) 키운 실제 svg 크기 */
+.entry-page__featured-nav-icon {
+  position: absolute;
+  top: -2.5px;
+  left: -2.5px;
+  width: 28.834px;
+  height: 52px;
+}
+
+/* 하단 → 상단 그라디언트 (Figma: rgba(0,0,0,0.7) → rgba(102,102,102,0)) */
 .entry-page__featured-overlay {
   position: absolute;
   inset: 0;
-  display: flex;
-  flex-direction: column;
-  /* 콘텐츠를 상단·좌측에 배치 (Figma: 아이브로우/타이틀이 배너 위쪽) */
-  justify-content: flex-start;
-  align-items: flex-start;
-  gap: 28px;
-  /* 좌우 패딩을 넉넉히 두어 가장자리 화살표와 타이틀이 겹치지 않게 */
-  padding: 80px 150px;
-  background: rgba(0, 0, 0, 0.2);
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.7) 0%,
+    rgba(102, 102, 102, 0) 100%
+  );
   color: #fff;
 }
 
-/* 아이브로우 Figma 5535:18560 Noto Sans Medium 48 #fff */
+/* 아이브로우 Figma 5896:103072/103056 Noto Sans Regular 48 #fff (x96 / y477 / h65) */
 .entry-page__featured-eyebrow {
+  position: absolute;
+  left: 96px;
+  top: 477px;
   margin: 0;
   font-size: 48px;
-  font-weight: 500;
+  font-weight: 400;
+  line-height: 65px;
+  color: #ffffff;
 }
 
-/* 타이틀 Figma 5535:18559 Noto Sans Bold 80, 강조 #fcd869 */
+/* 타이틀 Figma 5896:103071/103055 Noto Sans Bold 80 #bef2ce (x96 / y542 / 2줄 h206) */
 .entry-page__featured-title {
+  position: absolute;
+  left: 96px;
+  top: 542px;
   margin: 0;
   font-size: 80px;
   font-weight: 700;
-  line-height: normal;
-}
-
-.entry-page__featured-title em {
-  font-style: normal;
-  color: #fcd869;
-}
-
-/* 더 알아보기 Figma 5535:18568 흰 테두리 3, radius 55.5, w385/h111 · 5535:18561 텍스트 50 Medium */
-.entry-page__featured-more {
-  align-self: flex-start;
-  /* 타이틀 아래로 내리되, 좌우 화살표(중앙 약간 아래)와 비슷한 높이에 오도록 */
-  margin-top: 24px;
-  display: inline-flex;
-  align-items: center;
-  gap: 14px;
-  width: 385px;
-  height: 111px;
-  padding: 0 40px;
-  box-sizing: border-box;
-  border: 3px solid #fff;
-  border-radius: 55.5px;
-  background: transparent;
-  color: #ffffff;
-  font-size: 50px;
-  font-weight: 500;
-  cursor: pointer;
-}
-
-.entry-page__featured-more-chevron {
-  font-size: 54px;
-  line-height: 1;
+  line-height: 103px;
+  color: #bef2ce;
 }
 
 /* 하단 세액공제 안내문 (Figma 5535:18551 Noto Sans Medium 55 #999999, w1951 한 줄) */

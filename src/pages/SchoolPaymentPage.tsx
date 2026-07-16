@@ -10,7 +10,7 @@ import {
 import { PaymentStatusOverlay } from "../components/PaymentStatusOverlay";
 import { PageBody } from "../components/layout/PageBody";
 import { AppHeader } from "../components/AppHeader";
-import { AppFooter } from "../components/AppFooter";
+import { FooterBanner } from "../components/FooterBanner";
 import { IconHeart } from "../components/Icon";
 import { useDonationStore } from "../store/donationStore";
 import { useTheme } from "../theme/ThemeContext";
@@ -184,7 +184,7 @@ export function SchoolPaymentPage() {
         </p>
       </div>
 
-      <AppFooter />
+      <FooterBanner />
 
       {overlay === "card" && (
         <PaymentStatusOverlay
