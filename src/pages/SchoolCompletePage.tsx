@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { QRCodeSVG } from "qrcode.react";
 import { useAppNavigate } from "../hooks/useAppNavigate";
 import { PageBody } from "../components/layout/PageBody";
@@ -10,9 +10,19 @@ import { useTheme } from "../theme/ThemeContext";
 import { finishDonationFlow } from "../config/navigation";
 import { getKioskBridge } from "../utils/kioskBridge";
 import { formatCurrency } from "../utils/format";
-import { buildKioskPhotoSaveUrl } from "../utils/kioskPhotoSaveUrl";
+import { uploadPhotoBooth } from "../api/photoBooth";
+import { recoverPhotoBlob } from "../utils/photoBlob";
+import { buildMobileCertificateUrl } from "../utils/mobileCertificateUrl";
 import { getCampaignProgressPercent } from "../utils/campaignProgress";
 import "./SchoolCompletePage.css";
+
+/** YYYY-MM-DD — 모바일 증서 URL 의 d 파라미터 형식 (SchoolCertificatePage 와 동일) */
+function formatIsoDate(date: Date): string {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
 
 /**
  * 학교 결제 완료 화면 (Figma 5591:41267).
@@ -25,10 +35,15 @@ export function SchoolCompletePage() {
     selectedCampaign,
     amount,
     resetSession,
-    sharePhotoUrl,
+    capturedPhotoUrl,
     photoStatus,
   } = useDonationStore();
   const [qrOpen, setQrOpen] = useState(false);
+  // photo-booth 업로드 결과(공개 URL). QR 은 이 URL 이 나와야만 만들 수 있다.
+  const [photoBoothUrl, setPhotoBoothUrl] = useState<string | null>(null);
+  const [uploadFailed, setUploadFailed] = useState(false);
+  // 같은 사진을 리렌더마다 다시 올리지 않도록 (업로드한 사진을 기억)
+  const uploadedForRef = useRef<string | null>(null);
 
   useEffect(() => {
     if (!selectedCampaign || amount <= 0) {
@@ -44,16 +59,55 @@ export function SchoolCompletePage() {
     getKioskBridge()?.revealPhoto?.();
   }, [selectedCampaign, amount]);
 
+  // 촬영한 사진(data: 바이트)을 photo-booth 에 올려 공개 URL 을 받는다.
+  // 키오스크가 보내 주던 shareUrl 대신 이 URL 로 QR 을 만든다(서버가 1시간 뒤 정리).
+  useEffect(() => {
+    const photo = capturedPhotoUrl;
+    if (!photo) return;
+    if (uploadedForRef.current === photo) return;
+    uploadedForRef.current = photo;
+
+    // 여기서 "취소" 플래그를 두면 안 된다: StrictMode(개발)가 이펙트를 두 번 돌리면
+    // 1회차가 cleanup 으로 취소되고 2회차는 위 ref 가드에 막혀 아무도 업로드 결과를
+    // 반영하지 못한다(QR 이 영영 "생성 중..." 에서 멈춘다). 중복 업로드는 ref 가
+    // 막아 주고, 언마운트 후 setState 는 React 18 에서 무해한 no-op 이다.
+    (async () => {
+      try {
+        const blob = await recoverPhotoBlob(photo);
+        if (!blob) throw new Error("사진 바이트를 복원하지 못했습니다.");
+        const url = await uploadPhotoBooth(blob);
+        setPhotoBoothUrl(url);
+        setUploadFailed(false);
+      } catch (err) {
+        console.warn("[SchoolCompletePage] photo-booth 업로드 실패", err);
+        setUploadFailed(true);
+        // 실패한 사진은 다시 시도할 수 있게 기억에서 지운다.
+        uploadedForRef.current = null;
+      }
+    })();
+  }, [capturedPhotoUrl]);
+
   if (!selectedCampaign || amount <= 0) return null;
 
-  // 이 화면의 QR 은 "AI 사진 받기" 전용 — 키오스크 저장 페이지로 보낸다.
-  // (증서 QR 이 아니다: 이름은 다음 단계(/school-register)에서 받으므로 아직 비어 있고,
-  //  증서는 저장까지 마친 /school-certificate 가 담당한다.)
-  // 키오스크가 보내 준 공개 링크(shareUrl)가 있어야만 만들 수 있다 —
-  // capturedPhotoUrl 은 data: 바이트라 휴대폰이 열 수 없다.
-  const qrValue = buildKioskPhotoSaveUrl(sharePhotoUrl);
+  // 이 화면의 QR 은 "AI 사진 받기" 전용 — 모바일 증서 페이지로 보낸다.
+  // (이름은 다음 단계(/school-register)에서 받으므로 아직 비어 있다 → 모바일 쪽 기본값 "후원자".
+  //  이름·연락처까지 넣은 증서 QR 은 저장까지 마친 /school-certificate 가 담당한다.)
+  // photo-booth 공개 URL 이 있어야만 만들 수 있다 — capturedPhotoUrl 은 data: 바이트라
+  // 휴대폰이 열 수 없다.
+  const qrValue = photoBoothUrl
+    ? buildMobileCertificateUrl({
+        amount,
+        date: formatIsoDate(new Date()),
+        name: "",
+        photoUrl: photoBoothUrl,
+      })
+    : null;
   const photoLinkReady = qrValue !== null;
-  const photoGenerating = photoStatus === "generating" && !photoLinkReady;
+  // "생성 중..." = AI 합성 중이거나, 사진을 photo-booth 에 올리는 중.
+  // 사진 자체가 없거나(건너뜀) 실패했으면 "저장하기" 를 비활성으로 둔다(기존 동작).
+  const photoUploading = !!capturedPhotoUrl && !photoBoothUrl && !uploadFailed;
+  const photoGenerating =
+    !photoLinkReady && (photoStatus === "generating" || photoUploading);
 
   return (
     <PageBody className="school-complete" scroll={false}>

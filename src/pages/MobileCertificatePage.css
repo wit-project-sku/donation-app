@@ -1,97 +1,79 @@
+/* 모바일 기부증서 — 키오스크 학교 기부증서(SchoolCertificatePage)와 같은 구성:
+   큰 9:16 사진 카드 + 날짜·이름 줄. 액션은 저장 버튼 하나뿐이다
+   (키오스크의 QR·기부내역보기는 휴대폰에서 의미가 없어 넣지 않는다). */
 .mobile-cert {
-  height: 100dvh;
-  height: 100vh;
+  min-height: 100dvh;
+  min-height: 100vh;
   box-sizing: border-box;
-  overflow: hidden;
   font-family: "Noto Sans", "Noto Sans KR", -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 .mobile-cert__scroll {
-  height: 100%;
   box-sizing: border-box;
-  padding: 14px 14px max(16px, env(safe-area-inset-bottom));
+  min-height: 100dvh;
+  min-height: 100vh;
+  padding: 20px 16px max(20px, env(safe-area-inset-bottom));
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 12px;
 }
 
-.mobile-cert__hero {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-.mobile-cert__card {
-  position: relative;
-  width: 100%;
-  max-width: 360px;
-  box-sizing: border-box;
-  border: none;
-  border-radius: 22px;
-  background: #ffffff;
-  padding: 12px 12px 12px;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
+/* 사진 카드 — 학교 증서 .sc2-photo(1074.5×1910.25, radius 38)와 같은 9:16.
+   사진을 최대한 크게 보여 주는 것이 이 화면의 목적이라, 높이로 좁히지 않고
+   항상 화면 폭을 채운다. 세로가 짧은 기기에서는 페이지가 조금 스크롤된다
+   (.mobile-cert__scroll 은 min-height 라 늘어나므로 위가 잘리지 않는다). */
 .mobile-cert__photo-wrap {
   position: relative;
   width: 100%;
-  aspect-ratio: 3 / 4;
+  max-width: 440px;
+  aspect-ratio: 9 / 16;
   border-radius: 16px;
   overflow: hidden;
-  background: #f2f2f2;
+  background: #999999;
+  flex: 0 0 auto;
 }
 
 .mobile-cert__photo {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: top center;
   display: block;
 }
 
-.mobile-cert__photo--empty {
-  background: linear-gradient(135deg, #f2f2f2 0%, #e8e8e8 100%);
+/* 날짜 · 이름 — 학교 증서 .sc2-meta 와 같은 구성(선 240×5 / 글씨 50)을
+   카드 폭(1074.5 → 440) 비율로 축소. */
+.mobile-cert__meta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 4px;
 }
 
-.mobile-cert__info {
-  width: 100%;
-  margin-top: 10px;
-  padding-top: 10px;
-  border-top: 1px solid #d4d4d4;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
+.mobile-cert__meta-line {
+  width: 56px;
+  height: 2px;
+  background: #d0d0d0;
+  flex: 0 0 auto;
+}
+
+.mobile-cert__meta-text {
+  color: #000000;
+  font-size: 17px;
+  font-weight: 500;
+  line-height: 1.2;
+  white-space: nowrap;
 }
 
 .mobile-cert__amount {
-  color: #ff7bb7;
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 900;
   line-height: 1;
 }
 
-.mobile-cert__name {
-  width: 100%;
-  color: #222;
-  font-size: 15px;
-  font-weight: 800;
-  line-height: 1.25;
-  text-align: center;
-  word-break: keep-all;
-}
-
 .mobile-cert__phone {
-  width: 100%;
   color: #666;
   font-size: 13px;
   font-weight: 700;
@@ -100,24 +82,17 @@
 }
 
 .mobile-cert__message {
-  margin: 2px 0 0;
+  margin: 0;
   color: #555;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 500;
   line-height: 1.3;
   text-align: center;
   word-break: keep-all;
 }
 
-.mobile-cert__date {
-  margin-top: 1px;
-  color: #999;
-  font-size: 11px;
-  font-weight: 600;
-}
-
 .mobile-cert__error {
-  width: min(100%, 360px);
+  width: min(100%, 440px);
   margin: 0;
   color: #b42318;
   font-size: 12px;
@@ -126,20 +101,15 @@
   text-align: center;
 }
 
-.mobile-cert__actions {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-}
-
+/* 저장하기 — 학교 증서 .sc2-action(radius 42.9, Bold)과 같은 결의 단일 버튼 */
 .mobile-cert__download {
-  width: min(100%, 320px);
-  height: 46px;
-  margin-top: 2px;
+  width: min(100%, 440px);
+  height: 52px;
+  margin-top: 4px;
   border: none;
   border-radius: 999px;
   font-family: "Noto Sans", "Noto Sans KR", -apple-system, BlinkMacSystemFont, sans-serif;
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 700;
   letter-spacing: -0.01em;
   cursor: pointer;
@@ -147,7 +117,7 @@
   align-items: center;
   justify-content: center;
   gap: 6px;
-  flex-shrink: 0;
+  flex: 0 0 auto;
 }
 
 .mobile-cert__download:active:not(:disabled) {
