@@ -11,6 +11,7 @@ import type { SchoolRegionCode, SchoolSort } from "../api/types";
 import { buildSchoolCampaignFromDto } from "../data/schoolCampaign";
 import { AppHeader } from "../components/AppHeader";
 import { FooterBanner } from "../components/FooterBanner";
+import { SchoolPromoCard } from "../components/SchoolPromoCard";
 import { VirtualKeyboard } from "../components/VirtualKeyboard";
 import { appendKeyboardInput, removeLastHangul } from "../utils/hangulInput";
 import { formatCurrency } from "../utils/format";
@@ -93,22 +94,6 @@ function toChipLabel(name: string): string {
   return name.replace(/등학교$/, "");
 }
 
-/** rank → 색상 그룹 클래스 (1위 코랄 / 2·3위 검정 / 4위 이하 회색) */
-function rankTone(rank: number): string {
-  if (rank === 1) return "is-rank1";
-  if (rank <= 3) return "is-top3";
-  return "is-rest";
-}
-
-/** 랭킹 기준 시각 — API 최종 응답(fetch) 시각을 "YYYY.MM.DD HH:mm기준" 으로 표기. */
-function formatAsOf(timestamp: number): string {
-  const d = new Date(timestamp);
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return `${d.getFullYear()}.${pad(d.getMonth() + 1)}.${pad(d.getDate())} ${pad(
-    d.getHours(),
-  )}:${pad(d.getMinutes())}기준`;
-}
-
 /**
  * 기부할 학교 선택 화면 (Figma 5656:26114).
  * 홈에서 [학교] 카드를 누르면 진입한다. 상단 크롬(AppHeader)과 하단 배너
@@ -129,9 +114,6 @@ export function SchoolSelectPage() {
   const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
   // null = 초성 미선택(진입 시 가나다순 그리드). 초성 선택 시 해당 초성으로 필터.
   const [consonant, setConsonant] = useState<string | null>(null);
-  // 지역 그리드 정렬 토글 — false: 가나다순(NAME) / true: 지역 순위(기부액순 DONATION).
-  // Figma 5846:93667 "지역 순위" 칩. 기본은 가나다순 그리드(초성 필터와 함께 탐색).
-  const [regionRank, setRegionRank] = useState(false);
   // 검색창 클릭 시 검색창 바로 아래에 가상 키보드 노출 (다른 입력 화면과 동일 컴포넌트)
   const [keyboardOpen, setKeyboardOpen] = useState(false);
 
@@ -149,24 +131,20 @@ export function SchoolSelectPage() {
     ? REGION_CODE_MAP[selectedRegion as keyof typeof REGION_CODE_MAP]
     : undefined;
 
-  // 3가지 뷰:
-  //  - 전국 랭킹 표 (지역 미선택)               → sort=DONATION      (Figma 5776:25390)
-  //  - 지역 랭킹 표 (지역 + "지역 순위" 켜짐)    → sort=DONATION_REGION (Figma 5846:91359)
-  //  - 학교 칩 그리드 (지역 + "지역 순위" 꺼짐)  → sort=NAME          (Figma 5659:87407)
-  const isRegionRankView = !!selectedRegion && regionRank;
-  const isGridView = !!selectedRegion && !regionRank;
+  // 랭킹 기능은 잠시 숨김(hide-for-now). 3가지 뷰:
+  //  - 안내 카드 (지역 미선택 + 검색어 없음)     → 전국 랭킹 표 대체 (Figma 5930:46802)
+  //  - 검색 결과 표 (지역 미선택 + 검색 중)       → 순위 없는 표 (sort=DONATION)
+  //  - 학교 칩 그리드 (지역 선택)                → sort=NAME (Figma 5659:87407)
+  const isGridView = !!selectedRegion;
   const isTableView = !isGridView;
+  // 지역 미선택 + 검색어 없음 → 안내 카드를 랭킹 표 자리에 노출.
+  // (그 외, 지역 미선택 + 검색 중 → 순위 열이 없는 검색 결과 표.)
+  const showPromo = isTableView && !keyword;
 
   const pageSize = isGridView ? GRID_PAGE_SIZE : TABLE_PAGE_SIZE;
-  const sort: SchoolSort = isGridView
-    ? "NAME"
-    : isRegionRankView
-      ? "DONATION_REGION"
-      : "DONATION";
-  // 순위 변동/메달은 랭킹 표(전국·지역)에서만. 검색 중에는 순위 의미가 없으므로 숨김.
-  const isRankingView = isTableView && !keyword;
+  const sort: SchoolSort = isGridView ? "NAME" : "DONATION";
 
-  const { data, isLoading, isError, dataUpdatedAt } = useQuery({
+  const { data, isLoading, isError } = useQuery({
     queryKey: [
       "schools",
       {
@@ -284,10 +262,9 @@ export function SchoolSelectPage() {
               key={char}
               type="button"
               className={`school-consonant${consonant === char ? " is-active" : ""}`}
-              onClick={() => {
-                setConsonant((prev) => (prev === char ? null : char));
-                setRegionRank(false);
-              }}
+              onClick={() =>
+                setConsonant((prev) => (prev === char ? null : char))
+              }
             >
               {char}
             </button>
@@ -303,11 +280,12 @@ export function SchoolSelectPage() {
             {/도$|시$/.test(selectedRegion) ? "" : "시"} 고등학교 수 : 총{" "}
             {(data?.totalElements ?? gridSchools.length).toLocaleString()}개교
           </p>
+          {/* 지역 순위 — 랭킹 기능 숨김에 따라 비활성 처리 (hide-for-now) */}
           <button
             type="button"
-            className={`school-region-rank${regionRank ? " is-active" : ""}`}
-            onClick={() => setRegionRank((prev) => !prev)}
-            aria-pressed={regionRank}
+            className="school-region-rank is-disabled"
+            disabled
+            aria-disabled
           >
             지역 순위
           </button>
@@ -338,141 +316,72 @@ export function SchoolSelectPage() {
             ))
           )}
         </div>
+      ) : showPromo ? (
+        /* 지역 미선택 + 검색어 없음 — 교복주기 안내 카드 (Figma 5930:46802) */
+        <SchoolPromoCard />
       ) : (
-        /* 랭킹 표 — 전국(Figma 5776:25390) / 지역(Figma 5846:91359, 전국 순위 열 추가) */
-        <>
-          {!selectedRegion && (
-            <p className="school-page__count school-page__count--all">
-              • 전국 고등학교 수 : 총{" "}
-              {(data?.totalElements ?? tableSchools.length).toLocaleString()}
-              개교
-            </p>
-          )}
-
-          <div
-            className={`school-table${isRegionRankView ? " school-table--region" : ""}`}
-          >
-            <div className="school-table__head">
-              <span className="school-table__col school-table__col--rank">
-                {isRegionRankView ? "지역 순위" : "전국 순위"}
-              </span>
-              <span className="school-table__col school-table__col--name">
-                학교명
-              </span>
-              <span className="school-table__col school-table__col--amount">
-                기부액
-              </span>
-              <span className="school-table__col school-table__col--part">
-                참여자(명)
-              </span>
-              <span className="school-table__col school-table__col--benef">
-                수혜자(명)
-              </span>
-              {isRegionRankView && (
-                <span className="school-table__col school-table__col--nation">
-                  전국 순위
-                </span>
-              )}
-            </div>
-
-            {isLoading ? (
-              <div
-                className="school-table__row"
-                style={{ justifyContent: "center", cursor: "default" }}
-              >
-                불러오는 중...
-              </div>
-            ) : isError ? (
-              <div
-                className="school-table__row"
-                style={{ justifyContent: "center", cursor: "default" }}
-              >
-                학교 목록을 불러오지 못했습니다
-              </div>
-            ) : schools.length === 0 ? (
-              <div
-                className="school-table__row"
-                style={{ justifyContent: "center", cursor: "default" }}
-              >
-                검색 결과가 없습니다
-              </div>
-            ) : (
-              tableSchools.map((school, index) => {
-                // 순위는 백엔드 값 우선(전국=nationwideRank / 지역=regionRank).
-                const rank =
-                  (isRegionRankView ? school.regionRank : school.nationwideRank) ??
-                  index + 1;
-                const tone = rankTone(rank);
-                // 순위 변동은 백엔드 rankChange (양수=상승 ▲ / 음수=하락 ▼), 랭킹 뷰에서만.
-                const change = isRankingView ? school.rankChange ?? 0 : 0;
-
-                return (
-                  <button
-                    key={school.id}
-                    type="button"
-                    className={`school-table__row ${tone}`}
-                    onClick={() => openSchool(school)}
-                  >
-                    <span className="school-table__col school-table__col--rank">
-                      <span className="school-table__rank-no">{rank}</span>
-                      {change !== 0 && (
-                        <span
-                          key={`${school.id}-${change}`}
-                          className={`school-table__change ${
-                            change > 0 ? "is-up" : "is-down"
-                          }`}
-                        >
-                          {change > 0 ? "▲" : "▼"}
-                          {Math.abs(change)}
-                        </span>
-                      )}
-                    </span>
-                    <span className="school-table__col school-table__col--name">
-                      {toChipLabel(school.name)}
-                    </span>
-                    <span className="school-table__col school-table__col--amount">
-                      {formatCurrency(school.accumulatedAmount)}원
-                    </span>
-                    <span className="school-table__col school-table__col--part">
-                      {school.participantCount ?? 0}
-                    </span>
-                    <span className="school-table__col school-table__col--benef">
-                      {school.studentCount ?? 0}
-                    </span>
-                    {isRegionRankView && (
-                      <span className="school-table__col school-table__col--nation">
-                        {school.nationwideRank ?? "-"}
-                      </span>
-                    )}
-                  </button>
-                );
-              })
-            )}
+        /* 지역 미선택 + 검색 중 — 순위 열이 없는 검색 결과 표 */
+        <div className="school-table school-table--search">
+          <div className="school-table__head">
+            <span className="school-table__col school-table__col--name">
+              학교명
+            </span>
+            <span className="school-table__col school-table__col--amount">
+              기부액
+            </span>
+            <span className="school-table__col school-table__col--part">
+              참여자(명)
+            </span>
+            <span className="school-table__col school-table__col--benef">
+              수혜자(명)
+            </span>
           </div>
 
-          {/* 기준일 — API 최종 fetch 시각 (Figma 5776:25491 / 5846:91459) */}
-          {dataUpdatedAt > 0 && (
-            <p
-              className={`school-page__asof${isRegionRankView ? " school-page__asof--region" : ""}`}
+          {isLoading ? (
+            <div
+              className="school-table__row"
+              style={{ justifyContent: "center", cursor: "default" }}
             >
-              {formatAsOf(dataUpdatedAt)}
-            </p>
+              불러오는 중...
+            </div>
+          ) : isError ? (
+            <div
+              className="school-table__row"
+              style={{ justifyContent: "center", cursor: "default" }}
+            >
+              학교 목록을 불러오지 못했습니다
+            </div>
+          ) : schools.length === 0 ? (
+            <div
+              className="school-table__row"
+              style={{ justifyContent: "center", cursor: "default" }}
+            >
+              검색 결과가 없습니다
+            </div>
+          ) : (
+            tableSchools.map((school) => (
+              <button
+                key={school.id}
+                type="button"
+                className="school-table__row is-rest"
+                onClick={() => openSchool(school)}
+              >
+                <span className="school-table__col school-table__col--name">
+                  {toChipLabel(school.name)}
+                </span>
+                <span className="school-table__col school-table__col--amount">
+                  {formatCurrency(school.accumulatedAmount)}원
+                </span>
+                <span className="school-table__col school-table__col--part">
+                  {school.participantCount ?? 0}
+                </span>
+                <span className="school-table__col school-table__col--benef">
+                  {school.studentCount ?? 0}
+                </span>
+              </button>
+            ))
           )}
-
-          {/* 1·2·3위 메달 — 표 왼쪽 바깥 여백 (Figma 5842:3457~9 / 5846:91497~9) */}
-          {isRankingView &&
-            tableSchools.slice(0, 3).map((school, i) => (
-              <img
-                key={`medal-${school.id}`}
-                className={`school-page__medal school-page__medal--${i + 1}${
-                  isRegionRankView ? " school-page__medal--region" : ""
-                }`}
-                src={`/icons/image 48${i + 4}.png`}
-                alt=""
-                aria-hidden
-              />
-            ))}
-        </>
+        </div>
       )}
 
       {/* 하단 그라데이션 페이드 — Figma 5659:87586 (투명 → #c4c4c4) */}

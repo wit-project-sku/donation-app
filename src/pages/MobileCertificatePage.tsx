@@ -4,10 +4,7 @@ import { Download } from "lucide-react";
 import { getLocationTheme } from "../theme/locations";
 import { resolveCertificatePhotoUrl } from "../utils/defaultDonationImage";
 import { formatCurrency } from "../utils/format";
-import {
-  downloadMobileCertificate,
-  formatMobilePhone,
-} from "../utils/mobileCertificateDownload";
+import { downloadMobileCertificate } from "../utils/mobileCertificateDownload";
 import "./MobileCertificatePage.css";
 
 function getParam(params: URLSearchParams, key: string, fallback = "") {
@@ -36,10 +33,6 @@ export function MobileCertificatePage() {
   const date = useMemo(
     () => (rawDate ? formatDisplayDate(rawDate) : ""),
     [rawDate],
-  );
-  const phoneLabel = useMemo(
-    () => (phone ? formatMobilePhone(phone) : ""),
-    [phone],
   );
 
   const [downloading, setDownloading] = useState(false);
@@ -105,23 +98,8 @@ export function MobileCertificatePage() {
           />
         </div>
 
-        {/* 날짜 · 이름 — 학교 기부증서(.sc2-meta)와 같은 구성(선 · 날짜 · 이름 · 선) */}
-        <div className="mobile-cert__meta">
-          <span className="mobile-cert__meta-line" />
-          {date ? <span className="mobile-cert__meta-text">{date}</span> : null}
-          {name ? <span className="mobile-cert__meta-text">{name}</span> : null}
-          <span className="mobile-cert__meta-line" />
-        </div>
-
-        {/* 기부 금액 — 학교 기부증서에는 없지만, 증서로서 의미가 있고 QR 링크에
-            이미 담겨 있어(a 파라미터) 저장 이미지에도 들어간다. */}
-        <strong className="mobile-cert__amount" style={{ color: theme.primary }}>
-          {amountLabel}
-        </strong>
-        {phoneLabel ? (
-          <span className="mobile-cert__phone">{phoneLabel}</span>
-        ) : null}
-        {message ? <p className="mobile-cert__message">{message}</p> : null}
+        {/* 이 화면은 사진 + 저장 버튼만 노출한다 — 금액·날짜·이름 등 부가 텍스트는
+            보여 주지 않는다. (저장 이미지에는 downloadMobileCertificate 가 별도로 그린다) */}
 
         {downloadError ? (
           <p className="mobile-cert__error" role="alert">

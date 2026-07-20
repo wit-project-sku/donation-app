@@ -240,6 +240,12 @@
   border: 5px solid #e8e8e8;
 }
 
+/* 비활성 — 랭킹 기능 숨김(hide-for-now). 흐리게 + 클릭 불가 */
+.school-region-rank.is-disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
 .school-consonant {
   padding: 0 0 15px;
   background: none;
@@ -389,6 +395,11 @@
 .school-table--region .school-table__col--benef {
   flex: 0 0 186.13px;
   border-right: 2px solid #e8e8e8;
+}
+
+/* 검색 결과 표 — 순위 열 없음(hide-for-now). 제거된 순위 폭(268.6)을 학교명에 흡수 */
+.school-table--search .school-table__col--name {
+  flex: 0 0 826.3px;
 }
 
 /* 순위 숫자 — Figma Paperlogy 5Medium (1~3위 70 / 4위 이하 50) */
