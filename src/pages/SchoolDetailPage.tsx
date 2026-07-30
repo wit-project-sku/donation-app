@@ -4,12 +4,14 @@ import { PageBody } from "../components/layout/PageBody";
 import { AppHeader } from "../components/AppHeader";
 import { FooterBanner } from "../components/FooterBanner";
 import { useDonationStore } from "../store/donationStore";
-import { useTheme } from "../theme/ThemeContext";
 import { formatCurrency } from "../utils/format";
 import { getCampaignProgressPercent } from "../utils/campaignProgress";
 import { fetchSchoolById, fetchSchoolsPage } from "../api/schools";
 import { buildSchoolCampaignFromDto } from "../data/schoolCampaign";
 import "./SchoolDetailPage.css";
+
+/** 교복 사주기 캠페인 강조색 (Figma 5776:25995 초록) */
+const SCHOOL_ACCENT = "#00a937";
 
 /** 선택한 사용처에 따라 바뀌는 CTA 부제.
  *  Figma 5776:26007 "기부하기 - 후배들에게 교복을 사줍시다" — 마침표 없음. */
@@ -27,7 +29,6 @@ const PROGRAM_SUBTITLES: Record<string, string> = {
  */
 export function SchoolDetailPage() {
   const navigate = useAppNavigate();
-  const { theme } = useTheme();
   const { selectedCampaign, setSelectedCampaign, setDonationCategory } =
     useDonationStore();
   // Figma 기본 선택: 교복 지원(3번째)
@@ -116,7 +117,7 @@ export function SchoolDetailPage() {
       </div>
 
       <div className="sd-header-overlay">
-        <AppHeader title="학교" light />
+        <AppHeader title="후배에게 교복 사주기" light accent={SCHOOL_ACCENT} />
       </div>
 
       <div className="sd-body">
@@ -124,7 +125,7 @@ export function SchoolDetailPage() {
         <div className="sd-title-row">
           <h2 className="sd-title">{selectedCampaign.title}</h2>
           {selectedCampaign.donationRank != null && (
-            <span className="sd-rank" style={{ color: theme.primary }}>
+            <span className="sd-rank" style={{ color: SCHOOL_ACCENT }}>
               모금등수 : {selectedCampaign.donationRank}등
             </span>
           )}
@@ -141,6 +142,13 @@ export function SchoolDetailPage() {
             >
               <span className="sd-prog__num">{index + 1}</span>
               <span className="sd-prog__label">{program.title}</span>
+              {index === selected && (
+                <img
+                  className="sd-prog__check"
+                  src="/icons/check-green.png"
+                  alt="선택됨"
+                />
+              )}
             </button>
           ))}
         </div>
@@ -150,7 +158,7 @@ export function SchoolDetailPage() {
 
         {/* 모금 현황 — Figma 5591:40722 흰 박스 + 진행바 */}
         <div className="sd-funding">
-          <p className="sd-funding__label" style={{ color: theme.primary }}>
+          <p className="sd-funding__label" style={{ color: SCHOOL_ACCENT }}>
             모금 현황
           </p>
           <div className="sd-funding__bar">
@@ -158,11 +166,11 @@ export function SchoolDetailPage() {
               className="sd-funding__fill"
               style={{
                 width: `${getCampaignProgressPercent(selectedCampaign.accumulatedAmount, selectedCampaign.targetAmount)}%`,
-                backgroundColor: theme.primary,
+                backgroundColor: SCHOOL_ACCENT,
               }}
             />
           </div>
-          <p className="sd-funding__amount" style={{ color: theme.primary }}>
+          <p className="sd-funding__amount" style={{ color: SCHOOL_ACCENT }}>
             {formatCurrency(selectedCampaign.accumulatedAmount)} /{" "}
             {formatCurrency(selectedCampaign.targetAmount)}원
           </p>
@@ -178,7 +186,7 @@ export function SchoolDetailPage() {
         <button
           type="button"
           className="sd-cta"
-          style={{ backgroundColor: theme.primary }}
+          style={{ backgroundColor: SCHOOL_ACCENT }}
           onClick={() => navigate("/outfit")}
         >
           기부하기{subtitle ? ` - ${subtitle}` : ""}

@@ -40,6 +40,8 @@ export async function fetchOutfitsPage(
     status: params.status ?? "ACTIVE",
     // NGO=PREMIUM, 학교=SCHOOL_UNIFORM. Caller passes the right type per flow.
     ...(params.type ? { type: params.type } : {}),
+    // 학교 흐름: 선택한 학교의 교복만 조회 (미입력 시 전체 교복).
+    ...(params.schoolId != null ? { schoolId: params.schoolId } : {}),
   });
 
   return {

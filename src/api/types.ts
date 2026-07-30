@@ -147,6 +147,8 @@ export interface OutfitParams extends PageParams {
   status?: "ACTIVE" | "INACTIVE";
   /** 타입 필터 (미입력 시 전체) */
   type?: OutfitType;
+  /** 소속 학교 필터 — 학교 교복(SCHOOL_UNIFORM)일 때 해당 학교 교복만 조회 */
+  schoolId?: number;
 }
 
 export interface OutfitDto {

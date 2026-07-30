@@ -50,6 +50,12 @@ export function OutfitSelectionPage() {
   // NGO AI 생성 대기 상한 60초 타이머.
   const aiTimerRef = useRef<number | null>(null);
 
+  // 학교 흐름은 선택한 학교의 교복만 조회한다(학교당 2벌). NGO 흐름은 미지정.
+  const schoolId =
+    isSchool && selectedCampaign?.organization
+      ? selectedCampaign.organization.id
+      : undefined;
+
   const {
     data,
     isLoading,
@@ -60,7 +66,7 @@ export function OutfitSelectionPage() {
   } = useInfiniteQuery({
     queryKey: [
       "outfits",
-      { status: "ACTIVE", type: outfitType, pageSize: PAGE_SIZE },
+      { status: "ACTIVE", type: outfitType, pageSize: PAGE_SIZE, schoolId },
     ],
     initialPageParam: 1,
     queryFn: ({ pageParam }) =>
@@ -69,6 +75,7 @@ export function OutfitSelectionPage() {
         pageSize: PAGE_SIZE,
         status: "ACTIVE",
         type: outfitType,
+        schoolId,
       }),
     getNextPageParam: (lastPage) =>
       lastPage.last ? undefined : lastPage.pageNum + 1,
@@ -307,6 +314,7 @@ export function OutfitSelectionPage() {
                         src={outfit.imageUrl}
                         alt={outfit.name}
                         loading="lazy"
+                        decoding="async"
                         draggable={false}
                       />
                     </button>

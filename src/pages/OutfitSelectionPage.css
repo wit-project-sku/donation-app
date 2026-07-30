@@ -218,6 +218,22 @@
   display: block;
 }
 
+/* 학교 교복 카드 — 이미지를 고정 세로 비율(59/90) 박스로 중앙 배치 */
+.outfit-page--school .outfit-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 교복 이미지 — 고정 크기 418.629×638.618 (aspect 59/90), 전체가 보이도록 contain */
+.outfit-page--school .outfit-card__img {
+  width: 418.629px;
+  height: 638.618px;
+  aspect-ratio: 59 / 90;
+  object-fit: contain;
+  object-position: center;
+}
+
 .outfit-loading {
   display: flex;
   align-items: center;

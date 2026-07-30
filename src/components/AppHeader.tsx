@@ -41,6 +41,9 @@ interface AppHeaderProps {
   backStatic?: boolean;
   /** 히어로 위에 오버레이되는 화면(캠페인/상세)에서 타이틀·날짜를 흰색으로 (Figma). */
   light?: boolean;
+  /** 아이콘/위치 강조색 override — 기본은 조직 테마색(theme.primary).
+      교복 사주기(학교) 캠페인처럼 페이지 고유 브랜드색이 필요할 때 사용. */
+  accent?: string;
 }
 
 /**
@@ -58,11 +61,13 @@ export function AppHeader({
   onBack,
   backStatic = false,
   light = false,
+  accent,
 }: AppHeaderProps) {
   const { theme } = useTheme();
   const navigate = useAppNavigate();
   const { pathname } = useLocation();
   const resetSession = useDonationStore((state) => state.resetSession);
+  const accentColor = accent ?? theme.primary;
 
   const backTarget = backTo ?? getBackRoute(pathname);
   // backStatic 이면 경로에 상관없이 뒤로 버튼을 노출(하지만 비활성).
@@ -77,8 +82,8 @@ export function AppHeader({
   return (
     <header className="app-header">
       <div className="app-header__meta">
-        <span className="app-header__location" style={{ color: theme.primary }}>
-          <LocationPin color={theme.primary} />
+        <span className="app-header__location" style={{ color: accentColor }}>
+          <LocationPin color={accentColor} />
           {theme.name.toUpperCase()}
         </span>
         <span
@@ -97,7 +102,7 @@ export function AppHeader({
           aria-label="처음으로"
         >
           <IconHomeCircle
-            color={theme.primary}
+            color={accentColor}
             className="app-header__icon-img"
           />
         </button>
@@ -117,7 +122,7 @@ export function AppHeader({
             tabIndex={backStatic ? -1 : undefined}
           >
             <IconBackCircle
-              color={theme.primary}
+              color={accentColor}
               className="app-header__icon-img"
             />
           </button>

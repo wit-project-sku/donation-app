@@ -143,13 +143,29 @@
   font-weight: 700;
 }
 
-/* 활동명 — Figma 5776:26012 Display Bold 55 #00a937 */
+/* 활동명 — Figma 5776:26012 Display Bold 55 #00a937 (체크 위로) */
 .sd-prog__label {
+  position: relative;
+  z-index: 1;
   font-size: 55px;
   font-weight: 700;
   line-height: 1.2;
   text-align: center;
   color: #00a937;
+}
+
+/* 선택 표시 체크 — 여백을 제거한 체크 글리프(check-green.png), 선택 카드 좌상단.
+   원본(Mask group.png)은 투명 여백이 커서 글리프가 안쪽으로 밀렸다 → 트림 에셋 사용.
+   라벨 뒤(z-index 0)에 깔려 텍스트 가독성을 유지한다. */
+.sd-prog__check {
+  position: absolute;
+  top: -70px;
+  left: 76px;
+  z-index: 0;
+  width: 124px;
+  height: 107px;
+  object-fit: contain;
+  pointer-events: none;
 }
 
 /* 소개문 — Figma 5591:40690 Noto Sans Medium 55 #636363 */
