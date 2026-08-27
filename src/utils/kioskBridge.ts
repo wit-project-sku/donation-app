@@ -6,10 +6,12 @@
  *   guest → host : console.log(KIOSK_TAG + json)  → kiosk listens on 'console-message'
  *   host  → guest: kiosk calls window.__kioskDeliver(msg) via executeJavaScript
  *
- * Embedding is detected by the `?kiosk=1` marker the kiosk appends to the URL
+ * Embedding is detected by a `?kiosk=<id>` marker the kiosk appends to the URL
  * (and, if a preload bridge happens to be injected, that too). When not embedded
  * (standalone browser / dev) every method is inert and callers fall back to
  * normal in-app navigation.
+ *
+ * Known IDs: 1 (legacy flag), 4/5/6 (also select location theme colors).
  */
 const KIOSK_TAG = "[[KIOSKBRIDGE]]";
 
@@ -50,12 +52,26 @@ interface KioskWindow {
   kioskBridge?: { isKiosk?: boolean };
 }
 
+/** Parse `kiosk` from search or hash (HashRouter puts query inside the hash). */
+export function readKioskIdFromUrl(): string | null {
+  try {
+    const fromSearch = new URLSearchParams(window.location.search).get("kiosk");
+    if (fromSearch) return fromSearch;
+    const hash = window.location.hash;
+    const qIndex = hash.indexOf("?");
+    if (qIndex === -1) return null;
+    return new URLSearchParams(hash.slice(qIndex + 1)).get("kiosk");
+  } catch {
+    return null;
+  }
+}
+
 /**
  * True when embedded in the kiosk. Detected by (in order):
  *  1. Electron user-agent — the kiosk <webview> runs in Electron, a normal
  *     browser does not. This is the robust default (no URL marker required).
  *  2. an injected preload bridge (window.kioskBridge), if present.
- *  3. a ?kiosk=1 marker in the URL search or hash (opt-in override).
+ *  3. a ?kiosk=<id> marker in the URL search or hash (opt-in override).
  */
 function embedded(): boolean {
   try {
@@ -65,13 +81,7 @@ function embedded(): boolean {
   }
   const w = window as unknown as KioskWindow;
   if (w.kioskBridge?.isKiosk) return true;
-  try {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get("kiosk") === "1") return true;
-    return window.location.hash.includes("kiosk=1");
-  } catch {
-    return false;
-  }
+  return readKioskIdFromUrl() != null;
 }
 
 /** Send a message to the host kiosk over the console-message channel. */

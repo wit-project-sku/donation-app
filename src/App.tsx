@@ -29,10 +29,11 @@ import { useKioskPhotoBridge } from "./hooks/useKioskPhotoBridge";
 function LocationAwareApp() {
   const [searchParams] = useSearchParams();
   const location = searchParams.get("location") || "insadong";
+  const kioskId = searchParams.get("kiosk");
   useKioskPhotoBridge();
 
   return (
-    <ThemeProvider location={location}>
+    <ThemeProvider location={location} kioskId={kioskId}>
       <Routes>
         <Route path="/mobile-certificate" element={<MobileCertificatePage />} />
         <Route
