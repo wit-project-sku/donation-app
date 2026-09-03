@@ -1,5 +1,8 @@
-/* 후배에게 교복 사주기 — 학교 선택 (Figma 5951:75859) — 2160px 키오스크 좌표계 */
+/* 후배에게 교복 사주기 — 기부할 학교 선택 (Figma 5659:87407)
+   2160px 키오스크 좌표계에 Figma 값 그대로 배치. 강조색은 교복 캠페인 초록 #08b741. */
 .school-page {
+  --school-accent: #08b741;
+  --school-accent-soft: #e5ffed;
   position: relative;
   flex: 1;
   width: 100%;
@@ -17,7 +20,7 @@
   z-index: 2;
 }
 
-/* 검색창 — Figma 5951:75877 흰 배경, 강조색 5px 테두리, radius 120 */
+/* 검색창 — Figma 5656:26076 흰 배경, 강조색 5px 테두리, radius 120 */
 .school-page__search {
   position: absolute;
   left: 142px;
@@ -31,7 +34,7 @@
   gap: 40px;
   padding: 55px 75px;
   background: #ffffff;
-  border: 5px solid #08b741;
+  border: 5px solid var(--school-accent);
   border-radius: 120px;
 }
 
@@ -71,6 +74,8 @@
   cursor: default;
 }
 
+/* 좌측 세로중앙 네비(home/back, SideNav top 2010 + h205 ≈ 2215) 바로 아래에
+   전체 폭으로 노출 — 검색 중에도 상단 결과가 보이도록 아래쪽에 배치 */
 .school-page__keyboard {
   position: absolute;
   left: 0;
@@ -81,47 +86,152 @@
   box-shadow: 0 12px 50px rgba(0, 0, 0, 0.2);
 }
 
-/* 학교 칩 — Figma 5951:76053/76069: 7열 가로 배치, 7개 넘으면 다음 줄로 줄바꿈.
-   왼쪽부터 채우고(가로 우선), 2행(≈308px)까지 보이며 넘치면 세로 스크롤. */
-.school-chips {
+/* 지역 필터 탭 — Figma 5656:54452 (5열 × 2행, 행간격 35, 좌우 정렬) */
+.school-page__regions {
   position: absolute;
-  left: 170px;
-  top: 1024px;
+  left: 170.9px;
+  top: 973px;
   width: 1820px;
-  max-height: 308px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  row-gap: 35px;
+}
+
+/* 지역 탭 — Figma 5656:54456 흰 배경, 5px #e8e8e8 테두리, radius 42.9, Noto Medium 50 #999 */
+.school-region {
+  flex: 0 0 343px;
+  height: 170px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  background: #ffffff;
+  border: 5px solid #e8e8e8;
+  border-radius: 42.9px;
+  font-size: 50px;
+  font-weight: 500;
+  color: #999999;
+  cursor: pointer;
+}
+
+/* 선택 지역 — Figma 5656:54454 서울: 연초록 배경 #e5ffed + 초록 글씨 */
+.school-region.is-selected {
+  background: var(--school-accent-soft);
+  color: var(--school-accent);
+}
+
+/* 초성 필터 — Figma 5776:25794: left 220, top 1425, width 1744, Noto SemiBold 60 */
+.school-page__consonants {
+  position: absolute;
+  left: 220px;
+  top: 1425px;
+  width: 1744px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+
+.school-consonant {
+  padding: 0 0 15px;
+  background: none;
+  border: none;
+  border-bottom: 5px solid transparent;
+  font-size: 60px;
+  font-weight: 600;
+  line-height: 1;
+  color: #000000;
+  cursor: pointer;
+}
+
+/* 선택 초성 밑줄 — 강조색 */
+.school-consonant.is-active {
+  border-bottom-color: var(--school-accent);
+}
+
+/* 학교 수 — Figma 5776:25795: left 171, top 1604, Noto Medium 50 #999 */
+.school-page__count {
+  position: absolute;
+  left: 171px;
+  top: 1604px;
+  margin: 0;
+  font-size: 50px;
+  font-weight: 500;
+  color: #999999;
+  white-space: nowrap;
+}
+
+/* 지역 순위 토글 칩 — Figma 5846:93667: left 1637, top 1593, 343×84,
+   radius 42.9, #e5ffed 배경, Noto Medium 50 #999. 켜짐 시 강조색 글씨. */
+.school-region-rank {
+  position: absolute;
+  left: 1637px;
+  top: 1593px;
+  width: 343px;
+  height: 84px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  border-radius: 42.9px;
+  background: var(--school-accent-soft);
+  font-family: "Noto Sans", "Noto Sans KR", sans-serif;
+  font-size: 50px;
+  font-weight: 500;
+  color: #999999;
+  cursor: pointer;
+}
+
+.school-region-rank.is-active {
+  color: var(--school-accent);
+  font-weight: 700;
+}
+
+/* 학교 칩 그리드 — Figma 5659:86855: top 1732, 7열 250, 행간격 78.
+   하단 페이드 위까지 채우고 넘치면 세로 스크롤 (Figma 5769:56666 초록 스크롤바) */
+.school-grid {
+  position: absolute;
+  left: 170.9px;
+  top: 1732px;
+  width: 1820px;
+  max-height: 1480px;
+  overflow-x: hidden;
+  overflow-y: auto;
   display: grid;
   grid-template-columns: repeat(7, 250px);
   justify-content: space-between;
   align-content: start;
-  row-gap: 68px;
-  overflow-x: hidden;
-  overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: #08b741 transparent;
+  row-gap: 78px;
+  scrollbar-width: auto;
+  scrollbar-color: var(--school-accent) transparent;
 }
 
-.school-chips::-webkit-scrollbar {
-  width: 14px;
+/* 스크롤바 — Figma 5769:56666: width 34.3, radius 21.45, 강조색 솔리드 */
+.school-grid::-webkit-scrollbar {
+  width: 34.32px;
 }
 
-.school-chips::-webkit-scrollbar-track {
+.school-grid::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.school-chips::-webkit-scrollbar-thumb {
-  background: #08b741;
-  border-radius: 8px;
+.school-grid::-webkit-scrollbar-thumb {
+  background: var(--school-accent);
+  border-radius: 21.45px;
 }
 
-.school-chips__msg {
+.school-grid__msg {
   grid-column: 1 / -1;
-  white-space: nowrap;
+  text-align: center;
   font-size: 44px;
   color: #999999;
-  padding: 40px 0 0 20px;
+  padding: 80px 0;
 }
 
-/* 학교 칩 — Figma 5951:76055 흰 배경, 2.145px #e8e8e8 테두리, radius 42.9 */
+/* 학교 칩 — Figma 5659:86857 흰 배경, 2.145px #e8e8e8 테두리, radius 42.9, Noto Medium 38 */
 .school-chip {
   width: 250px;
   height: 120px;
@@ -139,7 +249,7 @@
   cursor: pointer;
 }
 
-/* 하단 그라데이션 페이드 — Figma 5659:87586 (투명 → #c4c4c4) */
+/* 하단 그라데이션 페이드 — Figma 5827:171240 (투명 → #c4c4c4) */
 .school-page__footer-fade {
   position: absolute;
   left: 0;
@@ -149,13 +259,4 @@
   background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, #c4c4c4 100%);
   pointer-events: none;
   z-index: 0;
-}
-
-/* 파트너 바 — Figma 5951:75880 검정, 하단 고정 */
-.school-page__footer {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 1;
 }
