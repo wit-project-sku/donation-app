@@ -105,7 +105,82 @@ function applySurfaceElevation(theme: LocationTheme): LocationTheme {
   };
 }
 
+/** Kiosk ID → location-color override. When set, wins over `?location=`. */
+export const kioskThemes: Record<string, LocationTheme> = {
+  "4": {
+    name: "Osaek Market",
+    background: "#FFFFFF",
+    primary: "#1A4D7E",
+    secondary: "#2D5A96",
+    text: {
+      primary: "#000000",
+      secondary: "#636E72",
+      onPrimary: "#FFFFFF",
+    },
+    button: {
+      background: "#FFFFFF",
+      border: "#1A4D7E",
+      text: "#1A4D7E",
+    },
+    card: {
+      background: "#FFFFFF",
+      border: "#1A4D7E",
+    },
+  },
+  "5": {
+    name: "Hwaseong Sa",
+    background: "#FFFFFF",
+    primary: "#005AB4",
+    secondary: "#1A7AD4",
+    text: {
+      primary: "#000000",
+      secondary: "#636E72",
+      onPrimary: "#FFFFFF",
+    },
+    button: {
+      background: "#FFFFFF",
+      border: "#005AB4",
+      text: "#005AB4",
+    },
+    card: {
+      background: "#FFFFFF",
+      border: "#005AB4",
+    },
+  },
+  "6": {
+    name: "Jejudo Island",
+    background: "#FFFBF2",
+    primary: "#FF7F0F",
+    secondary: "#FF9A40",
+    text: {
+      primary: "#2D3436",
+      secondary: "#636E72",
+      onPrimary: "#FFFFFF",
+    },
+    button: {
+      background: "#FFFFFF",
+      border: "#FF7F0F",
+      text: "#FF7F0F",
+    },
+    card: {
+      background: "#FFFFFF",
+      border: "#FF7F0F",
+    },
+  },
+};
+
 export const getLocationTheme = (location: string): LocationTheme => {
   const theme = locationThemes[location.toLowerCase()] || locationThemes.insadong;
   return applySurfaceElevation(theme);
+};
+
+/** Prefer kiosk theme (4/5/6) when present; otherwise fall back to location. */
+export const resolveBaseTheme = (
+  location: string,
+  kioskId: string | null,
+): LocationTheme => {
+  if (kioskId && kioskThemes[kioskId]) {
+    return applySurfaceElevation(kioskThemes[kioskId]);
+  }
+  return getLocationTheme(location);
 };

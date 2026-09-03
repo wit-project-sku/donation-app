@@ -14,6 +14,7 @@
   display: inline-flex;
   align-items: center;
   gap: 26px;
+  font-family: var(--font-pretendard);
   font-size: 68px;
   font-weight: 700;
   letter-spacing: 0.02em;

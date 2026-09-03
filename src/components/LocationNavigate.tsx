@@ -8,6 +8,11 @@ interface LocationNavigateProps {
 }
 
 export function LocationNavigate({ to, replace }: LocationNavigateProps) {
-  const { location } = useTheme();
-  return <Navigate to={appendLocationSearch(to, location)} replace={replace} />;
+  const { location, kioskId } = useTheme();
+  return (
+    <Navigate
+      to={appendLocationSearch(to, location, kioskId)}
+      replace={replace}
+    />
+  );
 }

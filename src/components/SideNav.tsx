@@ -18,12 +18,24 @@ const STATIC_BACK_ROUTES = new Set([
   "/certificate-prompt",
 ]);
 
+/** 교복 사주기 흐름 — 좌측 홈/뒤로 고정 초록 (Figma 5951:75859). */
+const SCHOOL_NAV_ACCENT = "#08B741";
+
+function isSchoolNavRoute(
+  pathname: string,
+  category: string | null | undefined,
+): boolean {
+  if (pathname === "/school" || pathname.startsWith("/school-")) return true;
+  // /outfit 은 NGO·학교 공용 — 학교 카테고리일 때만 초록
+  return pathname === "/outfit" && category === "school";
+}
+
 /**
  * 좌측 중앙에 세로로 쌓인 홈 + 뒤로가기 네비게이션 (Figma 5535:18546).
- * 헤더와 동일하게 아이콘 색이 활성 테마(theme.primary)를 따라간다.
+ * 기본은 활성 테마(theme.primary). 교복 사주기 흐름은 #08B741 고정.
  */
 export function SideNav() {
-  const { theme } = useTheme();
+  const { theme, category } = useTheme();
   const navigate = useAppNavigate();
   const { pathname } = useLocation();
   const resetSession = useDonationStore((state) => state.resetSession);
@@ -34,6 +46,9 @@ export function SideNav() {
   const backStatic = STATIC_BACK_ROUTES.has(pathname);
   // 진입 화면은 앱 내부 이전 단계가 없으므로 뒤로가기를 '앱 이탈'(키오스크 메뉴 복귀)로 처리.
   const showBack = backStatic || isEntry || backTarget !== null;
+  const iconColor = isSchoolNavRoute(pathname, category)
+    ? SCHOOL_NAV_ACCENT
+    : theme.primary;
 
   const handleHome = () => finishDonationFlow(navigate, resetSession);
   const handleBack = () => {
@@ -49,7 +64,7 @@ export function SideNav() {
         onClick={handleHome}
         aria-label="처음으로"
       >
-        <IconHomeCircle color={theme.primary} className="side-nav__icon-img" />
+        <IconHomeCircle color={iconColor} className="side-nav__icon-img" />
       </button>
       {showBack && (
         <button
@@ -60,7 +75,7 @@ export function SideNav() {
           aria-disabled={backStatic || undefined}
           tabIndex={backStatic ? -1 : undefined}
         >
-          <IconBackCircle color={theme.primary} className="side-nav__icon-img" />
+          <IconBackCircle color={iconColor} className="side-nav__icon-img" />
         </button>
       )}
     </div>
